@@ -1,0 +1,5 @@
+export {default as Home} from './home/Home'
+export {default as Games} from './games/Games'
+export {default as Websites} from './websites/Websites'
+export {default as Services} from './services/Services'
+export {default as AboutUs} from './aboutUs/AboutUs'

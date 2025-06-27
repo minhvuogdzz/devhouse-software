@@ -1,0 +1,59 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  font-family: var(--font-family);
+}
+
+body {
+  background: var(--color-bg);
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+
+/* class dh__container, section padding mặc định cho vào các section nhé */
+.dh__container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.gradient__text {
+  background: var(--gradient-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;  /* Đổ màu gradient cho chữ (làm chữ trong suốt để lộ gradient bên dưới)*/
+}
+
+.section__padding {
+  padding: 3rem 6rem;
+}
+
+.section__margin {
+  margin: 3rem 6rem;
+}
+
+@media (max-width: 768px) {
+  .section__padding {
+    padding: 2rem 3rem;
+  }
+
+  .section__margin {
+    margin: 2rem 3rem;
+  }
+}
+@media (max-width: 540px) {
+  .section__padding {
+    padding: 1rem 1.5rem;
+  }
+
+  .section__margin {
+    margin: 1rem 1.5rem;
+  }
+}
+
+
