@@ -1,0 +1,4 @@
+/node_modules/*
+/.env
+src/extensions/chatbot/venv/*
+src/extensions/chatbot/__pycache__/*

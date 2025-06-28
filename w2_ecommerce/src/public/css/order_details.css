@@ -1,0 +1,59 @@
+.order-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.order-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+.order-status {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+.status-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+.product-card {
+    display: flex;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+}
+.product-image {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    margin-right: 20px;
+    cursor: pointer;
+}
+.product-info {
+    flex-grow: 1;
+}
+.order-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+}
+.review-section {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ddd;
+}
+.stars {
+    color: gold;
+    font-size: 20px;
+}
+/* CSS tùy chỉnh cho chữ lớn hơn */
+.status-text {
+    font-size: 1.5rem; /* Hoặc có thể điều chỉnh tùy ý */
+    font-weight: bold; /* Làm cho chữ đậm nếu bạn muốn */
+}

@@ -1,0 +1,678 @@
+/* Định dạng chung */
+*,
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    overflow-y: scroll;
+    
+    /* Đảm bảo cuộn được */
+    position: relative;
+    
+}
+
+body::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Edge */
+}
+
+
+/* Wrapper chính cho layout */
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Chiều cao tối thiểu bằng viewport */
+}
+
+/* Nội dung chính */
+.content {
+    flex: 1 0 auto; /* Mở rộng để đẩy footer xuống nếu cần */
+}
+
+/* Footer */
+footer {
+    flex-shrink: 0; /* Giữ nguyên kích thước footer */
+}
+
+
+:root {
+    --black: #000;
+    --primaryColor: #ff3368;
+}
+
+footer {
+   
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    
+}
+
+.navbar-nav {
+    right: 400px;
+}
+
+/*header*/
+header {
+    width: 100%;
+
+}
+
+.navbar {
+    overflow-y: hidden;
+    position: relative;
+    z-index: 2000;
+    /* Đảm bảo navbar nằm trên các phần tử khác */
+}
+
+
+.nav-item {
+    margin: 0 12px;
+}
+
+.link-menu {
+    width: 300;
+}
+
+.nav-link {
+    color: var(--black);
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.nav-icons a {
+    margin-left: 22px
+}
+
+.nav-icons a i {
+    color: var(--black) !important
+}
+
+.cart-icon span {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    background: red;
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    line-height: 14px;
+    position: relative;
+    top: -10px;
+    right: 2px
+}
+
+.sub-menu {
+    position: absolute;
+    background: var(--primaryColor);
+    padding: 22px;
+    border-radius: 4px;
+    list-style: none;
+    width: 140px;
+    text-align: center;
+    top: 54px;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+
+.sub-menu li a {
+    color: #fff !important;
+    line-height: 2;
+    z-index: 3;
+}
+
+.nav-item:hover .sub-menu {
+    transform: translateY(0);
+    visibility: visible;
+    ;
+    transition: 0.5s;
+    z-index: 3
+}
+
+.sub-menu li:hover {
+    background-color: rgba(16, 238, 120, 0.2);
+    /* Màu nền khi hover */
+    border-radius: 4px;
+    z-index: 3
+}
+
+/*search icon*/
+/* Container bọc ô tìm kiếm */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+/* button - error */
+.search-container button {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+/* Ẩn ô nhập liệu ban đầu */
+.search-box {
+    width: 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    transition: width 0.4s ease-in-out, padding 0.4s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Khi hover vào search-container, mở rộng ô tìm kiếm */
+.search-container:hover .search-box {
+
+    width: 200px;
+    padding: 8px 15px;
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Icon tìm kiếm */
+.search-container i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #333;
+    font-size: 18px;
+}
+
+
+/*user icon*/
+/* Căn chỉnh icon */
+.nav-icons {
+    display: flex;
+    align-items: center;
+}
+
+.nav-icons a {
+    margin-left: 10px;
+    font-size: 20px;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    
+}
+
+/* Hiệu ứng khi di chuột vào icon người dùng */
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-icon {
+    position: relative;
+    display: inline-block;
+    padding: 0px;
+    border-radius: 20px;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.user-icon:hover {
+    background-color: #ff9800;
+    color: white;
+}
+
+/* Submenu user */
+.sub-menu-user {
+    position: fixed;
+    background: var(--primaryColor);
+    padding: 10px;
+    border-radius: 4px;
+    list-style: none;
+    width: 130px;
+    text-align: center;
+    top: 55px;
+    right: 20px;
+    /* Căn phải với body */
+    visibility: hidden;
+    transform: translateY(-10px);
+    z-index: 2001;
+}
+
+
+.sub-menu-user li a {
+    color: #fff !important;
+    line-height: 2;
+    z-index: 3;
+    font-size: 15;
+}
+
+.user-menu:hover .sub-menu-user {
+    transform: translateY(0);
+    visibility: visible;
+    
+    z-index: 10;
+}
+
+.sub-menu-user li:hover {
+    background-color: rgba(16, 238, 120, 0.2);
+    /* Màu nền khi hover */
+    border-radius: 4px;
+    z-index: 3
+}
+
+
+
+
+/* Navbar */
+.navbar {
+    overflow-x: hidden;
+    padding: 12px 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Categories */
+.category-box {
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: #f8f9fa;
+}
+
+.category-box:hover,
+.category-box:active {
+    background-color: #ff9800;
+    color: white;
+    transform: scale(1.05);
+}
+
+.category-box i {
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+.category-box:hover i {
+    color: white;
+}
+
+/*browser category*/
+/* Hiệu ứng tiêu đề */
+h4.fw-bold {
+    position: relative;
+    display: inline-block;
+    padding: 5px 10px;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1;
+}
+
+/* Tạo nền cam hẹp ban đầu */
+h4.fw-bold::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 5px;
+    /* Thanh cam ban đầu có chiều rộng nhỏ */
+    height: 100%;
+    background-color: #ff9800;
+    /* Nền cam */
+    transition: width 0.4s ease-in-out;
+    z-index: -1;
+    border-radius: 5px;
+}
+
+/* Khi hover vào -> phóng to nhẹ và mở rộng nền cam */
+h4.fw-bold:hover {
+    transform: scale(1.1);
+}
+
+h4.fw-bold:hover::before,
+.row:hover~h4.fw-bold::before {
+    width: 100%;
+    /* Mở rộng ra toàn bộ */
+}
+
+
+
+/* Best Selling Products */
+/* Container chính */
+.best-selling-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Đẩy "View All" sang phải */
+    position: relative;
+    padding: 10px 0;
+}
+
+/* Phần bên trái (This Month + Best Selling Products) */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Text "This Month" */
+.highlight-text {
+    position: relative;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff3368;
+    /* Màu cam */
+    padding: 5px 15px;
+    border-radius: 5px;
+    transition: color 0.3s ease-in-out;
+    z-index: 2;
+    width: fit-content;
+}
+
+/* Thanh cam nền mở rộng */
+.highlight-text::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 100%;
+    background-color: #ff3368;
+    /* Màu cam */
+    transition: width 0.4s ease-in-out;
+    z-index: -1;
+    border-radius: 5px;
+}
+
+/* Tiêu đề "Best Selling Products" */
+.best-selling-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 5px;
+    /* Đẩy xuống dưới */
+    transition: 0.3s;
+}
+
+/* Nút View All */
+.view-all-btn {
+    background-color: #ff3368;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.view-all-btn:hover {
+    background-color: #e62e5b;
+}
+
+/* Hiệu ứng khi hover vào Best Selling Products */
+.best-selling-header:hover .highlight-text {
+    color: white;
+    /* Đổi màu chữ thành trắng */
+}
+
+.best-selling-header:hover .highlight-text::before {
+    width: 100%;
+    /* Mở rộng nền cam */
+}
+
+
+.card {
+    width: 100%;
+    max-width: 300px;
+    /* Tăng chiều rộng */
+    height: 420px;
+    /* Chiều cao cố định */
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Ảnh sản phẩm chiếm toàn bộ card */
+.card img {
+    width: 100%;
+    height: 90%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Phần overlay chứa thông tin */
+.card-body {
+    position: absolute;
+    left: 0px;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    background: rgba(0, 0, 0, 0.33);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    text-align: center;
+    padding: 10px;
+}
+
+/* Điều chỉnh font chữ và khoảng cách */
+.card-body h6 {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.card-body p {
+    font-size: 16px;
+    margin: 2px 0;
+}
+
+.text-warning {
+    font-size: 16px;
+    color: #f8b400;
+}
+
+/* Đưa các nút điều hướng lên góc phải */
+.carousel-controls {
+    position: relative;
+    top: 170px;
+    right: 5px;
+    display: auto;
+    ;
+    gap: 0px;
+}
+.installment-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff0000;
+    color: white;
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    z-index: 10;
+}
+
+/* Tùy chỉnh kiểu dáng nút điều hướng */
+.carousel-control-prev,
+.carousel-control-next {
+    background-color: rgba(255, 255, 255, 0.8);
+    /* Nền trắng mờ */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Hiệu ứng hover */
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+/* Mũi tên màu đen */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(100%);
+    /* Đổi màu icon thành đen */
+}
+
+.icon-group {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.icon-circle {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.icon-circle i {
+    font-size: 16px;
+    color: #333;
+    transition: color 0.3s ease;
+}
+
+/* Hover chỉ hoạt động khi chưa click */
+.icon-circle:hover:not(.clicked) {
+    background-color: rgba(255, 0, 21, 0.879);
+}
+
+.icon-circle:hover:not(.clicked) i {
+    color: white;
+}
+
+/* Trạng thái khi đã click */
+.icon-circle.clicked {
+    background-color: white;
+}
+
+.icon-circle.clicked i {
+    color: red;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+    .category-box {
+        margin-bottom: 10px;
+    }
+}
+
+.banner-slider {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.slides {
+    display: flex;
+    width: 500%; /* 5 slide (3 gốc + 2 bản sao), mỗi slide 100% */
+    transition: transform 0.5s ease-in-out;
+    z-index: 1;
+}
+
+.slides img {
+    width: 100vw; /* Mỗi ảnh chiếm toàn bộ chiều rộng màn hình */
+    height: 350px;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.error-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2400;
+    max-width: 350px;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    /* Tạo khoảng cách giữa nội dung và nút đóng */
+    animation: fadeInUp 0.5s ease-in-out;
+}
+
+/* Định dạng nút đóng cho dễ bấm */
+.close-toast {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease-in-out;
+}
+
+.close-toast:hover {
+    opacity: 1;
+}
+
+/* Hiệu ứng xuất hiện */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+#google-login-btn {
+    background-color: #4285F4;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+#google-login-btn:hover {
+    background-color: #357ae8;
+}

@@ -1,0 +1,60 @@
+<link rel="stylesheet" type="text/css" href="/css/chatbot.css">
+
+
+<footer class="bg-dark text-white py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Our journey</h5>
+                <p>From humble beginnings, we have built a community of loyal customers</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Support</h5>
+                <p>141 Xuan Thuy, Dich Vong Hau, Cau Giay, Ha Noi</p>
+                <p>group11@gmail.com</p>
+                <p>+843949505816</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Follow us</h5>
+                <a href="#" class="text-white me-2"><i class="fa-brands fa-x-twitter fa-2x"></i></a>
+                <a href="https://www.instagram.com/thah.lam7/" target="_blank" class="text-decoration-none">
+                    <i class="fa fa-instagram fa-3x text-danger"></i>
+                </a>
+                <a href="https://www.facebook.com/thanhlamk4/" target="_blank" class="text-decoration-none">
+                    <i class="fa fa-facebook-official fa-3x text-primary"></i>
+                </a>
+            </div>
+        </div>
+        <hr class="bg-white">
+        <p class="text-center">© Copyright Group11 2025. All rights reserved</p>
+    </div>
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastNotification" class="toast align-items-center text-bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMessage">
+                    <!-- Message sẽ hiển thị ở đây -->
+                </div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <!-- Chatbot Button -->
+    <div id="chatbot-button" onclick="toggleChat()">
+        💬 Chat
+    </div>
+
+    <!-- Chatbot Window -->
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <img src="/image/robot.png" alt="Chatbot Icon">
+            <span>Chatbot</span>
+            <button onclick="toggleChat()">×</button>
+        </div>
+        <div id="chatbot-messages"></div>
+        <input type="text" id="chatbot-input" placeholder="Ask me anything..." onkeypress="sendMessage(event)">
+    </div>
+</footer>
+
+
+<script src="/js/chatbot.js"></script>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/image/uet.png">
+
+</head>
+
+<body>
+
+    <header><%- include('partials/header') %></header>
+    <div class="container mt-5">
+        <% if (!product) { %>
+            <div class="alert alert-danger text-center">
+                <h4>No product available.</h4>
+            </div>
+            <% } else { %>
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="<%= product.image_urls %>" class="img-fluid" alt="<%= product.name %>">
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <h2 class="col-md-6">
+                                <%= product.name %>
+                            </h2>
+                            <% if (user) { %>
+                                <span class="icon-circle" onclick="addWhistlist('<%= product.id %>')">
+                                    <i class="fa fa-heart"></i>
+                                </span>
+                                <% } else { %>
+                                    <span class="icon-circle" onclick="window.location.href='/api/auth/login'">
+                                        <i class="fa fa-heart"></i>
+                                    </span>
+                                    <% } %>
+                        </div>
+                        <p class="text-warning">★★★★★ (1 Reviews) | <span class="text-success">In Stock: <%= product.stock %></span></p>
+                        <h4 class="text-danger">$<%= product.price %>
+                        </h4>
+                        <p>
+                            <%= product.description %>
+                        </p>
+
+
+
+                        <form id="addToCartForm" method="POST">
+                            <input type="hidden" name="productId" value="<%= product.id %>">
+                            <% if (user) { %>
+                                <input type="hidden" name="userId" value="<%= user.userId %>">
+                                <% } %>
+
+                                    <div class="d-flex align-items-center">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                            onclick="decreaseQuantity()">-</button>
+                                        <input type="text" id="quantity" name="quantity"
+                                            class="form-control text-center mx-2" style="width: 50px;" value="1" data-stock="<%= product.stock %>">
+                                        <button type="button" class="btn btn-outline-secondary"
+                                            onclick="increaseQuantity()">+</button>
+                                    </div>
+
+                                    <% if (user) { %>
+                                        <button type="button" class="btn btn-danger mt-3" id="addToCartBtn"
+                                            onclick="addToCart('<%= product.id %>', document.getElementById('quantity').value)">
+                                            Add To Cart
+                                        </button>
+                                        <% } else { %>
+                                            <p class="text-danger mt-3">You need to <a href="/api/auth/login">login</a>
+                                                to order.</p>
+                                            <% } %>
+                        </form>
+
+                        <div class="mt-3 p-3 border rounded">
+                            <p><strong>Free Delivery</strong></p>
+                            <p>Enter your postal code for Delivery Availability</p>
+                            <p><strong>Return Delivery</strong></p>
+                            <p>Free 30 Days Delivery Returns.</p>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
+    </div>
+
+
+
+
+    <!-- Best Selling Products -->
+    <div class="container mt-5">
+
+        <div class="best-selling-header">
+            <div class="left-section">
+                <span class="highlight-text">This Month</span>
+                <h2 class="best-selling-title">Related Product</h2>
+            </div>
+            <button class="view-all-btn" onclick="window.location.href='/'">View All</button>
+
+        </div>
+
+        <div id="productCarousel" class="carousel slide">
+            <% if (prd && prd.length> 0) { %>
+                <div id="productCarousel" class="carousel slide">
+                    <div class="carousel-controls">
+                        <button class="carousel-control-next" type="button"
+                            data-bs-target="#productCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        </button>
+                        <button class="carousel-control-prev" type="button"
+                            data-bs-target="#productCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <div class="carousel-inner">
+                        <% for (let i = 0; i < prd.length; i += 4) { %>
+                            <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                                <div class="row">
+                                    <% for (let j = 0; j < 4; j++) {
+                                        const index = (i + j) % prd.length; // Lặp tròn nếu thiếu
+                                    %>
+                                        <div class="col-md-3">
+                                            <div class="card p-3">
+                                                <img src="<%= prd[index].image_urls %>" class="card-img-top"
+                                                    alt="<%= prd[index].name %>">
+                                                <div class="icon-group">
+                                                    <% if (user) { %>
+                                                                <span class="icon-circle"
+                                                                    onclick="addWhistlist('<%= prd[index].id %>')">
+                                                                    <i class="fa fa-heart"></i>
+                                                                </span>
+                                                            <% } else { %>
+                                                                <span class="icon-circle"
+                                                                    onclick="window.location.href='/api/auth/login'">
+                                                                    <i class="fa fa-heart"></i>
+                                                                </span>
+                                                            <% } %>
+                                                    <span class="icon-circle"
+                                                        onclick="viewProduct('<%= prd[index].id %>')">
+                                                        <i class="fa fa-eye"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <h6><%= prd[index].name %></h6>
+                                                    <p>$<%= prd[index].price %></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                </div>
+                <% } else { %>
+                    <div class="alert alert-warning text-center mt-3">
+                        No products available at the moment.
+                    </div>
+                    <% } %>
+        </div>
+
+        <!-- Phần Reviews -->
+        <div id="reviewsContainer" class="mt-5 p-4 border rounded bg-light">
+            <h5 class="text-danger">Reviews</h5>
+
+            <% if (reviews && reviews.length> 0) { %>
+                <% reviews.forEach(review=> { %>
+                    <div class="review-item mb-3">
+                        <div class="review-item mb-3 d-flex align-items-center">
+                            <img src="/image/avatar.jpg" alt="User Avatar" class="rounded-circle me-2"
+                                style="width: 60px; height: 60px;">
+                            <h5 class="mb-0"><strong>
+                                    <%= review.user_name %>
+                                </strong></h5>
+                        </div>
+                        <p>
+                            <%= new Date(review.created_at).toLocaleString() %>
+                        </p>
+                        <p class="text-warning">
+                            <%= '★' .repeat(review.rating) %>
+                                <%= '☆' .repeat(5 - review.rating) %>
+                        </p>
+                        <p>
+                            <%= review.comment %>
+                        </p>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <p>No reviews for this product yet.</p>
+                            <% } %>
+
+
+        </div>
+
+    </div>
+    <footer><%- include('partials/footer') %></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <script src="/js/product_info.js"></script>
+
+
+</body>
+
+</html>
