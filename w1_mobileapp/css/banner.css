@@ -6,3 +6,11 @@
 		border-bottom: 1px solid #e1e1e1;
 	}
 /* ======= End Banner ======== */
+
+@media (max-width: 768px) {
+	.banner {
+		padding-top: 5px;
+		text-align: center;
+		font-size: 14px;
+	}
+}
