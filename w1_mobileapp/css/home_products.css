@@ -173,3 +173,33 @@
 		
 	/* ===== End Them Vao Gio Hang ==== */
 /* ====== End Home Product ======= */
+
+@media (max-width: 768px) {
+	.sanPham {
+		width: 45%;
+		margin: 2.5%;
+	}
+	.sanPham a {
+		height: auto;
+		padding: 10px 0;
+	}
+	.sanPham a img {
+		width: 100px;
+		height: 100px;
+	}
+	.sanPham h3 {
+		font-size: 14px;
+		text-align: center;
+	}
+	.sanPham .price {
+		text-align: center;
+	}
+	.sanPham .ratingresult {
+		text-align: center;
+	}
+	.sanPham label {
+		font-size: 11px;
+		top: 110px;
+		left: 5px;
+	}
+}

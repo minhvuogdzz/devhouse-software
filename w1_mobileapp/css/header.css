@@ -233,3 +233,128 @@
 		/* ======= End Tools Member ======= */
 	/* ======= End Content ========= */
 /* ======= End header ======== */
+
+@media (max-width: 1024px) {
+	/* Header container */
+	.header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 10px;
+		border-bottom: 2px solid #ccc;
+	}
+
+	/* Logo */
+	.header .logo {
+		width: 180px;
+		height: 50px;
+		float: none;
+		margin-bottom: 10px;
+	}
+
+	/* Content */
+	.header .content {
+		width: 100%;
+		float: none;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	/* Search */
+	.search-header {
+		float: none;
+		width: 100%;
+		display: flex;
+		justify-content: center;
+		margin-bottom: 10px;
+	}
+	form.input-search {
+		width: 90%;
+		margin-left: 0;
+	}
+	.input-search input {
+		width: calc(100% - 100px);
+	}
+	.tags {
+		margin: 5px 0;
+		text-align: center;
+		font-size: 12px;
+	}
+
+	/* Tools member */
+	.tools-member {
+		float: none;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		width: 100%;
+		margin: 10px 0 0 0;
+	}
+	.tools-member a {
+		margin: 5px;
+		font-size: 14px;
+	}
+	.tools-member i {
+		padding: 8px;
+	}
+
+	/* Member dropdown */
+	.member {
+		float: none;
+		display: inline-block;
+		position: relative;
+	}
+	.member .menuMember {
+		left: 50%;
+		transform: translateX(-50%) scale(0);
+	}
+	.member:hover .menuMember {
+		transform: translateX(-50%) scale(1);
+	}
+
+	/* Cart */
+	.cart {
+		float: none;
+		margin: 0 10px;
+	}
+	.cart-number {
+		left: 1.2em;
+		bottom: -1em;
+		width: 1.5em;
+		height: 1.5em;
+		font-size: 0.9em;
+		line-height: 1.5em;
+	}
+
+	/* Hide check-order nếu không dùng */
+	.check-order {
+		display: none;
+	}
+
+	.tags {
+	width: 100%;
+	margin: 5px 0 0 0;
+	padding: 0 10px;
+	font-size: 13px;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 5px;
+}
+.tags a {
+	color: gray;
+	padding: 3px 10px;
+	background: #f5f5f5;
+	border-radius: 15px;
+	transition: 0.2s;
+}
+.tags a:hover {
+	color: black;
+	text-decoration: none;
+	background-color: #ddd;
+}
+
+}
+

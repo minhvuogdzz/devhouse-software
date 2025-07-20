@@ -56,3 +56,43 @@
 		}
 	/* ======= End quick link ======= */
 /* ======= End Top navigation ======= */
+
+@media (max-width: 768px) {
+	.top-nav {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 10px 0;
+		text-align: center;
+	}
+
+	/* Social icons */
+	.social-top-nav {
+		float: none;
+		display: flex;
+		justify-content: center;
+		margin-bottom: 10px;
+	}
+	.social-top-nav a {
+		font-size: 16px;
+		margin: 0 5px;
+	}
+
+	/* Quick links */
+	.top-nav-quicklink {
+		float: none;
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		padding: 0;
+	}
+	.top-nav-quicklink li {
+		display: inline-block;
+		margin: 0 10px;
+	}
+	.top-nav-quicklink li a {
+		padding: 8px 10px;
+		font-size: 14px;
+	}
+}

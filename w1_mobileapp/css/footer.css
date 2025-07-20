@@ -55,3 +55,22 @@
 }
 
 /* ======= End Footer ======== */
+
+@media (max-width: 768px) {
+	.plc li {
+		width: 100%;
+		display: block;
+		text-align: center;
+		border-right: none;
+		border-bottom: 1px solid #aaa;
+	}
+	.plc li:last-child {
+		border-bottom: none;
+	}
+
+	.copy-right {
+		font-size: 13px;
+		line-height: 1.5em;
+		padding: 10px 5px;
+	}
+}
