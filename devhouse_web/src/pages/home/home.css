@@ -1,5 +1,4 @@
 .dh__home {
-  height: 500px;
   width: 100%;
   margin-top: 70px;
 }
@@ -43,6 +42,18 @@
   display: block;
 }
 
+.dh__new img {
+  width: 120px;
+  height: 70px;
+  animation: blink 0.7s infinite; 
+}
+
+@keyframes blink {
+  0%   { filter: brightness(1); }
+  50%  { filter: brightness(2); } 
+  100% { filter: brightness(1); }
+}
+
 @media (max-width: 1200px) {
   .dh__home--hero_content {
     padding-right: 2rem;
@@ -79,5 +90,164 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+.dh__projects-title {
+  color: #2c5aa0;
+  font-size: 36px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.dh__projects-subtitle {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.dh__banner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(30, 41, 59, 0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dh__banner {
+  width: 90%;
+  max-width: 480px;
+  background: linear-gradient(90deg, #2c5aa0 0%, #6dd5ed 100%);
+  color: #fff;
+  padding: 28px 32px;
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(44,90,160,0.18);
+  z-index: 10001;
+}
+
+.dh__banner-square {
+  width: 50vw;
+  height: 50vw;
+  max-width: 420px;
+  max-height: 420px;
+  min-width: 260px;
+  min-height: 260px;
+  background: linear-gradient(120deg, #2c5aa0 0%, #6dd5ed 100%);
+  color: #fff;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(44,90,160,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10001;
+  padding: 32px 18px 24px 18px;
+  box-sizing: border-box;
+}
+
+.dh__banner-close {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: #fff;
+  color: #2c5aa0;
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.2s;
+}
+.dh__banner-close:hover {
+  background: #e3e9f6;
+}
+
+.dh__banner-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(44,90,160,0.10);
+  background: #fff;
+}
+
+.dh__banner-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.dh__banner-content span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.dh__banner-contact {
+  background: #fff;
+  color: #2c5aa0;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(44,90,160,0.08);
+  transition: background 0.2s, color 0.2s;
+}
+.dh__banner-contact:hover {
+  background: #2c5aa0;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .dh__banner-square {
+    width: 90vw;
+    height: 90vw;
+    max-width: 320px;
+    max-height: 320px;
+    padding: 18px 6px 12px 6px;
+  }
+  .dh__banner-img {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+.dh__banner-img {
+  animation: blinks 0.5s infinite; 
+}
+
+@keyframes blinks {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+    box-shadow: 0 0 0px rgba(255, 255, 255, 0);
+  }
+  50% {
+    opacity: 0.6;
+    filter: brightness(2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
   }
 }

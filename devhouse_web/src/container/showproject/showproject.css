@@ -1,0 +1,31 @@
+.dh__projects-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 36px;
+}
+
+.dh__projects-pagination {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.dh__projects-pagination button {
+  background: white;
+  border: 1px solid #ccc;
+  margin: 0 5px;
+  padding: 6px 10px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.dh__projects-pagination button.active {
+  background-color: #0070f3;
+  color: white;
+  font-weight: bold;
+}
+
+@media (max-width: 540px) {
+  .dh__projects-cards {
+    grid-template-columns: 1fr;
+  }
+}

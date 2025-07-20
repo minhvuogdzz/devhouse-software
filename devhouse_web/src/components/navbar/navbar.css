@@ -260,10 +260,15 @@
 /* Active link styles (you can add this class conditionally) */
 .navbar-link.active,
 .mobile-nav-link.active {
-  background: rgba(255, 255, 255, 0.2);
   font-weight: 600;
 }
 
 .navbar-link.active::before {
   width: 80%;
+}
+
+.navbar-item.active .navbar-link,
+.mobile-nav-item.active .mobile-nav-link {
+  font-weight: bold;
+  border-bottom: 2px solid #fff;
 }

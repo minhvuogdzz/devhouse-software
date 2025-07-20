@@ -1,0 +1,27 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mouse-trail-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* không cản click chuột */
+  z-index: 9999;
+}
+
+.trail {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  opacity: 0.8;
+  transform-origin: center center;
+}
