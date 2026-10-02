@@ -24,6 +24,8 @@ import { postAdminRouter } from './modules/blog/post.admin.routes.js';
 import { authorAdminRouter } from './modules/blog/author.admin.routes.js';
 import { tagAdminRouter } from './modules/blog/tag.admin.routes.js';
 import { mediaAdminRoutes } from './modules/media/media.admin.routes.js';
+import { contactPublicRoutes } from './modules/contact/contact.public.routes.js';
+import { contactAdminRoutes } from './modules/contact/contact.admin.routes.js';
 
 export const apiRouter = Router();
 
@@ -43,6 +45,7 @@ apiRouter.use('/projects', projectPublicRoutes);
 apiRouter.use('/technologies', technologyPublicRoutes);
 apiRouter.use('/categories', categoryPublicRoutes);
 apiRouter.use('/blog', blogPublicRouter);
+apiRouter.use('/contact', contactPublicRoutes);
 
 // Admin routes (requires authentication on all admin endpoints)
 export const adminRouter = Router();
@@ -61,5 +64,7 @@ adminRouter.use('/blog/posts', postAdminRouter);
 adminRouter.use('/blog/authors', authorAdminRouter);
 adminRouter.use('/blog/tags', tagAdminRouter);
 adminRouter.use('/media', mediaAdminRoutes);
+adminRouter.use('/contact-requests', contactAdminRoutes);
+adminRouter.use('/contact', contactAdminRoutes);
 
 apiRouter.use('/admin', adminRouter);
