@@ -6,6 +6,7 @@ export const createVitestConfig = (options = {}) =>
       globals: true,
       environment: 'node',
       testTimeout: 20000,
+      fileParallelism: false,
       ...options,
     },
   });

@@ -26,6 +26,10 @@ import { tagAdminRouter } from './modules/blog/tag.admin.routes.js';
 import { mediaAdminRoutes } from './modules/media/media.admin.routes.js';
 import { contactPublicRoutes } from './modules/contact/contact.public.routes.js';
 import { contactAdminRoutes } from './modules/contact/contact.admin.routes.js';
+import { seoPublicRoutes } from './modules/seo/seo.public.routes.js';
+import { dashboardAdminRoutes } from './modules/dashboard/dashboard.admin.routes.js';
+import { redirectAdminRoutes } from './modules/redirects/redirect.admin.routes.js';
+import { auditLogAdminRoutes } from './modules/audit-logs/audit-log.admin.routes.js';
 
 export const apiRouter = Router();
 
@@ -46,10 +50,12 @@ apiRouter.use('/technologies', technologyPublicRoutes);
 apiRouter.use('/categories', categoryPublicRoutes);
 apiRouter.use('/blog', blogPublicRouter);
 apiRouter.use('/contact', contactPublicRoutes);
+apiRouter.use('/seo', seoPublicRoutes);
 
 // Admin routes (requires authentication on all admin endpoints)
 export const adminRouter = Router();
 adminRouter.use(authenticate);
+adminRouter.use('/dashboard', dashboardAdminRoutes);
 adminRouter.use('/users', userAdminRoutes);
 adminRouter.use('/roles', roleAdminRoutes);
 adminRouter.use('/pages', pageAdminRoutes);
@@ -66,5 +72,7 @@ adminRouter.use('/blog/tags', tagAdminRouter);
 adminRouter.use('/media', mediaAdminRoutes);
 adminRouter.use('/contact-requests', contactAdminRoutes);
 adminRouter.use('/contact', contactAdminRoutes);
+adminRouter.use('/redirects', redirectAdminRoutes);
+adminRouter.use('/audit-logs', auditLogAdminRoutes);
 
 apiRouter.use('/admin', adminRouter);
