@@ -120,61 +120,94 @@ export const aboutCompany = defineSection({
 
 export const aboutLeadership = defineSection({
   key: 'leadership',
-  label: 'Đội ngũ lãnh đạo',
+  label: 'Sơ đồ tổ chức',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
-    members: field.list({
+    // Org chart as a tree: each node points at its parent by id ('' = top of the chart).
+    // A node can hold one person, or several people shown together as a group (e.g. a board).
+    nodes: field.list({
       of: field.group({
         fields: {
-          name: field.string({ max: 80 }),
-          role: field.text({ max: 120 }),
+          id: field.string({ max: 40 }),
+          parent: field.string({ max: 40 }),
+          label: field.text({ max: 80 }),
+          members: field.list({
+            of: field.group({
+              fields: {
+                name: field.string({ max: 80 }),
+                role: field.text({ max: 120 }),
+              },
+            }),
+          }),
         },
       }),
     }),
   },
   defaults: {
-    heading: { vi: 'Đội ngũ lãnh đạo', en: 'Leadership team' },
+    heading: { vi: 'Sơ đồ tổ chức', en: 'Our organization' },
     subheading: {
-      vi: 'Những người sáng lập và điều hành Dev House Software.',
-      en: 'The founders and leaders of Dev House Software.',
+      vi: 'Đội ngũ sáng lập và điều hành đứng sau Dev House Software.',
+      en: 'The founders and leaders behind Dev House Software.',
     },
-    members: [
+    nodes: [
       {
-        name: 'Dương Minh Vương',
-        role: { vi: 'CEO, Nhà sáng lập Dev House Group', en: 'CEO and Founder, Dev House Group' },
+        id: 'ceo',
+        parent: '',
+        members: [
+          {
+            name: 'Dương Minh Vương',
+            role: {
+              vi: 'CEO, Nhà sáng lập Dev House Group',
+              en: 'CEO and Founder, Dev House Group',
+            },
+          },
+        ],
       },
       {
-        name: 'Nguyễn Thành Lâm',
-        role: { vi: 'Giám đốc Công nghệ (CTO), Đồng sáng lập', en: 'CTO and Co-Founder' },
+        id: 'cto',
+        parent: 'ceo',
+        members: [
+          {
+            name: 'Nguyễn Thành Lâm',
+            role: { vi: 'Giám đốc Công nghệ (CTO), Đồng sáng lập', en: 'CTO and Co-Founder' },
+          },
+        ],
       },
       {
-        name: 'Lưu Công Hải',
-        role: {
-          vi: 'Đồng sáng lập, Giám đốc Dev House Software',
-          en: 'Co-Founder and Director, Dev House Software',
-        },
+        id: 'board',
+        parent: 'ceo',
+        label: { vi: 'Ban giám đốc Dev House Software', en: 'Dev House Software Directors' },
+        members: [
+          {
+            name: 'Lưu Công Hải',
+            role: { vi: 'Đồng sáng lập, Giám đốc', en: 'Co-Founder and Director' },
+          },
+          {
+            name: 'Nguyễn Hữu Trọng Anh',
+            role: { vi: 'Đồng sáng lập, Giám đốc', en: 'Co-Founder and Director' },
+          },
+        ],
       },
       {
-        name: 'Nguyễn Hữu Trọng Anh',
-        role: {
-          vi: 'Đồng sáng lập, Giám đốc Dev House Software',
-          en: 'Co-Founder and Director, Dev House Software',
-        },
+        id: 'product',
+        parent: 'board',
+        members: [
+          {
+            name: 'Nguyễn Đức Việt',
+            role: { vi: 'Giám đốc Sản phẩm (CPO)', en: 'Chief Product Officer (CPO)' },
+          },
+        ],
       },
       {
-        name: 'Nguyễn Đức Việt',
-        role: {
-          vi: 'Giám đốc Sản phẩm (CPO), Dev House Software',
-          en: 'Chief Product Officer (CPO), Dev House Software',
-        },
-      },
-      {
-        name: 'Lê Trương Nguyễn Hoàng',
-        role: {
-          vi: 'Giám đốc Hành chính Nhân sự, Dev House Software',
-          en: 'Head of Administration and HR, Dev House Software',
-        },
+        id: 'hr',
+        parent: 'board',
+        members: [
+          {
+            name: 'Lê Trương Nguyễn Hoàng',
+            role: { vi: 'Giám đốc Hành chính Nhân sự', en: 'Head of Administration and HR' },
+          },
+        ],
       },
     ],
   },

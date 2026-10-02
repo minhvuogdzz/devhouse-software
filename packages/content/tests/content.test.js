@@ -137,21 +137,25 @@ describe('@devhouse/content', () => {
       expect(defaultSettings.socialLinks).toEqual([]);
     });
 
-    it('lists the six leaders in both languages', () => {
-      const about = resolveDefaultPage('about', 'vi');
-      const names = about.sections.leadership.members.map(m => m.name);
-      expect(names).toEqual([
-        'Dương Minh Vương',
-        'Nguyễn Thành Lâm',
-        'Lưu Công Hải',
-        'Nguyễn Hữu Trọng Anh',
-        'Nguyễn Đức Việt',
-        'Lê Trương Nguyễn Hoàng',
-      ]);
-      const en = resolveDefaultPage('about', 'en');
-      for (const member of en.sections.leadership.members) {
-        expect(typeof member.role).toBe('string');
-        expect(member.role.length).toBeGreaterThan(0);
+    it('describes the org chart as a tree with all six leaders in both languages', () => {
+      for (const locale of ['vi', 'en']) {
+        const { nodes } = resolveDefaultPage('about', locale).sections.leadership;
+        const people = nodes.flatMap(n => n.members.map(m => m.name));
+        expect(people).toEqual([
+          'Dương Minh Vương',
+          'Nguyễn Thành Lâm',
+          'Lưu Công Hải',
+          'Nguyễn Hữu Trọng Anh',
+          'Nguyễn Đức Việt',
+          'Lê Trương Nguyễn Hoàng',
+        ]);
+        const ids = new Set(nodes.map(n => n.id));
+        const roots = nodes.filter(n => n.parent === '');
+        expect(roots).toHaveLength(1);
+        for (const node of nodes) {
+          if (node.parent !== '') expect(ids.has(node.parent)).toBe(true);
+          for (const m of node.members) expect(m.role.length).toBeGreaterThan(0);
+        }
       }
     });
 

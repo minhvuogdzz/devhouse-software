@@ -6,6 +6,7 @@ import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
+import { OrgChart } from '../components/sections/OrgChart.jsx';
 import {
   Shield,
   Target,
@@ -45,13 +46,6 @@ export function meta({ data }) {
     { title: seo.title || 'Dev House Software' },
     { name: 'description', content: seo.description || '' },
   ];
-}
-
-function initials(name = '') {
-  const parts = name.trim().split(/\s+/);
-  const last = parts[parts.length - 1] || '';
-  const first = parts.length > 1 ? parts[0] : '';
-  return `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
 }
 
 const offeringIcons = [Globe, Building2, Cpu];
@@ -155,33 +149,16 @@ export default function AboutPage() {
           </section>
         )}
 
-        {/* Leadership */}
-        {leadership?.members?.length > 0 && (
-          <section className="space-y-8">
-            <div className="max-w-2xl space-y-2">
+        {/* Organization chart */}
+        {leadership?.nodes?.length > 0 && (
+          <section className="space-y-10">
+            <div className="max-w-2xl mx-auto text-center space-y-2">
               <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg">
                 {leadership.heading}
               </h2>
               <p className="text-sm sm:text-base text-fg-muted">{leadership.subheading}</p>
             </div>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {leadership.members.map(member => (
-                <li key={member.name}>
-                  <Card className="h-full flex items-center gap-4">
-                    <div
-                      className="w-14 h-14 rounded-full bg-primary-subtle text-primary flex items-center justify-center font-display font-bold text-lg shrink-0"
-                      aria-hidden="true"
-                    >
-                      {initials(member.name)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-display font-bold text-fg leading-snug">{member.name}</p>
-                      <p className="text-sm text-fg-muted leading-snug mt-0.5">{member.role}</p>
-                    </div>
-                  </Card>
-                </li>
-              ))}
-            </ul>
+            <OrgChart nodes={leadership.nodes} />
           </section>
         )}
 
