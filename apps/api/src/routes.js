@@ -9,6 +9,17 @@ import { userAdminRoutes } from './modules/users/user.admin.routes.js';
 import { roleAdminRoutes } from './modules/roles/role.admin.routes.js';
 import { authenticate } from './core/middleware/authenticate.js';
 
+import { servicePublicRoutes } from './modules/services/service.public.routes.js';
+import { serviceAdminRoutes } from './modules/services/service.admin.routes.js';
+import { solutionPublicRoutes } from './modules/solutions/solution.public.routes.js';
+import { solutionAdminRoutes } from './modules/solutions/solution.admin.routes.js';
+import { projectPublicRoutes } from './modules/projects/project.public.routes.js';
+import { projectAdminRoutes } from './modules/projects/project.admin.routes.js';
+import { technologyPublicRoutes } from './modules/technologies/technology.public.routes.js';
+import { technologyAdminRoutes } from './modules/technologies/technology.admin.routes.js';
+import { categoryPublicRoutes } from './modules/categories/category.public.routes.js';
+import { categoryAdminRoutes } from './modules/categories/category.admin.routes.js';
+
 export const apiRouter = Router();
 
 // Health checks
@@ -20,6 +31,13 @@ apiRouter.use('/auth', authRoutes);
 // Public singleton content (/site, /pages/:key)
 apiRouter.use('/', contentPublicRoutes);
 
+// Public catalog routes
+apiRouter.use('/services', servicePublicRoutes);
+apiRouter.use('/solutions', solutionPublicRoutes);
+apiRouter.use('/projects', projectPublicRoutes);
+apiRouter.use('/technologies', technologyPublicRoutes);
+apiRouter.use('/categories', categoryPublicRoutes);
+
 // Admin routes (requires authentication on all admin endpoints)
 export const adminRouter = Router();
 adminRouter.use(authenticate);
@@ -28,5 +46,10 @@ adminRouter.use('/roles', roleAdminRoutes);
 adminRouter.use('/pages', pageAdminRoutes);
 adminRouter.use('/settings', settingsAdminRoutes);
 adminRouter.use('/navigation', navigationAdminRoutes);
+adminRouter.use('/services', serviceAdminRoutes);
+adminRouter.use('/solutions', solutionAdminRoutes);
+adminRouter.use('/projects', projectAdminRoutes);
+adminRouter.use('/technologies', technologyAdminRoutes);
+adminRouter.use('/categories', categoryAdminRoutes);
 
 apiRouter.use('/admin', adminRouter);

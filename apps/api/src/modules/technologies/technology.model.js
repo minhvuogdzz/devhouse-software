@@ -13,9 +13,7 @@ const technologySchema = new mongoose.Schema(
     slug: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
-      index: true,
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
@@ -55,6 +53,10 @@ technologySchema.plugin(softDeletePlugin);
 technologySchema.plugin(auditablePlugin);
 
 technologySchema.index({ status: 1, order: 1 });
+technologySchema.index(
+  { slug: 1 },
+  { unique: true, partialFilterExpression: { isDeleted: false } },
+);
 
 export const TechnologyModel =
   mongoose.models.Technology || mongoose.model('Technology', technologySchema, 'technologies');

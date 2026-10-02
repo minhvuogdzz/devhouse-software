@@ -151,11 +151,7 @@ export const contentService = {
     if (sections !== undefined) updateData.sections = sections;
     if (seo !== undefined) updateData.seo = seo;
 
-    await PageModel.findOneAndUpdate(
-      { key },
-      { $set: updateData },
-      { upsert: true, new: true },
-    );
+    await PageModel.findOneAndUpdate({ key }, { $set: updateData }, { upsert: true, new: true });
 
     cache.invalidateTag(`page:${key}`);
     cache.invalidateTag('pages');

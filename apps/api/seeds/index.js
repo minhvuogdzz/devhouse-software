@@ -79,8 +79,8 @@ export async function runSeeds() {
           status: tech.status,
         },
       },
-      { upsert: true, new: true },
-    );
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    ).setOptions({ withDeleted: true });
     techMap.set(tech.slug, existing._id);
   }
   logger.info('Seeded technologies.');
