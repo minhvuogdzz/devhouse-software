@@ -96,7 +96,7 @@ export default function TechnologyListPage() {
     {
       header: 'Thứ tự',
       key: 'order',
-      render: row => <span className="font-mono text-xs">{row.order ?? 0}</span>,
+      render: row => <span className="tabular-nums text-xs">{row.order ?? 0}</span>,
     },
     {
       header: 'Thao tác',

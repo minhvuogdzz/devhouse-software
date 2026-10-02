@@ -41,6 +41,40 @@ export const noRawPalettePlugin = {
         };
       },
     },
+    'no-font-mono': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description: 'Enforce rule P5: no monospace font used outside code blocks',
+        },
+      },
+      create(context) {
+        function check(node, text) {
+          if (typeof text !== 'string') return;
+          if (text.includes('font-mono')) {
+            const filename = context.getFilename ? context.getFilename() : context.filename;
+            if (filename && filename.includes('RichTextRenderer.jsx')) return;
+            context.report({
+              node,
+              message: 'Forbidden utility "font-mono". Rule P5 forbids monospace anywhere except a real code block inside a blog article. Use tabular-nums where alignment is needed.',
+            });
+          }
+        }
+
+        return {
+          Literal(node) {
+            if (typeof node.value === 'string') {
+              check(node, node.value);
+            }
+          },
+          TemplateElement(node) {
+            if (node.value?.raw) {
+              check(node, node.value.raw);
+            }
+          },
+        };
+      },
+    },
   },
 };
 
@@ -77,6 +111,7 @@ export const createEslintConfig = () => [
     },
     rules: {
       'theme/no-raw-palette': 'error',
+      'theme/no-font-mono': 'error',
     },
   },
   // Packages boundary: packages cannot import from apps

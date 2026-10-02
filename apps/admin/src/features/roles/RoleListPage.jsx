@@ -83,7 +83,7 @@ export default function RoleListPage() {
                   const name = typeof r.name === 'object' ? r.name[locale] || r.name.vi : r.name;
                   return (
                     <tr key={r._id} className="hover:bg-surface-raised transition-colors">
-                      <td className="px-6 py-4 font-mono text-xs font-semibold text-fg">
+                      <td className="px-6 py-4 tabular-nums text-xs font-semibold text-fg">
                         <Link
                           to={`/roles/${r._id}`}
                           className="hover:text-primary transition-colors"
