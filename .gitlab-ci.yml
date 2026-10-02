@@ -1,5 +1,4 @@
 stages:
-  - prepare
   - verify
   - test
   - build
@@ -20,56 +19,48 @@ default:
 # ─────────────────────────────────────────────────────────────
 # Stage 1: Prepare
 # ─────────────────────────────────────────────────────────────
-install:
-  stage: prepare
+.node-job:
+  before_script:
+    - corepack enable
+    - yarn install --immutable
   cache:
     key:
       files:
         - yarn.lock
     paths:
       - .yarn/cache
-      - node_modules
-      - apps/*/node_modules
-      - packages/*/node_modules
-  script:
-    - corepack enable
-    - yarn install --immutable
 
 # ─────────────────────────────────────────────────────────────
 # Stage 2: Verify
 # ─────────────────────────────────────────────────────────────
 lint:
+  extends: .node-job
   stage: verify
-  needs: ['install']
   script:
-    - corepack enable
     - yarn lint
 
 format:check:
+  extends: .node-job
   stage: verify
-  needs: ['install']
   script:
-    - corepack enable
     - yarn format:check
 
 # ─────────────────────────────────────────────────────────────
 # Stage 3: Test
 # ─────────────────────────────────────────────────────────────
 test:
+  extends: .node-job
   stage: test
-  needs: ['install']
   script:
-    - corepack enable
     - yarn test
 
 # ─────────────────────────────────────────────────────────────
 # Stage 4: Build
 # ─────────────────────────────────────────────────────────────
 build:apps:
+  extends: .node-job
   stage: build
-  needs: ['install']
   script:
-    - corepack enable
     - yarn build
 
 # ─────────────────────────────────────────────────────────────
