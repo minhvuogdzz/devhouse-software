@@ -8,7 +8,7 @@ set -euo pipefail
 
 BASE_DIR="/opt/devhouse"
 COMPOSE_FILE="${BASE_DIR}/compose.prod.yml"
-REGISTRY="${REGISTRY:-registry.gitlab.com/thedevhouse/devhouse-software}"
+REGISTRY="${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}"
 RELEASE_LOG="${BASE_DIR}/releases.log"
 CURRENT_TAG_FILE="${BASE_DIR}/current_tag"
 PREVIOUS_TAG_FILE="${BASE_DIR}/previous_tag"

@@ -26,11 +26,9 @@ ENV NODE_ENV=production
 ENV WEB_PORT=3000
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
-COPY --from=builder /app/apps/web/build ./apps/web/build
-COPY package.json yarn.lock .yarnrc.yml ./
+COPY --from=deps /app ./
 COPY packages packages
+COPY --from=builder /app/apps/web/build ./apps/web/build
 COPY apps/web/server.js ./apps/web/server.js
 COPY apps/web/package.json ./apps/web/package.json
 COPY apps/web/scripts ./apps/web/scripts

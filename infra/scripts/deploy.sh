@@ -15,7 +15,7 @@ fi
 
 BASE_DIR="/opt/devhouse"
 COMPOSE_FILE="${BASE_DIR}/compose.prod.yml"
-REGISTRY="${REGISTRY:-registry.gitlab.com/thedevhouse/devhouse-software}"
+REGISTRY="${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}"
 RELEASE_LOG="${BASE_DIR}/releases.log"
 CURRENT_TAG_FILE="${BASE_DIR}/current_tag"
 PREVIOUS_TAG_FILE="${BASE_DIR}/previous_tag"
@@ -45,7 +45,7 @@ docker compose -f "$COMPOSE_FILE" pull
 echo "Running database migrations and idempotent seed..."
 if ! docker compose -f "$COMPOSE_FILE" run --rm \
   -e NODE_ENV=production \
-  api node apps/api/src/server.js --migrate-only; then
+  api node apps/api/seeds/index.js; then
   echo "ERROR: Database migration or seed failed! Aborting deployment without switching services." >&2
   exit 1
 fi
