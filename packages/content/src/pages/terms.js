@@ -18,8 +18,8 @@ export const termsHero = defineSection({
       en: 'Last updated: October 2026',
     },
     content: {
-      vi: 'Chào mừng quý khách đến với website chính thức của Dev House Software. Việc truy cập và sử dụng dịch vụ của chúng tôi đồng nghĩa với việc bạn đồng ý với các điều khoản pháp lý, bản quyền tác giả và quy định bảo vệ sở hữu trí tuệ đã được ban hành.',
-      en: 'Welcome to Dev House Software. By accessing this website or engaging our professional engineering services, you agree to comply with our commercial terms, intellectual property protections, and governing professional standards.',
+      vi: 'Chào mừng bạn đến với Dev House Software. Khi truy cập trang web hoặc sử dụng dịch vụ của chúng tôi, bạn đồng ý với các nguyên tắc và điều khoản làm việc cơ bản để hai bên có thể hợp tác suôn sẻ.',
+      en: 'Welcome to Dev House Software. By using our website or working with us, you agree to our clear terms and rules so we can build a smooth partnership.',
     },
   },
 });

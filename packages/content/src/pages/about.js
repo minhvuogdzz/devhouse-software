@@ -35,29 +35,29 @@ export const aboutMission = defineSection({
   },
   defaults: {
     heading: {
-      vi: 'Những nguyên tắc định hình văn hóa hợp tác của chúng tôi',
-      en: 'The core values that guide every collaboration',
+      vi: 'Cách chúng tôi làm việc',
+      en: 'How we work',
     },
     values: [
       {
-        title: { vi: 'Trung thực & Minh bạch', en: 'Integrity & Transparency' },
+        title: { vi: 'Rõ ràng & Cởi mở', en: 'Clear & Honest' },
         description: {
-          vi: 'Luôn báo cáo thực chất, thẳng thắn về tiến độ, rủi ro và các phương án xử lý tối ưu nhất cho khách hàng.',
-          en: 'Uncompromised candor regarding project timelines, potential risks, and optimal solutions.',
+          vi: 'Luôn trao đổi thẳng thắn về thời gian, chi phí và cách làm để bạn có thể yên tâm hợp tác.',
+          en: 'We communicate openly about timelines, costs, and the work involved so you always know where things stand.',
         },
       },
       {
-        title: { vi: 'Chất lượng Kỹ thuật Chuẩn mực', en: 'Engineering Rigor' },
+        title: { vi: 'Làm việc cẩn thận', en: 'Careful Work' },
         description: {
-          vi: 'Không cắt ngắn quy trình kiểm thử và kiến trúc; chú trọng tính ổn định, bảo mật và khả năng bảo trì dài hạn.',
-          en: 'No shortcuts in testing or architecture; prioritizing resilience, security, and clean maintenance.',
+          vi: 'Chúng tôi kiểm tra kỹ lưỡng phần mềm để đảm bảo hệ thống an toàn, dễ dùng và không có lỗi.',
+          en: 'We thoroughly test the software to ensure it is secure, easy to use, and bug-free.',
         },
       },
       {
-        title: { vi: 'Tập trung vào Giá trị Thực tế', en: 'Outcome-Driven Value' },
+        title: { vi: 'Tạo ra giá trị thực', en: 'Real Results' },
         description: {
-          vi: 'Phần mềm chỉ có ý nghĩa khi đem lại lợi ích vận hành rõ ràng và tạo đột phá hiệu suất cho tổ chức.',
-          en: 'Software succeeds only when it creates measurable business velocity and operational efficiency.',
+          vi: 'Phần mềm làm ra phải giúp bạn tiết kiệm thời gian hoặc kiếm thêm doanh thu, chứ không chỉ để cho có.',
+          en: 'The software we build must actually save you time or help your business grow.',
         },
       },
     ],

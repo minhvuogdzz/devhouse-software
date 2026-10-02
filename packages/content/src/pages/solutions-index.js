@@ -10,16 +10,16 @@ export const solutionsHero = defineSection({
   },
   defaults: {
     eyebrow: {
-      vi: 'Gói Giải pháp Đóng gói Sẵn sàng',
-      en: 'Outcome-Oriented Solution Packages',
+      vi: 'Giải pháp phần mềm',
+      en: 'Software Solutions',
     },
     heading: {
-      vi: 'Giải pháp chuyển đổi số toàn diện cho doanh nghiệp tăng trưởng',
-      en: 'Targeted digital transformation suites designed for measurable impact',
+      vi: 'Phần mềm quản lý toàn diện giúp doanh nghiệp phát triển',
+      en: 'Complete software solutions that help your business grow',
     },
     subheading: {
-      vi: 'Kết hợp hài hòa giữa các dịch vụ công nghệ then chốt để giải quyết trọn vẹn những bài toán vận hành phức tạp nhất.',
-      en: 'Integrated bundles combining core software competencies to address mission-critical business challenges.',
+      vi: 'Kết hợp các công cụ quản lý thành một hệ thống thống nhất, giúp bạn vận hành doanh nghiệp trơn tru và dễ dàng hơn.',
+      en: 'Combined tools for management and operations in one system, helping you run your business smoothly.',
     },
   },
 });
@@ -30,12 +30,12 @@ export const solutionsIndexPage = {
   sections: [solutionsHero],
   seo: {
     title: {
-      vi: 'Giải pháp Số & Tự động hóa Doanh nghiệp — Dev House Software',
-      en: 'Enterprise Digital Solutions & Automation — Dev House Software',
+      vi: 'Giải pháp & Phần mềm doanh nghiệp — Dev House Software',
+      en: 'Business Software & Solutions — Dev House Software',
     },
     description: {
-      vi: 'Các gói giải pháp chuyển đổi số, ERP nội bộ và hệ thống tự động hóa thông minh cho doanh nghiệp vừa và lớn.',
-      en: 'Digital transformation suites, internal operations systems, and intelligent automation platforms.',
+      vi: 'Các giải pháp phần mềm quản lý, bán hàng và hệ thống tự động hóa cho doanh nghiệp.',
+      en: 'Business management software, sales tools, and simple automation platforms for growing teams.',
     },
   },
 };

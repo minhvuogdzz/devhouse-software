@@ -13,16 +13,16 @@ export const homeHero = defineSection({
   },
   defaults: {
     eyebrow: {
-      vi: 'Đối tác Kỹ thuật & Phát triển Phần mềm Doanh nghiệp',
-      en: 'Enterprise Software & Technology Partner',
+      vi: 'Đối tác Phát triển Phần mềm Doanh nghiệp',
+      en: 'Enterprise Software Partner',
     },
     heading: {
-      vi: 'Xây dựng giải pháp phần mềm tin cậy, tối ưu hiệu quả kinh doanh của bạn',
-      en: 'Building reliable software solutions that accelerate your business outcomes',
+      vi: 'Xây dựng phần mềm tin cậy, giúp doanh nghiệp vận hành hiệu quả',
+      en: 'Building reliable software tools that accelerate your business',
     },
     subheading: {
-      vi: 'Chúng tôi đồng hành cùng các doanh nghiệp hiện đại hóa quy trình vận hành, kiến tạo nền tảng số bảo mật và phát triển các sản phẩm phần mềm đột phá.',
-      en: 'We partner with forward-thinking enterprises to modernize operational workflows, architect secure digital foundations, and deliver impactful software products.',
+      vi: 'Chúng tôi đồng hành cùng các tổ chức tối ưu quy trình làm việc và phát triển các sản phẩm phần mềm thực tế, dễ sử dụng.',
+      en: 'We partner with organizations to improve their daily workflows, build secure foundations, and deliver software that works.',
     },
     primaryCta: {
       label: { vi: 'Tư vấn giải pháp', en: 'Schedule Consultation' },
@@ -56,35 +56,35 @@ export const homeOutcomes = defineSection({
   },
   defaults: {
     heading: {
-      vi: 'Tập trung vào kết quả kinh doanh và độ tin cậy lâu dài',
-      en: 'Focused on measurable business outcomes and long-term stability',
+      vi: 'Tập trung vào kết quả kinh doanh và hiệu quả lâu dài',
+      en: 'Focused on measurable business results and long-term stability',
     },
     subheading: {
-      vi: 'Mọi dòng mã và quyết định kiến trúc đều phục vụ mục tiêu tăng trưởng thực tế của tổ chức.',
-      en: 'Every architectural decision and line of code directly serves your operational growth.',
+      vi: 'Mọi tính năng và quyết định phát triển đều phục vụ mục tiêu tăng trưởng thực tế của tổ chức.',
+      en: 'Every technical decision we make directly serves your operational growth.',
     },
     items: [
       {
         title: { vi: 'Bàn giao đúng tiến độ', en: 'Predictable Delivery' },
         description: {
-          vi: 'Quy trình phát triển minh bạch với các mốc kiểm soát rõ ràng, giúp dự án luôn đi đúng định hướng.',
-          en: 'Transparent delivery cycles with clear milestone verifications ensure steady progress.',
+          vi: 'Quy trình minh bạch với các mốc kiểm soát rõ ràng, giúp dự án đi đúng hướng từ ngày đầu tiên.',
+          en: 'Transparent processes with clear milestones ensure your project stays on track.',
         },
         metric: '',
       },
       {
-        title: { vi: 'Kiến trúc bảo mật & mở rộng', en: 'Secure & Scalable Architecture' },
+        title: { vi: 'Hệ thống an toàn & ổn định', en: 'Secure & Stable Systems' },
         description: {
-          vi: 'Hệ thống thiết kế theo tiêu chuẩn công nghiệp, sẵn sàng đáp ứng lưu lượng tăng trưởng mà không gián đoạn.',
-          en: 'Industry-standard infrastructure built to handle expanding user volumes without downtime.',
+          vi: 'Phần mềm được thiết kế cẩn thận, sẵn sàng đáp ứng lượng người dùng lớn mà không bị gián đoạn.',
+          en: 'Well-built systems designed to handle your expanding business without unexpected downtime.',
         },
         metric: '',
       },
       {
         title: { vi: 'Đồng hành dài hạn', en: 'Dedicated Partnership' },
         description: {
-          vi: 'Hỗ trợ kỹ thuật liên tục, bảo trì chủ động và tư vấn định hướng công nghệ theo từng giai đoạn.',
-          en: 'Proactive maintenance, continuous support, and technology guidance at every lifecycle stage.',
+          vi: 'Hỗ trợ liên tục, bảo trì chủ động và luôn tư vấn giải pháp phù hợp nhất theo từng giai đoạn.',
+          en: 'Proactive maintenance, reliable support, and honest guidance at every stage of your growth.',
         },
         metric: '',
       },
@@ -110,44 +110,44 @@ export const homeProcess = defineSection({
   },
   defaults: {
     heading: {
-      vi: 'Phương pháp hợp tác chặt chẽ và chuyên nghiệp',
-      en: 'A collaborative, disciplined delivery framework',
+      vi: 'Cách chúng tôi làm việc cùng bạn',
+      en: 'A clear process to build your software',
     },
     subheading: {
-      vi: 'Từ thấu hiểu bài toán đến hiện thực hóa giải pháp qua từng bước bài bản.',
-      en: 'From discovery to delivery through proven, methodical steps.',
+      vi: 'Từ lúc bắt đầu tìm hiểu vấn đề đến khi phần mềm được đưa vào sử dụng thực tế.',
+      en: 'From planning the first idea to launching the final tool for your team.',
     },
     steps: [
       {
         stepNumber: '01',
-        title: { vi: 'Khảo sát & Tư vấn', en: 'Discovery & Advisory' },
+        title: { vi: 'Tìm hiểu yêu cầu', en: 'Planning & Requirements' },
         description: {
-          vi: 'Phân tích kỹ lưỡng mục tiêu kinh doanh, khảo sát hiện trạng hệ thống và xác định phạm vi giải pháp.',
-          en: 'Analyze operational requirements, evaluate existing systems, and establish project scope.',
+          vi: 'Cùng thảo luận để hiểu rõ mục tiêu kinh doanh và những khó khăn hiện tại của bạn.',
+          en: 'We talk with your team to understand your business goals and current challenges.',
         },
       },
       {
         stepNumber: '02',
-        title: { vi: 'Thiết kế & Kiến trúc', en: 'Architecture & UX Design' },
+        title: { vi: 'Thiết kế giải pháp', en: 'Design & Prototype' },
         description: {
-          vi: 'Xây dựng kiến trúc hệ thống chuẩn mực và thiết kế trải nghiệm người dùng tối ưu trước khi phát triển.',
-          en: 'Formulate robust system architecture and seamless user journeys prior to implementation.',
+          vi: 'Lên bản vẽ cách phần mềm hoạt động và giao diện để đảm bảo mọi thứ dễ sử dụng.',
+          en: 'We map out how the software will work and look, ensuring it is easy to use.',
         },
       },
       {
         stepNumber: '03',
-        title: { vi: 'Phát triển & Kiểm thử', en: 'Iterative Development & QA' },
+        title: { vi: 'Lập trình & Kiểm tra', en: 'Development & Testing' },
         description: {
-          vi: 'Lập trình tuần tự theo từng vòng lặp, kiểm thử tự động toàn diện đảm bảo chất lượng cao nhất.',
-          en: 'Iterative sprints backed by automated testing suites for resilient software quality.',
+          vi: 'Viết mã nguồn và liên tục kiểm tra để đảm bảo phần mềm hoạt động ổn định và không có lỗi.',
+          en: 'We write the code and test it constantly to make sure everything works perfectly without errors.',
         },
       },
       {
         stepNumber: '04',
-        title: { vi: 'Triển khai & Vận hành', en: 'Deployment & Support' },
+        title: { vi: 'Bàn giao & Hỗ trợ', en: 'Launch & Support' },
         description: {
-          vi: 'Bàn giao hệ thống an toàn trên môi trường vận hành thực tế và đào tạo đội ngũ chuyển giao.',
-          en: 'Zero-disruption production deployment accompanied by thorough team onboarding and monitoring.',
+          vi: 'Đưa phần mềm vào sử dụng thực tế, hướng dẫn nhân viên và tiếp tục hỗ trợ khi cần thiết.',
+          en: 'We launch the software for your team to use and provide ongoing help whenever you need it.',
         },
       },
     ],
@@ -165,20 +165,20 @@ export const homeCta = defineSection({
   },
   defaults: {
     heading: {
-      vi: 'Sẵn sàng khởi động dự án phần mềm tiếp theo của bạn?',
-      en: 'Ready to bring your next software initiative to life?',
+      vi: 'Bạn cần xây dựng một phần mềm mới?',
+      en: 'Ready to build your next software tool?',
     },
     subheading: {
-      vi: 'Liên hệ với đội ngũ chuyên gia của chúng tôi để nhận tư vấn lộ trình và ước tính chi phí chi tiết.',
-      en: 'Connect with our engineering leads for a strategic consultation and actionable project roadmap.',
+      vi: 'Liên hệ với chúng tôi để thảo luận về ý tưởng của bạn và nhận báo giá chi tiết.',
+      en: 'Contact us to discuss your ideas and get a detailed cost estimate.',
     },
     primaryCta: {
-      label: { vi: 'Gửi yêu cầu hợp tác', en: 'Get in Touch' },
+      label: { vi: 'Liên hệ ngay', en: 'Get in Touch' },
       url: '/contact',
       target: '_self',
     },
     secondaryCta: {
-      label: { vi: 'Xem hồ sơ năng lực', en: 'Our Capabilities' },
+      label: { vi: 'Tìm hiểu thêm', en: 'About Us' },
       url: '/about',
       target: '_self',
     },
@@ -191,12 +191,12 @@ export const homePage = {
   sections: [homeHero, homeOutcomes, homeProcess, homeCta],
   seo: {
     title: {
-      vi: 'Dev House Software — Phát triển Phần mềm Doanh nghiệp & Giải pháp AI',
-      en: 'Dev House Software — Enterprise Engineering & AI Solutions',
+      vi: 'Dev House Software — Xây dựng phần mềm doanh nghiệp',
+      en: 'Dev House Software — Enterprise Software Development',
     },
     description: {
-      vi: 'Tư vấn và phát triển phần mềm theo yêu cầu, hệ thống quản trị doanh nghiệp và giải pháp số chuyên sâu.',
-      en: 'Custom enterprise software development, modern operational platforms, and specialized digital solutions.',
+      vi: 'Dịch vụ làm phần mềm theo yêu cầu và xây dựng các công cụ giúp doanh nghiệp quản lý công việc hiệu quả.',
+      en: 'Custom software development and tools to help your business operate efficiently.',
     },
   },
 };
