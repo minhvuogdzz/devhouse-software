@@ -81,4 +81,14 @@ describe('API Core', () => {
       expect(err.details).toEqual([{ field: 'x' }]);
     });
   });
+
+  describe('Environment Loader', () => {
+    it('resolves rootEnvPath to the repository root .env', async () => {
+      const { rootEnvPath } = await import('../src/config/index.js');
+      expect(rootEnvPath).toBeDefined();
+      expect(rootEnvPath.endsWith('.env')).toBe(true);
+      // Path should NOT be inside apps/api — it should be 3 levels up
+      expect(rootEnvPath).not.toContain('apps/api/src');
+    });
+  });
 });

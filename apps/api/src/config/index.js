@@ -1,7 +1,13 @@
 import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const rootEnvPath = path.resolve(__dirname, '..', '..', '..', '.env');
+
+dotenv.config({ path: rootEnvPath });
 
 const configSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -55,3 +61,14 @@ if (!parsed.success) {
 }
 
 export const config = parsed.success ? parsed.data : configSchema.parse({});
+export { rootEnvPath };
+
+// Log which database we are connecting to (never the password)
+if (process.env.NODE_ENV !== 'test') {
+  try {
+    const u = new URL(config.MONGODB_URI);
+    console.info(`[config] MongoDB target → ${u.host}/${config.MONGODB_DB_NAME}`);
+  } catch {
+    console.info(`[config] MongoDB target → ${config.MONGODB_URI} / ${config.MONGODB_DB_NAME}`);
+  }
+}
