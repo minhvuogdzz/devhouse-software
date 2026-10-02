@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import globals from 'globals';
+import reactPlugin from 'eslint-plugin-react';
 
 export const noRawPalettePlugin = {
   rules: {
@@ -46,6 +47,9 @@ export const noRawPalettePlugin = {
 export const createEslintConfig = () => [
   js.configs.recommended,
   {
+    plugins: {
+      react: reactPlugin,
+    },
     languageOptions: {
       ecmaVersion: 2024,
       sourceType: 'module',
@@ -60,8 +64,9 @@ export const createEslintConfig = () => [
       },
     },
     rules: {
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^(_|React)' }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'react/jsx-uses-vars': 'error',
     },
   },
   // Feature code in apps/web and apps/admin: disallow raw palette colors
