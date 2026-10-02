@@ -1,0 +1,88 @@
+# Dev House Software: compact deployment file (edge + web + admin + api).
+# MongoDB Atlas, Cloudinary and SMTP are external, configured through the env files.
+#
+# On the server (default layout /opt/devhouse):
+#   cp docker-compose.yml /opt/devhouse/docker-compose.yml
+#   mkdir -p /opt/devhouse/{env,certs,acme}
+#   env/api.env   <- from .env.example (MONGODB_URI, CLOUDINARY_*, SMTP_*, ...)
+#   env/web.env   <- SITE_URL=https://www.<domain>
+#   certs/live/<domain>/{fullchain,privkey}.pem   <- TLS certificates
+#   echo "REGISTRY=registry.gitlab.com/thedevhouse/web-repo" >  /opt/devhouse/.env
+#   echo "IMAGE_TAG=<short-commit-sha>"                       >> /opt/devhouse/.env
+#   docker compose pull && docker compose up -d
+#
+# Only `edge` publishes ports. Roll back by setting IMAGE_TAG to the previous tag and running `up -d` again.
+
+name: devhouse
+
+x-service: &service
+  restart: unless-stopped
+  networks: [internal]
+  security_opt: ['no-new-privileges:true']
+  stop_grace_period: 30s
+  logging:
+    driver: json-file
+    options: { max-size: '10m', max-file: '5' }
+
+services:
+  api:
+    <<: *service
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/api:${IMAGE_TAG:?set IMAGE_TAG}
+    env_file: ${ENV_DIR:-/opt/devhouse/env}/api.env
+    environment: { NODE_ENV: production, PORT: '4000', TRUST_PROXY: '1' }
+    expose: ['4000']
+    mem_limit: 512m
+    healthcheck:
+      test: ['CMD', 'node', 'apps/api/scripts/healthcheck.js']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  web:
+    <<: *service
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/web:${IMAGE_TAG:?set IMAGE_TAG}
+    env_file: ${ENV_DIR:-/opt/devhouse/env}/web.env
+    environment:
+      { NODE_ENV: production, WEB_PORT: '3000', API_INTERNAL_URL: 'http://api:4000/api/v1' }
+    expose: ['3000']
+    mem_limit: 512m
+    depends_on: { api: { condition: service_healthy } }
+    healthcheck:
+      test: ['CMD', 'node', 'apps/web/scripts/healthcheck.js']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  admin:
+    <<: *service
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/admin:${IMAGE_TAG:?set IMAGE_TAG}
+    expose: ['80']
+    mem_limit: 64m
+    stop_grace_period: 10s
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://127.0.0.1/healthz']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+  edge:
+    <<: *service
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/edge:${IMAGE_TAG:?set IMAGE_TAG}
+    ports: ['80:80', '443:443']
+    volumes:
+      - ${CERT_DIR:-/opt/devhouse/certs}:/etc/nginx/certs:ro
+      - ${ACME_DIR:-/opt/devhouse/acme}:/var/www/certbot:ro
+      - nginx_cache:/var/cache/nginx
+    mem_limit: 256m
+    depends_on:
+      api: { condition: service_healthy }
+      web: { condition: service_healthy }
+      admin: { condition: service_healthy }
+
+networks:
+  internal: {}
+
+volumes:
+  nginx_cache: {}
