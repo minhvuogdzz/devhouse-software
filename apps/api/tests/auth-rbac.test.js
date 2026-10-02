@@ -5,7 +5,6 @@ import { app } from '../src/app.js';
 import { adminRouter } from '../src/routes.js';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { runSeeds } from '../seeds/index.js';
-import { UserModel } from '../src/modules/users/user.model.js';
 import { SessionModel } from '../src/modules/auth/session.model.js';
 
 describe('Auth & RBAC', () => {

@@ -6,7 +6,6 @@ import { sendSuccess } from '../../core/http/index.js';
 import { cache } from '../../core/cache/index.js';
 import { audit } from '../../core/audit/index.js';
 import { NotFoundError, ConflictError } from '../../core/errors/index.js';
-import { localize } from '@devhouse/content';
 import { sanitizePublicDTO } from '../../core/utils/dto.js';
 
 export const categoryController = {

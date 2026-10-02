@@ -11,7 +11,7 @@ export function AmbientBackground() {
       
       <div className="absolute top-[20%] right-[-10%] w-[45vw] h-[45vw] max-w-[500px] max-h-[500px] rounded-full bg-accent/20 dark:bg-accent/10 blur-[80px] sm:blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-2000" />
       
-      <div className="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-primary-subtle dark:bg-indigo-600/10 blur-[80px] sm:blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-4000" />
+      <div className="absolute bottom-[-10%] left-[20%] w-[60vw] h-[60vw] max-w-[700px] max-h-[700px] rounded-full bg-primary-subtle dark:bg-primary-subtle blur-[80px] sm:blur-[120px] mix-blend-multiply dark:mix-blend-screen animate-blob animation-delay-4000" />
       
       {/* Noise overlay for premium texture */}
       <div 

@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { UserModel } from '../src/modules/users/user.model.js';
 import { app } from '../src/app.js';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { runSeeds } from '../seeds/index.js';

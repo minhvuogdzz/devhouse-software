@@ -97,7 +97,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
     }
 
     return match;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 };

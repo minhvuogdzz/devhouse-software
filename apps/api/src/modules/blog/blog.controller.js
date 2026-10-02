@@ -6,26 +6,26 @@ export const blogController = {
   // Public
   async listPosts(req, res) {
     const result = await blogService.listPublicPosts(req.query);
-    const locale = req.query.locale || 'vi';
+    const locale = req.query.locale || null;
     const mapped = result.data.map(post => sanitizePublicDTO(post, locale));
     return sendPaginated(res, mapped, result.pagination);
   },
 
   async getPostBySlug(req, res) {
-    const locale = req.query.locale || 'vi';
+    const locale = req.query.locale || null;
     const post = await blogService.getPublicPostBySlug(req.params.slug, locale);
     return sendSuccess(res, sanitizePublicDTO(post, locale));
   },
 
   async listTags(req, res) {
-    const locale = req.query.locale || 'vi';
+    const locale = req.query.locale || null;
     const tags = await blogService.listPublicTags(locale);
     const mapped = tags.map(tag => sanitizePublicDTO(tag, locale));
     return sendSuccess(res, mapped);
   },
 
   async getAuthor(req, res) {
-    const locale = req.query.locale || 'vi';
+    const locale = req.query.locale || null;
     const author = await blogService.getPublicAuthor(req.params.slug, locale);
     return sendSuccess(res, sanitizePublicDTO(author, locale));
   },

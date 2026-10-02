@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import { UserModel } from '../src/modules/users/user.model.js';
 import { app } from '../src/app.js';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { runSeeds } from '../seeds/index.js';
@@ -168,7 +167,7 @@ describe('Singleton Content (Pages, Settings, Navigation)', () => {
       // Verify public endpoint returns default hero heading
       const publicRes = await request(app).get('/api/v1/pages/home?locale=vi');
       expect(publicRes.status).toBe(200);
-      expect(publicRes.body.data.sections.hero.heading).toContain('Xây dựng giải pháp phần mềm');
+      expect(publicRes.body.data.sections.hero.heading).toContain('Xây dựng phần mềm tin cậy');
     });
 
     it('POST /api/v1/admin/pages/home/reset resets entire page', async () => {

@@ -8,7 +8,7 @@ export function generateSeoMeta({ title, description, url, locale, type = 'websi
       const parsed = new URL(url);
       baseUrl = parsed.origin;
       pathname = parsed.pathname;
-    } catch (e) {
+    } catch (_e) {
       // ignore
     }
   }
