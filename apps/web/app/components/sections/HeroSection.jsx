@@ -46,13 +46,14 @@ export function HeroSection({
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             {primaryCta && (
               <Button to={primaryUrl} size="lg" variant="primary" className="w-full sm:w-auto">
-                {primaryCta.label || 'Tư vấn giải pháp'}
+                {primaryCta.label ||
+                  (locale === 'en' ? 'Schedule a Consultation' : 'Tư vấn giải pháp')}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             )}
             {secondaryCta && (
               <Button to={secondaryUrl} size="lg" variant="outline" className="w-full sm:w-auto">
-                {secondaryCta.label || 'Khám phá dịch vụ'}
+                {secondaryCta.label || (locale === 'en' ? 'Explore Services' : 'Khám phá dịch vụ')}
               </Button>
             )}
           </div>

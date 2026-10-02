@@ -24,6 +24,7 @@ export default function ServiceEditorPage() {
   const [isLoading, setIsLoading] = useState(!isNew);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     if (!isNew) {
@@ -62,6 +63,7 @@ export default function ServiceEditorPage() {
     };
 
     try {
+      setErrorMsg('');
       if (isNew) {
         await apiClient('/admin/services', {
           method: 'POST',
@@ -75,7 +77,7 @@ export default function ServiceEditorPage() {
       }
       navigate('/services');
     } catch (err) {
-      alert(err.message || 'Lỗi khi lưu dịch vụ');
+      setErrorMsg(err.message || 'Lỗi khi lưu dịch vụ');
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +90,7 @@ export default function ServiceEditorPage() {
       await apiClient(`/admin/services/${id}`, { method: 'DELETE' });
       navigate('/services');
     } catch (err) {
-      alert(err.message || 'Lỗi khi xóa dịch vụ');
+      setErrorMsg(err.message || 'Lỗi khi xóa dịch vụ');
     } finally {
       setIsDeleting(false);
     }
@@ -115,6 +117,11 @@ export default function ServiceEditorPage() {
       status={form.status}
       onStatusChange={status => setForm({ ...form, status })}
     >
+      {errorMsg && (
+        <div className="p-4 rounded-lg bg-danger-surface text-danger text-sm font-medium">
+          {errorMsg}
+        </div>
+      )}
       <Card className="p-6 space-y-6">
         <LocalizedField
           label="Tên dịch vụ"

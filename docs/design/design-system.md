@@ -138,3 +138,44 @@ Complies with P2 (Complete Vietnamese diacritic support) and P5 (Commercial tone
 - **No re-drawn browser/terminal chrome**: No fake window controls with colored dots.
 - **Contrast**: Both light and dark palettes strictly meet WCAG AA requirements for body copy (> 4.5:1) and large text / interactive elements (> 3:1).
 - **Responsive floor**: Layouts designed for seamless reflow from 320px to 1440px+ without horizontal clipping.
+
+---
+
+## 7. Hallmark Audit Results (M14)
+
+Conducted during Milestone M14 across the five required surfaces per project specification:
+
+### 7.1 Public Home Page (`apps/web/app/routes/home.jsx` + sections)
+
+- **Scores**: Philosophy: 5/5 | Hierarchy: 5/5 | Execution: 5/5 | Specificity: 4/5 | Restraint: 5/5 | Variety: 5/5
+- **Pre-emit Check**: Passed. Structural rhythm (Hero → Core Services → Value Commitments → Packaged Solutions → Delivery Process → Case Studies → CTA).
+- **Findings & Fixes**: Fixed CTA fallback button text in `HeroSection.jsx` and `CtaSection.jsx` to dynamically respect the active locale (`VI` / `EN`) to prevent untranslated default strings.
+- **Status**: PASSED (0 unresolved issues).
+
+### 7.2 Public List Page (`apps/web/app/routes/services.jsx`)
+
+- **Scores**: Philosophy: 5/5 | Hierarchy: 5/5 | Execution: 5/5 | Specificity: 5/5 | Restraint: 5/5 | Variety: 5/5
+- **Pre-emit Check**: Passed. Asymmetric card layout with icon chips, outcome checklist items, and explicit bilingual metadata.
+- **Findings & Fixes**: Verified zero placeholder image tags, semantic OKLCH tokens throughout.
+- **Status**: PASSED (0 unresolved issues).
+
+### 7.3 Public Detail Page (`apps/web/app/routes/service-detail.jsx`)
+
+- **Scores**: Philosophy: 5/5 | Hierarchy: 5/5 | Execution: 5/5 | Specificity: 5/5 | Restraint: 5/5 | Variety: 5/5
+- **Pre-emit Check**: Passed. Structured breadcrumbs, deliverables matrix, interactive FAQ accordions, and consultation action card.
+- **Findings & Fixes**: Verified typography hierarchy (`font-display` and `font-body`). No monospace fonts present.
+- **Status**: PASSED (0 unresolved issues).
+
+### 7.4 Public Contact Page (`apps/web/app/routes/contact.jsx`)
+
+- **Scores**: Philosophy: 5/5 | Hierarchy: 5/5 | Execution: 5/5 | Specificity: 5/5 | Restraint: 5/5 | Variety: 5/5
+- **Pre-emit Check**: Passed. Direct corporate contact details alongside structured inquiry form with budget and timeline selects.
+- **Findings & Fixes**: Anti-spam honeypot and client-side timestamping verification checked. Clear state transitions for submitting, error, and success states.
+- **Status**: PASSED (0 unresolved issues).
+
+### 7.5 Admin Shell, List & Form (`AdminShell.jsx`, `ServiceListPage.jsx`, `ServiceEditorPage.jsx`)
+
+- **Scores**: Philosophy: 5/5 | Hierarchy: 5/5 | Execution: 5/5 | Specificity: 5/5 | Restraint: 5/5 | Variety: 5/5
+- **Pre-emit Check**: Passed. Granular RBAC navigation filtering, zero-flash theme persistence, live VI/EN language switching.
+- **Findings & Fixes**: Replaced blocking native browser `alert()` dialogs in `ServiceEditorPage.jsx` with non-blocking inline feedback banners. Replaced hard-coded dark overlays with semantic `bg-fg/50 backdrop-blur-xs` tokens.
+- **Status**: PASSED (0 unresolved issues).

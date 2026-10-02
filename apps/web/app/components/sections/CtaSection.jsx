@@ -25,13 +25,13 @@ export function CtaSection({ heading, subheading, primaryCta, secondaryCta, loca
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
           {primaryCta && (
             <Button to={primaryUrl} size="lg" variant="primary" className="w-full sm:w-auto">
-              {primaryCta.label || 'Tư vấn dự án'}
+              {primaryCta.label || (locale === 'en' ? 'Contact Us' : 'Tư vấn dự án')}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           )}
           {secondaryCta && (
             <Button to={secondaryUrl} size="lg" variant="outline" className="w-full sm:w-auto">
-              {secondaryCta.label || 'Xem năng lực'}
+              {secondaryCta.label || (locale === 'en' ? 'About Us' : 'Xem năng lực')}
             </Button>
           )}
         </div>
