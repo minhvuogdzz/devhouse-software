@@ -28,14 +28,54 @@ export const RedirectSchema = z.object({
   note: z.string().optional().default(''),
 });
 
-export const MediaRegistrationSchema = z.object({
-  publicId: z.string().min(1),
-  url: z.string().url(),
-  width: z.number().int().positive().optional(),
-  height: z.number().int().positive().optional(),
-  format: z.string().optional(),
-  resourceType: z.enum(['image', 'raw', 'video']).default('image'),
-  bytes: z.number().int().positive().optional(),
-  alt: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
-  caption: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+export const MediaSignatureRequestSchema = z.object({
+  folder: z.string().min(1).default('site'),
+  resourceType: z.enum(['image', 'video', 'raw']).default('image'),
+  filename: z.string().optional(),
+});
+
+export const MediaRegistrationSchema = z
+  .object({
+    publicId: z.string().min(1).optional(),
+    public_id: z.string().min(1).optional(),
+    url: z.string().optional(),
+    secure_url: z.string().optional(),
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+    format: z.string().optional(),
+    resourceType: z.enum(['image', 'raw', 'video']).optional(),
+    resource_type: z.enum(['image', 'raw', 'video']).optional(),
+    bytes: z.number().int().positive().optional(),
+    version: z.number().int().positive().optional(),
+    originalFilename: z.string().optional(),
+    original_filename: z.string().optional(),
+    title: z.string().optional().default(''),
+    alt: z.union([z.string(), LocalizedStringSchema]).optional().default({ vi: '', en: '' }),
+    isDecorative: z.boolean().optional().default(false),
+    caption: z.union([z.string(), LocalizedStringSchema]).optional().default({ vi: '', en: '' }),
+    folder: z.string().optional().default('site'),
+    tags: z.array(z.string()).optional().default([]),
+    signature: z.string().optional(),
+  })
+  .transform(val => {
+    const publicId = val.publicId || val.public_id;
+    const resourceType = val.resourceType || val.resource_type || 'image';
+    const originalFilename = val.originalFilename || val.original_filename || '';
+    const url = val.secure_url || val.url || '';
+    return {
+      ...val,
+      publicId,
+      resourceType,
+      originalFilename,
+      url,
+    };
+  });
+
+export const MediaUpdateSchema = z.object({
+  title: z.string().optional(),
+  alt: z.union([z.string(), LocalizedStringSchema]).optional(),
+  isDecorative: z.boolean().optional(),
+  caption: z.union([z.string(), LocalizedStringSchema]).optional(),
+  folder: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 });

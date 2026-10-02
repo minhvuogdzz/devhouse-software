@@ -23,6 +23,7 @@ import { blogPublicRouter } from './modules/blog/blog.public.routes.js';
 import { postAdminRouter } from './modules/blog/post.admin.routes.js';
 import { authorAdminRouter } from './modules/blog/author.admin.routes.js';
 import { tagAdminRouter } from './modules/blog/tag.admin.routes.js';
+import { mediaAdminRoutes } from './modules/media/media.admin.routes.js';
 
 export const apiRouter = Router();
 
@@ -59,5 +60,6 @@ adminRouter.use('/categories', categoryAdminRoutes);
 adminRouter.use('/blog/posts', postAdminRouter);
 adminRouter.use('/blog/authors', authorAdminRouter);
 adminRouter.use('/blog/tags', tagAdminRouter);
+adminRouter.use('/media', mediaAdminRoutes);
 
 apiRouter.use('/admin', adminRouter);

@@ -16,10 +16,12 @@ export const LocalizedSlugSchema = z.object({
 });
 
 export const ImageRefSchema = z.object({
+  mediaId: z.string().optional(),
   publicId: z.string().default(''),
   url: z.string().default(''),
   width: z.number().optional(),
   height: z.number().optional(),
+  format: z.string().optional(),
   alt: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
 });
 
