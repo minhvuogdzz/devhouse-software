@@ -104,14 +104,14 @@ export function Header({ alternateUrl = null }) {
 
           {/* Desktop navigation */}
           <nav
-            className="hidden lg:flex items-center gap-1 xl:gap-2"
+            className="hidden lg:flex items-center gap-0.5 xl:gap-1"
             aria-label={t('header.menuLabel')}
           >
             {navItems.map(item => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-3 py-2 text-sm font-medium rounded-md transition-colors ${
+                className={`px-2 py-1.5 xl:px-3 xl:py-2 text-[13px] xl:text-sm font-medium whitespace-nowrap rounded-md transition-colors ${
                   isActive(item.path)
                     ? 'text-primary bg-primary-subtle font-semibold'
                     : 'text-fg-muted hover:text-fg hover:bg-surface-2'

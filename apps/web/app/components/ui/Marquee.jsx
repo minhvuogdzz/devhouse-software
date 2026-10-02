@@ -1,24 +1,25 @@
 import React from 'react';
 
-export function Marquee({ children, speed = 30, direction = 'left', className = '' }) {
+export function Marquee({ children, speed = 40, direction = 'left', className = '' }) {
   return (
-    <div className={`overflow-hidden flex w-full relative ${className} group`}>
+    <div className={`flex w-full overflow-hidden gap-6 ${className} group`}>
       <div 
-        className={`flex min-w-full shrink-0 gap-6 pr-6 animate-marquee group-hover:[animation-play-state:paused]`}
+        className={`flex shrink-0 animate-marquee gap-6 group-hover:[animation-play-state:paused]`}
         style={{ animationDuration: `${speed}s`, animationDirection: direction === 'right' ? 'reverse' : 'normal' }}
       >
         {children}
       </div>
       <div 
-        className={`flex min-w-full shrink-0 gap-6 pr-6 animate-marquee group-hover:[animation-play-state:paused] absolute top-0 left-full`}
+        className={`flex shrink-0 animate-marquee gap-6 group-hover:[animation-play-state:paused]`}
+        aria-hidden="true"
         style={{ animationDuration: `${speed}s`, animationDirection: direction === 'right' ? 'reverse' : 'normal' }}
       >
         {children}
       </div>
       <style>{`
         @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-100%); }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(calc(-100% - 1.5rem)); }
         }
         .animate-marquee {
           animation: marquee linear infinite;
