@@ -1,26 +1,33 @@
 import { blogService } from './blog.service.js';
 import { sendSuccess, sendPaginated } from '../../core/http/index.js';
+import { sanitizePublicDTO } from '../../core/utils/dto.js';
 
 export const blogController = {
   // Public
   async listPosts(req, res) {
     const result = await blogService.listPublicPosts(req.query);
-    return sendPaginated(res, result.data, result.pagination);
+    const locale = req.query.locale || 'vi';
+    const mapped = result.data.map(post => sanitizePublicDTO(post, locale));
+    return sendPaginated(res, mapped, result.pagination);
   },
 
   async getPostBySlug(req, res) {
-    const post = await blogService.getPublicPostBySlug(req.params.slug, req.query.locale);
-    return sendSuccess(res, post);
+    const locale = req.query.locale || 'vi';
+    const post = await blogService.getPublicPostBySlug(req.params.slug, locale);
+    return sendSuccess(res, sanitizePublicDTO(post, locale));
   },
 
   async listTags(req, res) {
-    const tags = await blogService.listPublicTags(req.query.locale);
-    return sendSuccess(res, tags);
+    const locale = req.query.locale || 'vi';
+    const tags = await blogService.listPublicTags(locale);
+    const mapped = tags.map(tag => sanitizePublicDTO(tag, locale));
+    return sendSuccess(res, mapped);
   },
 
   async getAuthor(req, res) {
-    const author = await blogService.getPublicAuthor(req.params.slug, req.query.locale);
-    return sendSuccess(res, author);
+    const locale = req.query.locale || 'vi';
+    const author = await blogService.getPublicAuthor(req.params.slug, locale);
+    return sendSuccess(res, sanitizePublicDTO(author, locale));
   },
 
   // Admin Posts

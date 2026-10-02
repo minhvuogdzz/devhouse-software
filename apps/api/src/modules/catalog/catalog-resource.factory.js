@@ -1,3 +1,4 @@
+import { sanitizePublicDTO } from '../../core/utils/dto.js';
 import { createRepository } from '../../core/db/base-repository.js';
 import { cache } from '../../core/cache/index.js';
 import { audit } from '../../core/audit/index.js';
@@ -355,12 +356,15 @@ export function createCatalogModule({
   const controller = {
     async list(req, res) {
       const result = await service.listPublic(req.query);
-      return sendPaginated(res, result.data, result.pagination);
+      const locale = req.query.locale || 'vi';
+      const mapped = result.data.map(doc => sanitizePublicDTO(doc, locale));
+      return sendPaginated(res, mapped, result.pagination);
     },
 
     async getBySlug(req, res) {
-      const result = await service.getBySlugPublic(req.params.slug, req.query.locale);
-      return sendSuccess(res, result);
+      const locale = req.query.locale || 'vi';
+      const result = await service.getBySlugPublic(req.params.slug, locale);
+      return sendSuccess(res, sanitizePublicDTO(result, locale));
     },
 
     async adminList(req, res) {
