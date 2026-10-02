@@ -1,0 +1,119 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+  font-family: var(--font-family);
+}
+
+body {
+  background: var(--color-bg);
+}
+
+a {
+  color: unset;
+  text-decoration: none;
+}
+
+/* class dh__container, section padding mặc định cho vào các section nhé */
+.dh__container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.gradient__text {
+  background: var(--gradient-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;  /* Đổ màu gradient cho chữ (làm chữ trong suốt để lộ gradient bên dưới)*/
+}
+
+.dh__title {
+  font-weight: 700;
+  font-size: 50px;
+  line-height: 65px;
+  letter-spacing: -.04em;
+}
+
+.dh__text {
+  color: var(--color-text);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.section__padding {
+  padding: 3rem 6rem;
+}
+
+.section__margin {
+  margin: 3rem 6rem;
+}
+
+@media (max-width: 768px) {
+  .section__padding {
+    padding: 2rem 3rem;
+  }
+
+  .section__margin {
+    margin: 2rem 3rem;
+  }
+
+  .dh__title {
+    font-size: 45px;
+    line-height: 55px;
+  }
+  .dh__text {
+    line-height: 1.5;
+    font-size: 14px;
+  }
+}
+@media (max-width: 540px) {
+  .section__padding {
+    padding: 1rem 1.5rem;
+  }
+
+  .section__margin {
+    margin: 1rem 1.5rem;
+  }
+  .dh__title {
+    font-size: 35px;
+    line-height: 45px;
+  }
+  
+}
+
+
+.floating-order-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  background: linear-gradient(135deg, #4CAF50, #2ecc71);
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 16px 28px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  animation: pulseGlow 1s infinite;
+  transition: transform 0.5s ease;
+}
+
+.floating-order-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Nhấp nháy ánh sáng */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 0px rgba(76, 175, 80, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(76, 175, 80, 1);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(76, 175, 80, 0.7);
+  }
+}

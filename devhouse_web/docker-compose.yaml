@@ -1,0 +1,10 @@
+version: '3.3'
+
+services:
+  devhouse_web:
+    build: .
+    container_name: devhouse_web
+    restart: always
+    ports:
+      - "5173:5173"  # expose nếu muốn truy cập trực tiếp
+

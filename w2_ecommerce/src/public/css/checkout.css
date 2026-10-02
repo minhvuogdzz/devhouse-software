@@ -1,0 +1,52 @@
+.breadcrumb {
+    position: absolute; /* Định vị tuyệt đối */
+    top: 10px; /* Cách trên cùng 10px */
+    left: 10px; /* Cách lề trái 10px */
+    background: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+.checkout-container {
+    display: flex;
+    gap: 20px; /* Tạo khoảng cách giữa hai phần */
+    
+    margin: auto;
+}
+
+.billing-details {
+    flex: 1; /* Chiếm 50% chiều rộng */
+}
+
+.order-payment {
+    flex: 1; /* Chiếm 50% chiều rộng */
+    display: flex;
+    flex-direction: column;
+}
+
+.order-summary {
+    margin-bottom: 20px; /* Tạo khoảng cách với phần Payment */
+}
+
+/* Căn chỉnh bảng Order Summary */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.table img {
+    width: 50px;
+    margin-right: 10px;
+}
+
+/* Định dạng Payment */
+.payment-options {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}

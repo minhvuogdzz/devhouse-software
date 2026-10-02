@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Page</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="/image/uet.png">
+
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/about.css">
+</head>
+
+<body>
+    <header><%- include('partials/header') %></header>
+
+    <div class="container">
+
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mt-3">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">About</li>
+                </ol>
+            </nav>
+
+            <!-- Our Story Section -->
+            <div class="row mb-5 align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-4 mb-4">Our Story</h1>
+                    <p class="lead">
+                        The ultimate destination for technology enthusiasts. We offer high-quality products at reasonable prices,
+                        catering to all your needs from hardware, accessories to smart devices.
+                    </p>
+                    <p class="lead">
+                        Not just a store, <strong>UET Store</strong> is also a hub for technology enthusiasts. We are committed to providing the latest, reliable products and excellent customer service.
+                    </p>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center">
+                    <img src="/image/banner.jpg" class="img-fluid rounded w-50 me-2"
+                        style="object-fit: cover; height: 200px;" alt="Our Story Image 1">
+                    <img src="/image/banner0.jpg" class="img-fluid rounded w-50"
+                        style="object-fit: cover; height: 200px;" alt="Our Story Image 2">
+                </div>
+            </div>
+
+
+            <div class="members">
+                <div class="row text-center justify-content-center">
+                    <div class="col-md-4 mb-4">
+                        <div class="card1">
+                            <img src="/image/iphone.png" class="card-img-top" alt="Do Pham">
+                            <div class="card-body1">
+                                <h5 class="card-title">Do Pham</h5>
+                                <p class="card-text">Founder & Chairman</p>
+                                <div class="d-flex justify-content-center">
+                                    <a href="#" class="text-muted me-3"><i class="fa fa-twitter"></i></a>
+                                    <a href="#" class="text-muted me-3"><i class="fa fa-instagram"></i></a>
+                                    <a href="#" class="text-muted"><i class="fa fa-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card1 h-100 shadow-sm">
+                            <img src="/image/ps5.jpg" class="card-img-top" alt="Pham Ngoc Do">
+                            <div class="card-body1">
+                                <h5 class="card-title">Pham Ngoc Do</h5>
+                                <p class="card-text">CEO</p>
+                                <div class="d-flex justify-content-center">
+                                    <a href="#" class="text-muted me-3"><i class="fa fa-twitter"></i></a>
+                                    <a href="#" class="text-muted me-3"><i class="fa fa-instagram"></i></a>
+                                    <a href="#" class="text-muted"><i class="fa fa-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card1 h-100 shadow-sm">
+                            <img src="/image/24h.jpg" class="card-img-top" alt="Doflamingo" ">
+                    <div class=" card-body1">
+                            <h5 class="card-title">Duong Long</h5>
+                            <p class="card-text">Co-founder</p>
+                            <div class="d-flex justify-content-center">
+                                <a href="#" class="text-muted me-3"><i class="fa fa-twitter"></i></a>
+                                <a href="#" class="text-muted me-3"><i class="fa fa-instagram"></i></a>
+                                <a href="#" class="text-muted"><i class="fa fa-linkedin"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div class="row text-center justify-content-center">
+                <div class="col-md-4 mb-4">
+                    <div class="support-item">
+                        <div class="icon-circle1 mb-3">
+                            <i class="fa fa-truck fa-lg"></i>
+                        </div>
+                        <h6>FREE AND FAST DELIVERY</h6>
+                        <p>Free delivery for all orders $140</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="support-item">
+                        <div class="icon-circle1 mb-3">
+                            <i class="fa fa-headphones fa-lg"></i>
+                        </div>
+                        <h6>24/7 CUSTOMER SERVICE</h6>
+                        <p>Friendly 24/7 customer support</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="support-item">
+                        <div class="icon-circle1 mb-3">
+                            <i class="fa fa-shield fa-lg"></i>
+                        </div>
+                        <h6>MONEY BACK GUARANTEE</h6>
+                        <p>We return money within 30 days</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <footer><%- include('partials/footer') %></footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

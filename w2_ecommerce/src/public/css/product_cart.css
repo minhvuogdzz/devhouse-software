@@ -1,0 +1,391 @@
+/* Định dạng chung */
+*,
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+:root {
+    --black: #000;
+    --primaryColor: black;
+}
+
+.navbar-nav {
+    right: 400px;
+}
+
+/*header*/
+header {
+    width: 100%;
+    padding: 16px 0
+}
+
+.nav-item {
+    margin: 0 12px;
+}
+
+.link-menu {
+    width: 300;
+}
+
+.nav-link {
+    color: var(--black);
+    font-size: 14px;
+    text-transform: capitalize;
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.nav-icons a {
+    margin-left: 22px
+}
+
+.nav-icons a i {
+    color: var(--black) !important
+}
+
+.cart-icon span {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 100%;
+    background: rgb(0, 0, 0);
+    color: white;
+    font-size: 10px;
+    text-align: center;
+    line-height: 14px;
+    position: relative;
+    top: -10px;
+    right: 2px
+}
+
+.sub-menu {
+    position: absolute;
+    background: var(--primaryColor);
+    padding: 22px;
+    border-radius: 4px;
+    list-style: none;
+    width: 140px;
+    text-align: center;
+    top: 54px;
+    visibility: hidden;
+    transform: translateY(-10px);
+}
+
+.sub-menu li a {
+    color: #fff !important;
+    line-height: 2;
+    z-index: 3;
+}
+
+.nav-item:hover .sub-menu {
+    transform: translateY(0);
+    visibility: visible;
+    ;
+    transition: 0.5s;
+    z-index: 3
+}
+
+.sub-menu li:hover {
+    background-color: rgba(16, 238, 120, 0.2);
+    /* Màu nền khi hover */
+    border-radius: 4px;
+    z-index: 3
+}
+
+/*search icon*/
+/* Container bọc ô tìm kiếm */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Ẩn ô nhập liệu ban đầu */
+.search-box {
+    width: 0;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    transition: width 0.4s ease-in-out, padding 0.4s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+}
+* Icon tìm kiếm */
+.search-container i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #333;
+    font-size: 18px;
+}
+
+
+/*user icon*/
+/* Căn chỉnh icon */
+.nav-icons {
+    display: flex;
+    align-items: center;
+}
+
+.nav-icons a {
+    margin-left: 10px;
+    font-size: 20px;
+    color: black;
+    padding: 5px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hiệu ứng khi di chuột vào icon người dùng */
+.user-menu {
+    position: relative;
+    display: inline-block;
+}
+
+.user-icon {
+    display: inline-block;
+    padding: 0px;
+    border-radius: 20px;
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.user-icon:hover {
+    background-color: #ff9800;
+    color: white;
+}
+
+/* Submenu user */
+.sub-menu-user {
+    position: absolute;
+    background: var(--primaryColor);
+    padding: 10px;
+    border-radius: 4px;
+    list-style: none;
+    width: 130px;
+    text-align: center;
+    top: 38px;
+    visibility: hidden;
+    transform: translateY(-10px);
+
+}
+
+
+.sub-menu-user li a {
+    color: #fff !important;
+    line-height: 2;
+    z-index: 3;
+    font-size: 15;
+}
+
+.user-menu:hover .sub-menu-user {
+    transform: translateY(0);
+    visibility: visible;
+    transition: 1s;
+    z-index: 3
+}
+
+.sub-menu-user li:hover {
+    background-color: rgba(16, 238, 120, 0.2);
+    /* Màu nền khi hover */
+    border-radius: 4px;
+    z-index: 3
+}
+
+
+
+
+/* Navbar */
+.navbar {
+    overflow-x: hidden;
+    padding: 12px 20px;
+    border-bottom: 2px solid #ddd;
+}
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.featured-products .product-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.product-name {
+  font-weight: bold;
+}
+
+.product-description {
+  font-size: 14px;
+  color: #555;
+}
+
+.product-slider {
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 10px;
+}
+
+.product-wrapper {
+    display: flex;
+    gap: 15px;
+}
+
+.product-item {
+    flex: 0 0 auto;
+    width: 250px;
+}
+
+/* Đổi màu cho nút .btn-primary thành màu đỏ */
+.btn-primary {
+  background-color: #000000 !important; /* Tương đương .btn-danger của Bootstrap */
+  border-color: #050505 !important;
+}
+.btn-primary:hover {
+  background-color: #030203 !important;
+  border-color: #0b0909 !important;
+}
+
+/* Đổi màu cho nút .btn-success nếu bạn cũng muốn đỏ */
+.btn-success {
+  background-color: #0b0909 !important;
+  border-color: #060404 !important;
+}
+.btn-success:hover {
+  background-color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* Đổi màu tiêu đề H2, H3 sang đỏ */
+h2.fw-bold,
+h3.fw-bold {
+  color: #000000; /* Màu đỏ tương tự nút */
+}
+
+/* Thêm hiệu ứng hover cho card sản phẩm */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  border: 1px solid #000000;
+}
+
+/* Căn chỉnh ảnh sản phẩm cho đẹp hơn */
+.product-image {
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.highlight-text {
+    position: relative;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ff3368;
+    /* Màu cam */
+    padding: 5px 15px;
+    border-radius: 5px;
+    transition: color 0.3s ease-in-out;
+    z-index: 2;
+    width: fit-content;
+}
+.highlight-text::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 100%;
+    background-color: #ff3368;
+    /* Màu cam */
+    transition: width 0.4s ease-in-out;
+    z-index: -1;
+    border-radius: 5px;
+}
+.best-selling-header:hover .highlight-text {
+    color: white;
+    /* Đổi màu chữ thành trắng */
+}
+
+.best-selling-header:hover .highlight-text::before {
+    width: 100%;
+    /* Mở rộng nền cam */
+}
+.best-selling-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* Đẩy "View All" sang phải */
+    position: relative;
+    padding: 10px 0;
+}
+
+/* Phần bên trái (This Month + Best Selling Products) */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.view-all-btn {
+    background-color: #ff3368;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s;
+}
+
+.view-all-btn:hover {
+    background-color: #e62e5b;
+}.banner-slider {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.slides {
+    display: flex;
+    width: 300%;
+    /* Giữ nguyên chiều rộng */
+    transition: transform 0.5s ease-in-out;
+    z-index: 1;
+}
+
+.slides img {
+    width: 100vw;
+    /* Mỗi ảnh chiếm toàn bộ chiều rộng màn hình */
+    height: 350px;
+    object-fit: cover;
+    z-index: 1;
+}

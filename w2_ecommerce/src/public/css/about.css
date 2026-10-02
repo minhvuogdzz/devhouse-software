@@ -1,0 +1,100 @@
+/* Members Section */
+.members {
+    margin-top: 50px; /* Khoảng cách trên */
+    margin-bottom: 50px; /* Khoảng cách dưới */
+}
+
+.members .card1 {
+    border: none; /* Bỏ viền mặc định */
+    border-radius: 10px; /* Bo góc */
+    overflow: hidden; /* Ẩn phần thừa của ảnh */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Bóng nhẹ */
+    max-width: 300px; /* Chiều rộng cố định */
+    margin: 0 auto; /* Căn giữa */
+    background-color: #fff; /* Nền trắng */
+}
+
+.members .card-img-top {
+    width: 100%;
+    height: 300px; /* Chiều cao ảnh */
+    object-fit: cover; /* Đảm bảo ảnh không méo */
+    border-bottom: 4px solid #fff; /* Viền trắng dưới ảnh */
+}
+
+.members .card-body1 {
+    padding: 15px; /* Khoảng cách bên trong */
+    text-align: center; /* Căn giữa nội dung */
+}
+
+.members .card-title {
+    font-size: 18px; /* Kích thước tên */
+    font-weight: bold; /* In đậm */
+    margin-bottom: 5px; /* Khoảng cách dưới tên */
+    color: #333; /* Màu chữ */
+}
+
+.members .card-text {
+    font-size: 14px; /* Kích thước vai trò */
+    color: #666; /* Màu xám nhạt */
+    margin-bottom: 10px; /* Khoảng cách dưới vai trò */
+}
+
+.members .d-flex {
+    gap: 10px; /* Khoảng cách giữa các biểu tượng */
+}
+
+.members .text-muted i {
+    font-size: 16px; /* Kích thước biểu tượng */
+    color: #666; /* Màu xám */
+    transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
+}
+
+.members .text-muted i:hover {
+    color: #ff3368; /* Màu hồng khi hover */
+}
+
+/* Support Items Section (Container cuối) */
+.support-item {
+    text-align: center; /* Căn giữa nội dung */
+    padding: 20px; /* Khoảng cách bên trong */
+}
+
+.support-item .icon-circle1 {
+    width: 50px; /* Đường kính vòng tròn */
+    height: 50px;
+    background-color: #e0e0e0; /* Nền xám nhạt */
+    border-radius: 50%; /* Hình tròn */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px; /* Căn giữa và khoảng cách dưới */
+}
+
+.support-item .icon-circle1 i {
+    font-size: 20px; /* Kích thước biểu tượng */
+    color: #333; /* Màu đen */
+}
+
+.support-item h6 {
+    font-size: 16px; /* Kích thước tiêu đề */
+    font-weight: bold; /* In đậm */
+    color: #333; /* Màu đen */
+    margin-bottom: 5px; /* Khoảng cách dưới tiêu đề */
+}
+
+.support-item p {
+    font-size: 14px; /* Kích thước mô tả */
+    color: #666; /* Màu xám */
+    margin: 0; /* Bỏ margin mặc định */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .members .card1 {
+        margin-bottom: 20px; /* Khoảng cách giữa các card trên mobile */
+    }
+
+    .support-item {
+        margin-bottom: 20px; /* Khoảng cách giữa các mục hỗ trợ trên mobile */
+    }
+}

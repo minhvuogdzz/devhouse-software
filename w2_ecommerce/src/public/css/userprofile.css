@@ -1,0 +1,141 @@
+/* Sidebar Menu */
+.sidebar-menu {
+    padding: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 15px;
+}
+
+.sidebar-menu a {
+    color: #666;
+    font-size: 16px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.sidebar-menu a.active,
+.sidebar-menu a:hover {
+    color: #ff3368; /* Màu hồng giống giao diện */
+}
+
+/* Profile Form */
+h5.text-danger {
+    color: #ff3368 !important; /* Màu hồng cho tiêu đề "Edit Your Profile" */
+}
+
+.form-label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #f8f9fa; /* Nền xám nhạt giống hình */
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #ff3368;
+    box-shadow: none;
+}
+
+.form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+}
+
+.btn-danger {
+    background-color: #ff3368; /* Màu hồng giống nút "Save Changes" */
+    border-color: #ff3368;
+    padding: 10px 20px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #e62e5b;
+    border-color: #e62e5b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar-menu {
+        margin-bottom: 30px;
+    }
+
+    .sidebar-menu li {
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+    .form-control {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .btn-danger {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+}
+.content h5.text-danger {
+    font-weight: bold;
+    font-size: 1.6rem;
+    color: #dc3545;
+    border-bottom: 2px solid #dc3545;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.list-group-item {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.list-group-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-admin.card-body-admin {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px dashed #dee2e6;
+}
+
+.sidebar-menu li a {
+    display: block;
+    padding: 10px 15px;
+    font-weight: 500;
+    color: #333;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.sidebar-menu li a.active,
+.sidebar-menu li a:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+.input-group input.form-control {
+    border: 1px solid #dc3545;
+}
+
+.input-group button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.input-group button:hover {
+    background-color: #bb2d3b;
+}

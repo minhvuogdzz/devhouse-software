@@ -1,0 +1,104 @@
+footer {
+  background-color: #ffffff;
+  padding: 40px 50px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  border-top: 1px solid #ddd;
+}
+
+/* Dùng flex để canh đều khoảng cách */
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+/* Cột */
+.footer-column {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Tiêu đề */
+.footer-column h4 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Danh sách */
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+/* Ảnh icon */
+.footer-column img {
+  width: 40px;
+  height: auto;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+/* QR Code */
+.qr-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.qr-section img {
+  width: 90px;
+  height: auto;
+}
+
+.qr-section div img {
+  width: 120px;
+  margin-top: 5px;
+}
+
+/* Nút "Lên đầu" */
+.back-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #f44336;
+  color: white;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top:hover {
+  background-color: #d32f2f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-container {
+      flex-direction: column;
+      align-items: center;
+  }
+  
+  .qr-section {
+      flex-direction: column;
+      align-items: center;
+  }
+
+  .back-to-top {
+      bottom: 10px;
+      right: 10px;
+  }
+}
