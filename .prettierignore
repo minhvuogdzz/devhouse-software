@@ -1,0 +1,8 @@
+.yarn
+yarn.lock
+dist
+build
+coverage
+.react-router
+docs/architecture
+GEMINI.md
