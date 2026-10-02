@@ -1,14 +1,18 @@
 import React from 'react';
-import { useLoaderData, Link } from 'react-router';
+import { useRouteError, isRouteErrorResponse, Link } from 'react-router';
 import { defaultPages, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
 import { getTranslation } from '../lib/i18n.js';
 import { Button } from '../components/ui/Button.jsx';
 import { Home } from 'lucide-react';
 
-export async function loader({ request }) {
+export function getLocaleFromRequest(request) {
   const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
+  return url.pathname.startsWith('/en') ? 'en' : 'vi';
+}
+
+export async function loader({ request }) {
+  const locale = getLocaleFromRequest(request);
 
   let pageData = null;
   try {
@@ -18,14 +22,26 @@ export async function loader({ request }) {
     pageData = defaultPages['not-found'] || {};
   }
 
-  return {
-    pageData: localize(pageData, locale),
-    locale,
-  };
+  throw new Response(
+    JSON.stringify({ pageData: localize(pageData, locale), locale }),
+    {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    },
+  );
 }
 
-export function meta({ data }) {
-  const isEn = data?.locale === 'en';
+export function meta({ error }) {
+  let locale = 'vi';
+  if (error && isRouteErrorResponse(error)) {
+    try {
+      const parsed = JSON.parse(error.data);
+      locale = parsed.locale || 'vi';
+    } catch {
+      /* ignore */
+    }
+  }
+  const isEn = locale === 'en';
   return [
     {
       title: isEn
@@ -36,7 +52,20 @@ export function meta({ data }) {
 }
 
 export default function NotFoundPage() {
-  const { pageData, locale } = useLoaderData();
+  const error = useRouteError();
+  let pageData = {};
+  let locale = 'vi';
+
+  if (error && isRouteErrorResponse(error)) {
+    try {
+      const parsed = JSON.parse(error.data);
+      pageData = parsed.pageData || {};
+      locale = parsed.locale || 'vi';
+    } catch {
+      /* ignore */
+    }
+  }
+
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
 
