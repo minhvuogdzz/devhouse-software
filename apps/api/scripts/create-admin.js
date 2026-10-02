@@ -1,4 +1,6 @@
 import crypto from 'node:crypto';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { logger } from '../src/core/logger/index.js';
 import { config } from '../src/config/index.js';
@@ -88,7 +90,7 @@ export async function createAdmin() {
   return adminUser;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   connectDB()
     .then(createAdmin)
     .then(async () => {
