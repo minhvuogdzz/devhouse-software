@@ -1,0 +1,35 @@
+# Dev House Software — Code Owners
+# Syntax reference: https://docs.gitlab.com/ee/user/project/codeowners/
+
+# Global default owners
+* @thedevhouse/maintainers
+
+# Infrastructure, Docker, Compose, and CI/CD
+/infra/ @thedevhouse/infra-leads
+/.gitlab-ci.yml @thedevhouse/infra-leads
+/compose*.yml @thedevhouse/infra-leads
+/**/Dockerfile @thedevhouse/infra-leads
+
+# Core & Shared Contracts
+/packages/ @thedevhouse/core-leads
+
+# API Backend
+/apps/api/ @thedevhouse/backend-leads
+
+# Security, Auth, and Access Control
+/apps/api/src/modules/auth/ @thedevhouse/security-leads
+/apps/api/src/modules/roles/ @thedevhouse/security-leads
+/apps/api/src/modules/users/ @thedevhouse/security-leads
+/apps/api/src/core/middleware/authenticate.js @thedevhouse/security-leads
+/apps/api/src/core/middleware/require-permission.js @thedevhouse/security-leads
+/apps/api/src/core/middleware/origin-check.js @thedevhouse/security-leads
+
+# Frontend Public Web
+/apps/web/ @thedevhouse/frontend-leads
+
+# Admin CMS
+/apps/admin/ @thedevhouse/frontend-leads
+
+# Design System & Documentation
+/docs/design/ @thedevhouse/frontend-leads
+/docs/architecture/ @thedevhouse/maintainers

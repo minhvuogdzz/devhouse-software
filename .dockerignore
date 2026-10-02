@@ -1,0 +1,14 @@
+.git/
+.gitignore
+.env
+.env.*
+node_modules/
+dist/
+build/
+coverage/
+.react-router/
+.yarn/cache/
+*.log
+README.md
+docs/
+legacy/

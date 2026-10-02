@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Dev House CMS — Administration</title>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('dh-theme');
+          var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = saved || (systemDark ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body
+    class="bg-bg text-fg min-h-screen antialiased selection:bg-primary-subtle selection:text-primary"
+  >
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

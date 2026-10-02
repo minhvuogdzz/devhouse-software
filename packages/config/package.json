@@ -1,0 +1,13 @@
+{
+  "name": "@devhouse/config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tailwind/theme.css": "./tailwind/theme.css",
+    "./theme.css": "./tailwind/theme.css",
+    "./eslint": "./eslint/index.js",
+    "./prettier": "./prettier/index.js",
+    "./vitest": "./vitest/index.js"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "@devhouse/content",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./define": "./src/define.js",
+    "./resolve": "./src/resolve.js",
+    "./settings": "./src/settings.js",
+    "./navigation": "./src/navigation.js",
+    "./pages": "./src/pages/index.js",
+    "./catalog": "./src/catalog/index.js"
+  },
+  "dependencies": {
+    "@devhouse/shared": "workspace:*",
+    "zod": "^3.24.1"
+  }
+}
