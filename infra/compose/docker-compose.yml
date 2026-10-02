@@ -19,6 +19,8 @@ x-service: &service
   restart: unless-stopped
   networks: [internal]
   security_opt: ['no-new-privileges:true']
+  read_only: true
+  tmpfs: ['/tmp']
   stop_grace_period: 30s
   logging:
     driver: json-file
@@ -31,6 +33,7 @@ services:
     env_file: ${ENV_DIR:-/opt/devhouse/env}/api.env
     environment: { NODE_ENV: production, PORT: '4000', TRUST_PROXY: '1' }
     expose: ['4000']
+    cap_drop: ['ALL']
     mem_limit: 512m
     healthcheck:
       test: ['CMD', 'node', 'apps/api/scripts/healthcheck.js']
@@ -46,6 +49,7 @@ services:
     environment:
       { NODE_ENV: production, WEB_PORT: '3000', API_INTERNAL_URL: 'http://api:4000/api/v1' }
     expose: ['3000']
+    cap_drop: ['ALL']
     mem_limit: 512m
     depends_on: { api: { condition: service_healthy } }
     healthcheck:
@@ -59,6 +63,7 @@ services:
     <<: *service
     image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/admin:${IMAGE_TAG:?set IMAGE_TAG}
     expose: ['80']
+    tmpfs: ['/tmp', '/var/run', '/var/cache/nginx']
     mem_limit: 64m
     stop_grace_period: 10s
     healthcheck:
@@ -71,6 +76,7 @@ services:
     <<: *service
     image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/edge:${IMAGE_TAG:?set IMAGE_TAG}
     ports: ['80:80', '443:443']
+    tmpfs: ['/tmp', '/var/run']
     volumes:
       - ${CERT_DIR:-/opt/devhouse/certs}:/etc/nginx/certs:ro
       - ${ACME_DIR:-/opt/devhouse/acme}:/var/www/certbot:ro
