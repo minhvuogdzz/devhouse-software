@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const rootEnvPath = path.resolve(__dirname, '..', '..', '..', '.env');
+const rootEnvPath = path.resolve(__dirname, '..', '..', '..', '..', '.env');
 
 dotenv.config({ path: rootEnvPath });
 
