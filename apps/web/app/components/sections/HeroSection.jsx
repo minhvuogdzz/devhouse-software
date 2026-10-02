@@ -26,8 +26,8 @@ export function HeroSection({
       : ['Kiến trúc Chuẩn mực', 'Tiến độ Đảm bảo', 'Đồng hành Lâu dài'];
 
   return (
-    <section className="relative isolate pt-12 pb-16 lg:pt-16 lg:pb-24 bg-transparent">
-      <GlobeBackground className="-z-10 top-0 left-0 w-full h-[120%] lg:h-[150%] opacity-80" />
+    <section className="relative isolate pt-24 pb-24 lg:pt-32 lg:pb-32 min-h-[85vh] flex flex-col justify-center bg-transparent">
+      <GlobeBackground className="-z-10 inset-0 h-full w-full opacity-70" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal direction="up" className="max-w-3xl mx-auto text-center space-y-5">
           {eyebrow && (
