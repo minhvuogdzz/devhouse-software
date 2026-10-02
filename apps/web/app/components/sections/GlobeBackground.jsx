@@ -310,7 +310,7 @@ export function GlobeBackground({ className = '' }) {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 h-full w-full ${className}`}
+      className={`pointer-events-none absolute ${className}`}
     />
   );
 }

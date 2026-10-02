@@ -151,7 +151,7 @@ export default function TechnologiesPage() {
           <div className="space-y-16">
             {activeGroups.map((group, idx) => (
               <div key={idx} className="space-y-6">
-                <div className="border-b border-border pb-4 space-y-1">
+                <div className="pb-4 space-y-1">
                   <h2 className="text-2xl font-bold font-display text-fg flex items-center gap-2">
                     <Layers className="w-5 h-5 text-primary" />
                     {group.title}

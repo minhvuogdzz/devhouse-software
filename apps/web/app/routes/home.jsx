@@ -103,7 +103,7 @@ export default function HomePage() {
 
       {/* 2. Featured Services */}
       {services.length > 0 && (
-        <section className="py-12 lg:py-16 border-b border-border bg-transparent">
+        <section className="py-12 lg:py-16 bg-transparent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
               <div>
@@ -163,7 +163,7 @@ export default function HomePage() {
 
       {/* 4. Solutions */}
       {solutions.length > 0 && (
-        <section className="py-12 lg:py-16 border-b border-border bg-transparent">
+        <section className="py-12 lg:py-16 bg-transparent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal direction="up" className="text-center max-w-3xl mx-auto mb-10 space-y-3">
               <Badge variant="accent" className="mb-2">
@@ -217,7 +217,7 @@ export default function HomePage() {
 
       {/* 6. Featured Projects (Case Studies) */}
       {projects.length > 0 && (
-        <section className="py-12 lg:py-16 border-b border-border bg-transparent">
+        <section className="py-12 lg:py-16 bg-transparent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal direction="up" className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
               <div>

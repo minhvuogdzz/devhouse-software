@@ -26,13 +26,8 @@ export function HeroSection({
       : ['Kiến trúc Chuẩn mực', 'Tiến độ Đảm bảo', 'Đồng hành Lâu dài'];
 
   return (
-    <section className="relative isolate overflow-hidden pt-12 pb-16 lg:pt-16 lg:pb-24 border-b border-border bg-transparent">
-      <GlobeBackground className="-z-10" />
-      {/* Fades the globe toward the page background so the text stays easy to read */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-transparent to-bg/30"
-      />
+    <section className="relative isolate pt-12 pb-16 lg:pt-16 lg:pb-24 bg-transparent">
+      <GlobeBackground className="-z-10 top-0 left-0 w-full h-[120%] lg:h-[150%] opacity-80" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal direction="up" className="max-w-3xl mx-auto text-center space-y-5">
           {eyebrow && (

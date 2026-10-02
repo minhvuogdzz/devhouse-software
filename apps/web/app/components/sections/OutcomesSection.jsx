@@ -8,7 +8,7 @@ export function OutcomesSection({ heading, subheading, items = [] }) {
   const defaultIcons = [Target, ShieldCheck, HeartHandshake];
 
   return (
-    <section className="py-12 lg:py-16 border-b border-border bg-transparent">
+    <section className="py-12 lg:py-16 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal direction="up">
           <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">

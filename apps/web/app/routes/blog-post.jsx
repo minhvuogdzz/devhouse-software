@@ -118,7 +118,7 @@ export default function BlogPostPage() {
             {post.title}
           </h1>
 
-          <div className="flex flex-wrap items-center gap-6 pt-2 pb-6 border-b border-border text-sm text-fg-muted">
+          <div className="flex flex-wrap items-center gap-6 pt-2 pb-6 text-sm text-fg-muted">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-full bg-primary-subtle text-primary flex items-center justify-center">
                 <User className="w-4 h-4" />
