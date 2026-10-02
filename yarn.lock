@@ -416,13 +416,16 @@ __metadata:
     "@react-router/serve": "npm:^7.1.3"
     "@tailwindcss/vite": "npm:^4.0.0"
     "@tanstack/react-query": "npm:^5.64.2"
+    clsx: "npm:^2.1.1"
     dotenv: "npm:^16.4.7"
     express: "npm:^5.2.1"
+    framer-motion: "npm:^13.5.0"
     isbot: "npm:^5.1.22"
     lucide-react: "npm:^0.473.0"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-router: "npm:^7.1.3"
+    tailwind-merge: "npm:^3.7.0"
     tailwindcss: "npm:^4.0.0"
     vite: "npm:^6.0.7"
     vitest: "npm:^3.0.0"
@@ -2338,6 +2341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: 10c0/c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^2.0.1":
   version: 2.0.1
   resolution: "color-convert@npm:2.0.1"
@@ -3576,6 +3586,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"framer-motion@npm:^13.5.0":
+  version: 13.5.0
+  resolution: "framer-motion@npm:13.5.0"
+  dependencies:
+    motion-dom: "npm:^13.5.0"
+    motion-utils: "npm:^13.5.0"
+    tslib: "npm:^2.4.0"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/b70b622d1790b5a3818faed8ac7621dd2dc37f66cce3b043d5ff675fcbc5c8435d5a000d505cbca084564dacad9986051bd3c328d4f0e42c5e502fdef844f634
+  languageName: node
+  linkType: hard
+
 "fresh@npm:^2.0.0":
   version: 2.0.0
   resolution: "fresh@npm:2.0.0"
@@ -4778,6 +4807,22 @@ __metadata:
     on-finished: "npm:~2.4.1"
     on-headers: "npm:~1.1.0"
   checksum: 10c0/543ef12deae8c30d12df9cd0412353dc6003a075530a2c093099a91792fa969778d5eeb863f0fdcbd0333f25281b17a5b7bc3e38cf759024679b24ca7b950be9
+  languageName: node
+  linkType: hard
+
+"motion-dom@npm:^13.5.0":
+  version: 13.5.0
+  resolution: "motion-dom@npm:13.5.0"
+  dependencies:
+    motion-utils: "npm:^13.5.0"
+  checksum: 10c0/ab91758628b52bc3191a998e2fda63e2f039d260b090def64d4d55406523ea8c456ed83a1755eee240821360c0b2797eca35ba6990752c3e6999261e3c11072b
+  languageName: node
+  linkType: hard
+
+"motion-utils@npm:^13.5.0":
+  version: 13.5.0
+  resolution: "motion-utils@npm:13.5.0"
+  checksum: 10c0/25182af58dafe8aafd596106529ee3bcf39f1295c2cf1016eded6f8876cfd28c550c368fe2d4167dad0782c5ea106c06c39efaedbbb1be2a7cb325b1a827ed11
   languageName: node
   linkType: hard
 
@@ -6075,6 +6120,13 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
+  languageName: node
+  linkType: hard
+
+"tailwind-merge@npm:^3.7.0":
+  version: 3.7.0
+  resolution: "tailwind-merge@npm:3.7.0"
+  checksum: 10c0/1b1439fe30b6ee63fc3abc1c985bf9beb8529eb2db21cc321bd8c7cf73f36cd4ec80846ea10af8ae09175810f385336c22a6ce355a0b5cce69432d49672f90c1
   languageName: node
   linkType: hard
 
