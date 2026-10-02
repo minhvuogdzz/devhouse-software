@@ -13,6 +13,9 @@ export default {
     language: 'Language',
     theme: 'Toggle Theme',
     contactCta: 'Get Started',
+    menuOpen: 'Open menu',
+    menuClose: 'Close menu',
+    menuLabel: 'Site navigation',
   },
   footer: {
     tagline:

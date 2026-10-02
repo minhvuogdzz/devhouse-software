@@ -13,6 +13,9 @@ export default {
     language: 'Ngôn ngữ',
     theme: 'Chuyển giao diện',
     contactCta: 'Tư vấn dự án',
+    menuOpen: 'Mở menu',
+    menuClose: 'Đóng menu',
+    menuLabel: 'Menu điều hướng',
   },
   footer: {
     tagline:
