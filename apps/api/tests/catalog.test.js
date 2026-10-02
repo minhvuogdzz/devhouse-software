@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import bcrypt from 'bcryptjs';
+import { UserModel } from '../src/modules/users/user.model.js';
 import { app } from '../src/app.js';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { runSeeds } from '../seeds/index.js';
@@ -20,7 +20,7 @@ describe('Catalog Modules (Services, Solutions, Projects, Technologies, Categori
     await connectDB();
     await runSeeds();
 
-    const passwordHash = await bcrypt.hash(testPassword, 10);
+    const passwordHash = await UserModel.hashPassword(testPassword);
 
     await UserModel.deleteMany({
       email: 'catalog-admin@devhouse.example',
