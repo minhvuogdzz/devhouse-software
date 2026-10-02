@@ -22,13 +22,10 @@ export async function loader({ request }) {
     pageData = defaultPages['not-found'] || {};
   }
 
-  throw new Response(
-    JSON.stringify({ pageData: localize(pageData, locale), locale }),
-    {
-      status: 404,
-      headers: { 'Content-Type': 'application/json' },
-    },
-  );
+  throw new Response(JSON.stringify({ pageData: localize(pageData, locale), locale }), {
+    status: 404,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
 
 export function meta({ error }) {

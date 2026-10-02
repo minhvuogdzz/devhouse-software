@@ -47,8 +47,11 @@ cp .env.example .env
 
 ```bash
 yarn workspace @devhouse/api seed
-yarn workspace @devhouse/api create-admin
+node apps/api/scripts/create-admin.js
 ```
+
+The admin password is generated randomly and printed once to the terminal.
+Set `SEED_ADMIN_PASSWORD` in `.env` or inline to supply your own (min 12 chars).
 
 ### 4. Start Development Servers
 

@@ -41,10 +41,20 @@ Run the idempotent seed script to populate system roles, default categories, and
 yarn --cwd apps/api seed
 ```
 
-Create your initial local superadmin account:
+Create your initial local superadmin account. The script generates a secure
+random password if `SEED_ADMIN_PASSWORD` is not set:
 
 ```bash
-node apps/api/scripts/create-admin.js admin@devhouse.example AdminPassword123 "DevHouse Superadmin"
+node apps/api/scripts/create-admin.js
+```
+
+The generated password will be printed once to the terminal. The account
+requires a password change on first login.
+
+To supply your own password (minimum 12 characters):
+
+```bash
+SEED_ADMIN_PASSWORD='YourStrongPass!1' node apps/api/scripts/create-admin.js
 ```
 
 ### 4. Start Development Servers
