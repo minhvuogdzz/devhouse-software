@@ -4,6 +4,7 @@ import { Sun, Moon, Menu, X, Globe } from 'lucide-react';
 import { useTheme } from '../../lib/theme.js';
 import { getTranslation, getLocaleFromUrl, getAlternateLocalePath } from '../../lib/i18n.js';
 import { Button } from '../ui/Button.jsx';
+import { Logo } from '../ui/Logo.jsx';
 
 export function Header({ alternateUrl = null }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -33,9 +34,7 @@ export function Header({ alternateUrl = null }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand */}
         <Link to={homePath} className="flex items-center gap-3 group focus:outline-none">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-fg font-bold text-lg shadow-sm">
-            D
-          </div>
+          <Logo variant="mark" className="h-10 w-auto" />
           <div className="flex flex-col">
             <span className="font-display font-bold text-xl tracking-tight text-fg group-hover:text-primary transition-colors">
               Dev House

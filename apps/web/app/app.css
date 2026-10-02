@@ -17,3 +17,14 @@ h5,
 h6 {
   font-family: var(--font-display);
 }
+
+/* Brand logo: show the variant that matches the active theme */
+.logo-on-dark {
+  display: none;
+}
+[data-theme='dark'] .logo-on-light {
+  display: none;
+}
+[data-theme='dark'] .logo-on-dark {
+  display: inline-block;
+}

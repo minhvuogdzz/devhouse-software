@@ -1,3 +1,4 @@
+import { Logo } from '../ui/Logo.jsx';
 import React, { useState } from 'react';
 import { Outlet, NavLink, Link, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../../lib/auth-context.jsx';
@@ -176,9 +177,7 @@ export function AdminShell() {
         {/* Brand */}
         <div className="h-16 flex items-center px-6 border-b border-border">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-primary text-primary-fg font-black text-sm flex items-center justify-center font-display shadow-xs">
-              D
-            </div>
+            <Logo className="h-8 w-auto" />
             <div className="leading-tight">
               <span className="font-bold text-sm text-fg tracking-tight block">Dev House</span>
               <span className="text-[10px] text-fg-subtle font-medium block">Administration</span>

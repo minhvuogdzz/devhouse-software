@@ -8,6 +8,8 @@ import {
   isRouteErrorResponse,
   useLocation,
 } from 'react-router';
+import { defaultSettings, localize } from '@devhouse/content';
+import { apiClient } from './lib/api-client.js';
 import { themeInitScript } from './lib/theme.js';
 import { getLocaleFromUrl, getTranslation } from './lib/i18n.js';
 import { Button } from './components/ui/Button.jsx';
@@ -15,8 +17,23 @@ import stylesHref from './app.css?url';
 
 export const links = () => [
   { rel: 'stylesheet', href: stylesHref },
-  { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+  { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
+  { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
+  { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicon-192.png' },
+  { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
 ];
+
+export async function loader({ request }) {
+  const url = new URL(request.url);
+  const locale = getLocaleFromUrl(url.pathname);
+  try {
+    const res = await apiClient(`/site?locale=${locale}`);
+    if (res.data?.settings) return { settings: res.data.settings, locale };
+  } catch {
+    // fall through to code defaults so the site never renders without contact details
+  }
+  return { settings: localize(defaultSettings, locale), locale };
+}
 
 export function Layout({ children }) {
   const location = useLocation();

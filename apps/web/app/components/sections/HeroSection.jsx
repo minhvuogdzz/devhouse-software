@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../ui/Button.jsx';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { GlobeBackground } from './GlobeBackground.jsx';
 
 export function HeroSection({
   eyebrow,
@@ -24,7 +25,13 @@ export function HeroSection({
       : ['Kiến trúc Chuẩn mực', 'Tiến độ Đảm bảo', 'Đồng hành Lâu dài'];
 
   return (
-    <section className="relative overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-24 border-b border-border bg-gradient-to-b from-surface to-bg">
+    <section className="relative isolate overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-28 border-b border-border bg-gradient-to-b from-surface to-bg">
+      <GlobeBackground className="-z-10" />
+      {/* Fades the globe toward the page background so the text stays easy to read */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg/30 via-transparent to-bg/30"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           {eyebrow && (

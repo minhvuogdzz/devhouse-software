@@ -9,6 +9,7 @@ import {
   defaultSolutions,
   defaultTechnologies,
   defaultCategories,
+  resolveDefaultPage,
 } from '../src/index.js';
 
 describe('@devhouse/content', () => {
@@ -120,6 +121,45 @@ describe('@devhouse/content', () => {
         expect(solution.name.en.length).toBeGreaterThan(0);
         expect(solution.shortDescription.vi.length).toBeGreaterThan(0);
         expect(solution.shortDescription.en.length).toBeGreaterThan(0);
+      }
+    });
+  });
+  describe('company details and About page', () => {
+    it('uses the real company contact details', () => {
+      expect(defaultSettings.contactEmail).toBe('devhousesoftware.inc@gmail.com');
+      expect(defaultSettings.hotline.replace(/\s/g, '')).toBe('0869528304');
+      expect(defaultSettings.address.vi).toContain('Tây Hồ');
+      expect(defaultSettings.address.vi).toContain('Hà Nội');
+    });
+
+    it('does not ship invented company data', () => {
+      expect(defaultSettings.taxCode).toBe('');
+      expect(defaultSettings.socialLinks).toEqual([]);
+    });
+
+    it('lists the six leaders in both languages', () => {
+      const about = resolveDefaultPage('about', 'vi');
+      const names = about.sections.leadership.members.map(m => m.name);
+      expect(names).toEqual([
+        'Dương Minh Vương',
+        'Nguyễn Thành Lâm',
+        'Lưu Công Hải',
+        'Nguyễn Hữu Trọng Anh',
+        'Nguyễn Đức Việt',
+        'Lê Trương Nguyễn Hoàng',
+      ]);
+      const en = resolveDefaultPage('about', 'en');
+      for (const member of en.sections.leadership.members) {
+        expect(typeof member.role).toBe('string');
+        expect(member.role.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('has service terms in both languages', () => {
+      for (const locale of ['vi', 'en']) {
+        const terms = resolveDefaultPage('about', locale).sections.serviceTerms;
+        expect(terms.items.length).toBeGreaterThanOrEqual(5);
+        expect(terms.linkLabel.length).toBeGreaterThan(0);
       }
     });
   });

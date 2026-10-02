@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useLoaderData, useActionData, useNavigation, Form } from 'react-router';
+import {
+  useLoaderData,
+  useActionData,
+  useNavigation,
+  useRouteLoaderData,
+  Form,
+} from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
 import { getTranslation } from '../lib/i18n.js';
@@ -98,7 +104,10 @@ export function meta({ data }) {
 }
 
 export default function ContactPage() {
-  const { pageData, services, _siteSettings, locale, mountTime } = useLoaderData();
+  const { pageData, services, locale, mountTime } = useLoaderData();
+  const site = useRouteLoaderData('root');
+  const settings = site?.settings || {};
+  const phoneHref = (settings.hotline || '').replace(/[^+\d]/g, '');
   const actionData = useActionData();
   const navigation = useNavigation();
   const t = getTranslation(locale);
@@ -372,10 +381,10 @@ export default function ContactPage() {
                   <div>
                     <span className="block font-semibold text-fg">Email</span>
                     <a
-                      href="mailto:contact@devhouse.com.vn"
+                      href={`mailto:${settings.contactEmail}`}
                       className="hover:text-primary transition-colors"
                     >
-                      contact@devhouse.com.vn
+                      {settings.contactEmail}
                     </a>
                   </div>
                 </div>
@@ -388,8 +397,8 @@ export default function ContactPage() {
                     <span className="block font-semibold text-fg">
                       {locale === 'en' ? 'Hotline' : 'Đường dây nóng'}
                     </span>
-                    <a href="tel:+842838000000" className="hover:text-primary transition-colors">
-                      (+84) 28 3800 0000
+                    <a href={`tel:${phoneHref}`} className="hover:text-primary transition-colors">
+                      {settings.hotline}
                     </a>
                   </div>
                 </div>
@@ -402,11 +411,7 @@ export default function ContactPage() {
                     <span className="block font-semibold text-fg">
                       {locale === 'en' ? 'Headquarters' : 'Văn phòng làm việc'}
                     </span>
-                    <p className="leading-relaxed">
-                      {locale === 'en'
-                        ? 'Dev House Software, Dist. 1, Ho Chi Minh City, Vietnam'
-                        : 'Dev House Software, Quận 1, Thành phố Hồ Chí Minh, Việt Nam'}
-                    </p>
+                    <p className="leading-relaxed">Dev House Software, {settings.address}</p>
                   </div>
                 </div>
 

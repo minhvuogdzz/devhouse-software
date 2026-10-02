@@ -64,10 +64,196 @@ export const aboutMission = defineSection({
   },
 });
 
+export const aboutCompany = defineSection({
+  key: 'company',
+  label: 'Thông tin công ty',
+  fields: {
+    heading: field.text({ max: 120 }),
+    intro: field.textarea({ max: 600 }),
+    groupNote: field.textarea({ max: 400 }),
+    offeringsHeading: field.text({ max: 120 }),
+    offerings: field.list({
+      of: field.group({
+        fields: {
+          title: field.text(),
+          description: field.textarea(),
+        },
+      }),
+    }),
+  },
+  defaults: {
+    heading: { vi: 'Về Dev House Software', en: 'About Dev House Software' },
+    intro: {
+      vi: 'Dev House Software là công ty công nghệ thuộc Dev House Group, có trụ sở tại Hà Nội. Chúng tôi thiết kế và xây dựng website, ứng dụng, phần mềm quản lý, giải pháp AI và tự động hoá, giúp doanh nghiệp làm việc nhanh hơn và bán hàng tốt hơn.',
+      en: 'Dev House Software is a technology company within Dev House Group, based in Hanoi. We design and build websites, apps, business software, AI and automation that help companies work faster and sell better.',
+    },
+    groupNote: {
+      vi: 'Dev House Group là tổ chức mẹ, do ông Dương Minh Vương sáng lập. Dev House Software phụ trách mảng phát triển phần mềm và giải pháp công nghệ cho khách hàng.',
+      en: 'Dev House Group is the parent organization, founded by Dương Minh Vương. Dev House Software handles software development and technology solutions for clients.',
+    },
+    offeringsHeading: { vi: 'Chúng tôi giúp bạn việc gì', en: 'What we help you with' },
+    offerings: [
+      {
+        title: { vi: 'Website và ứng dụng', en: 'Websites and apps' },
+        description: {
+          vi: 'Website, ứng dụng web, ứng dụng di động và phần mềm máy tính được làm đúng theo nhu cầu của bạn.',
+          en: 'Websites, web apps, mobile apps and desktop software built around what you actually need.',
+        },
+      },
+      {
+        title: { vi: 'Phần mềm quản lý', en: 'Business software' },
+        description: {
+          vi: 'Hệ thống nội bộ giúp quản lý bán hàng, vận hành và chăm sóc khách hàng gọn gàng hơn.',
+          en: 'Internal systems that keep sales, operations and customer care organized.',
+        },
+      },
+      {
+        title: { vi: 'AI và tự động hoá', en: 'AI and automation' },
+        description: {
+          vi: 'Trợ lý AI và các quy trình tự động giúp giảm việc lặp đi lặp lại và tiết kiệm thời gian.',
+          en: 'AI assistants and automated workflows that cut repetitive work and save time.',
+        },
+      },
+    ],
+  },
+});
+
+export const aboutLeadership = defineSection({
+  key: 'leadership',
+  label: 'Đội ngũ lãnh đạo',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    members: field.list({
+      of: field.group({
+        fields: {
+          name: field.string({ max: 80 }),
+          role: field.text({ max: 120 }),
+        },
+      }),
+    }),
+  },
+  defaults: {
+    heading: { vi: 'Đội ngũ lãnh đạo', en: 'Leadership team' },
+    subheading: {
+      vi: 'Những người sáng lập và điều hành Dev House Software.',
+      en: 'The founders and leaders of Dev House Software.',
+    },
+    members: [
+      {
+        name: 'Dương Minh Vương',
+        role: { vi: 'CEO, Nhà sáng lập Dev House Group', en: 'CEO and Founder, Dev House Group' },
+      },
+      {
+        name: 'Nguyễn Thành Lâm',
+        role: { vi: 'Giám đốc Công nghệ (CTO), Đồng sáng lập', en: 'CTO and Co-Founder' },
+      },
+      {
+        name: 'Lưu Công Hải',
+        role: {
+          vi: 'Đồng sáng lập, Giám đốc Dev House Software',
+          en: 'Co-Founder and Director, Dev House Software',
+        },
+      },
+      {
+        name: 'Nguyễn Hữu Trọng Anh',
+        role: {
+          vi: 'Đồng sáng lập, Giám đốc Dev House Software',
+          en: 'Co-Founder and Director, Dev House Software',
+        },
+      },
+      {
+        name: 'Nguyễn Đức Việt',
+        role: {
+          vi: 'Giám đốc Sản phẩm (CPO), Dev House Software',
+          en: 'Chief Product Officer (CPO), Dev House Software',
+        },
+      },
+      {
+        name: 'Lê Trương Nguyễn Hoàng',
+        role: {
+          vi: 'Giám đốc Hành chính Nhân sự, Dev House Software',
+          en: 'Head of Administration and HR, Dev House Software',
+        },
+      },
+    ],
+  },
+});
+
+export const aboutServiceTerms = defineSection({
+  key: 'serviceTerms',
+  label: 'Điều khoản dịch vụ (tóm tắt)',
+  fields: {
+    heading: field.text({ max: 120 }),
+    intro: field.textarea({ max: 400 }),
+    items: field.list({
+      of: field.group({
+        fields: {
+          title: field.text(),
+          description: field.textarea(),
+        },
+      }),
+    }),
+    linkLabel: field.text({ max: 80 }),
+  },
+  defaults: {
+    heading: { vi: 'Điều khoản dịch vụ', en: 'Service terms' },
+    intro: {
+      vi: 'Tóm tắt cách chúng tôi làm việc với khách hàng. Nội dung đầy đủ có tại trang Điều khoản sử dụng.',
+      en: 'A short summary of how we work with clients. The full text is on the Terms of Service page.',
+    },
+    items: [
+      {
+        title: { vi: 'Báo giá rõ ràng', en: 'Clear quotes' },
+        description: {
+          vi: 'Mỗi dự án có phạm vi công việc và báo giá bằng văn bản trước khi bắt đầu.',
+          en: 'Every project has a written scope and quote before work begins.',
+        },
+      },
+      {
+        title: { vi: 'Thanh toán theo giai đoạn', en: 'Staged payments' },
+        description: {
+          vi: 'Chi phí được chia theo các mốc bàn giao đã thống nhất với bạn.',
+          en: 'Costs are split across delivery milestones agreed with you.',
+        },
+      },
+      {
+        title: { vi: 'Thay đổi yêu cầu', en: 'Changes to requirements' },
+        description: {
+          vi: 'Phần phát sinh ngoài phạm vi sẽ được báo trước về thời gian và chi phí, chỉ thực hiện khi bạn đồng ý.',
+          en: 'Extra work outside the scope is quoted for time and cost first, and only done once you agree.',
+        },
+      },
+      {
+        title: { vi: 'Bảo mật thông tin', en: 'Confidentiality' },
+        description: {
+          vi: 'Thông tin của bạn được giữ kín. Chúng tôi sẵn sàng ký thỏa thuận bảo mật (NDA).',
+          en: 'Your information stays private. We are happy to sign a non-disclosure agreement (NDA).',
+        },
+      },
+      {
+        title: { vi: 'Quyền sở hữu sản phẩm', en: 'Ownership' },
+        description: {
+          vi: 'Sau khi thanh toán đủ, bạn sở hữu sản phẩm được bàn giao theo hợp đồng.',
+          en: 'Once payment is complete, you own the product delivered under the contract.',
+        },
+      },
+      {
+        title: { vi: 'Bảo hành và hỗ trợ', en: 'Warranty and support' },
+        description: {
+          vi: 'Thời gian bảo hành và hỗ trợ sau bàn giao được ghi rõ trong hợp đồng của từng dự án.',
+          en: 'Warranty and after-delivery support are written into each project contract.',
+        },
+      },
+    ],
+    linkLabel: { vi: 'Xem điều khoản đầy đủ', en: 'Read the full terms' },
+  },
+});
+
 export const aboutPage = {
   key: 'about',
   title: { vi: 'Giới thiệu', en: 'About' },
-  sections: [aboutHero, aboutMission],
+  sections: [aboutHero, aboutCompany, aboutLeadership, aboutMission, aboutServiceTerms],
   seo: {
     title: {
       vi: 'Giới thiệu về Dev House Software — Đội ngũ Kỹ sư Công nghệ Chuyên nghiệp',

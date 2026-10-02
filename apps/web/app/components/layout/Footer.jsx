@@ -1,5 +1,7 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useRouteLoaderData } from 'react-router';
+import { Mail, Phone, MapPin } from 'lucide-react';
+import { Logo } from '../ui/Logo.jsx';
 import { getTranslation, getLocaleFromUrl } from '../../lib/i18n.js';
 
 export function Footer() {
@@ -8,6 +10,9 @@ export function Footer() {
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
   const currentYear = new Date().getFullYear();
+  const site = useRouteLoaderData('root');
+  const settings = site?.settings || {};
+  const phoneHref = (settings.hotline || '').replace(/[^+\d]/g, '');
 
   return (
     <footer className="border-t border-border bg-surface text-fg transition-colors">
@@ -15,19 +20,37 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
           {/* Company Column */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to={prefix || '/'} className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-fg font-bold text-base shadow-sm">
-                D
-              </div>
-              <span className="font-display font-bold text-xl tracking-tight text-fg">
-                Dev House <span className="text-primary font-normal">Software</span>
-              </span>
+            <Link to={prefix || '/'} className="inline-block" aria-label="Dev House Software">
+              <Logo variant="full" alt="Dev House Software" className="h-28 w-auto" />
             </Link>
             <p className="text-sm text-fg-muted leading-relaxed max-w-sm">{t('footer.tagline')}</p>
-            <div className="pt-2 text-xs text-fg-subtle space-y-1">
-              <p>Email: contact@devhouse.example</p>
-              <p>Address: Keangnam Landmark 72, Pham Hung, Nam Tu Liem, Hanoi</p>
-            </div>
+            <ul className="pt-2 text-sm text-fg-muted space-y-2">
+              {settings.contactEmail && (
+                <li className="flex items-start gap-2.5">
+                  <Mail className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
+                  <a
+                    href={`mailto:${settings.contactEmail}`}
+                    className="hover:text-primary transition-colors"
+                  >
+                    {settings.contactEmail}
+                  </a>
+                </li>
+              )}
+              {settings.hotline && (
+                <li className="flex items-start gap-2.5">
+                  <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
+                  <a href={`tel:${phoneHref}`} className="hover:text-primary transition-colors">
+                    {settings.hotline}
+                  </a>
+                </li>
+              )}
+              {settings.address && (
+                <li className="flex items-start gap-2.5">
+                  <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
+                  <span>{settings.address}</span>
+                </li>
+              )}
+            </ul>
           </div>
 
           {/* Navigation */}

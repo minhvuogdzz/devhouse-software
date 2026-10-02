@@ -1,3 +1,4 @@
+import { localize } from '../resolve.js';
 import { homePage } from './home.js';
 import { aboutPage } from './about.js';
 import { servicesIndexPage } from './services-index.js';
@@ -27,6 +28,17 @@ export const PAGE_REGISTRY = {
 };
 
 export const getPageDefinition = key => PAGE_REGISTRY[key] ?? null;
+
+/**
+ * Code-only version of a page for one locale (no database). Used as the last-resort
+ * fallback when the API cannot be reached, so a page is never blank.
+ */
+export function resolveDefaultPage(key, locale) {
+  const def = PAGE_REGISTRY[key];
+  if (!def) return { sections: {}, seo: {} };
+  const sections = Object.fromEntries(def.sections.map(sec => [sec.key, sec.defaults]));
+  return { sections: localize(sections, locale), seo: localize(def.seo ?? {}, locale) };
+}
 
 export * from './home.js';
 export * from './about.js';
