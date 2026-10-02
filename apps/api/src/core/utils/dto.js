@@ -19,10 +19,10 @@ export function sanitizePublicDTO(doc, locale) {
 
   if (locale) {
     // Recursively flatten localized fields { vi, en } -> string
-    const flatten = (val) => {
-      if (Array.isArray(val)) return val.map(flatten);
+    const flatten = (val, key) => {
+      if (Array.isArray(val)) return val.map(v => flatten(v, key));
       if (val !== null && typeof val === 'object') {
-        if (val.vi !== undefined || val.en !== undefined) {
+        if ((val.vi !== undefined || val.en !== undefined) && key !== 'alternates') {
            return val[locale] !== undefined ? val[locale] : (val.vi || val.en || '');
         }
         
@@ -31,13 +31,13 @@ export function sanitizePublicDTO(doc, locale) {
         
         const res = {};
         for (const [k, v] of Object.entries(val)) {
-           res[k] = flatten(v);
+           res[k] = flatten(v, k);
         }
         return res;
       }
       return val;
     };
-    obj = flatten(obj);
+    obj = flatten(obj, null);
   }
 
   return obj;

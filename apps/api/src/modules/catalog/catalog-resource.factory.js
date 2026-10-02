@@ -77,7 +77,7 @@ export function createCatalogModule({
       }
 
       const docs = await query.lean();
-      const locale = rawQuery.locale || 'vi';
+      const locale = rawQuery.locale || null;
 
       const transformed = docs.map(doc => {
         const item = transformPublic(doc);
@@ -356,13 +356,13 @@ export function createCatalogModule({
   const controller = {
     async list(req, res) {
       const result = await service.listPublic(req.query);
-      const locale = req.query.locale || 'vi';
+      const locale = req.query.locale || null;
       const mapped = result.data.map(doc => sanitizePublicDTO(doc, locale));
       return sendPaginated(res, mapped, result.pagination);
     },
 
     async getBySlug(req, res) {
-      const locale = req.query.locale || 'vi';
+      const locale = req.query.locale || null;
       const result = await service.getBySlugPublic(req.params.slug, locale);
       return sendSuccess(res, sanitizePublicDTO(result, locale));
     },
