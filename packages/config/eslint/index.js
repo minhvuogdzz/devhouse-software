@@ -130,6 +130,7 @@ export const createEslintConfig = () => [
       '**/.yarn/**',
       '**/coverage/**',
       '**/.hallmark/**',
+      'legacy/**',
     ],
   },
 ];

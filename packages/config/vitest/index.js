@@ -7,6 +7,7 @@ export const createVitestConfig = (options = {}) =>
       environment: 'node',
       testTimeout: 20000,
       fileParallelism: false,
+      exclude: ['**/node_modules/**', '**/dist/**', '**/build/**', 'legacy/**'],
       ...options,
     },
   });
