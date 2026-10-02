@@ -1,0 +1,132 @@
+name: devhouse-staging
+
+services:
+  edge:
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/edge:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - /opt/devhouse/staging/certs:/etc/nginx/certs:ro
+      - /opt/devhouse/staging/acme:/var/www/certbot:ro
+      - staging_nginx_cache:/var/cache/nginx
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+    networks:
+      - staging_internal
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+    stop_grace_period: 30s
+
+  api:
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/api:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    expose:
+      - '4000'
+    env_file:
+      - /opt/devhouse/staging/env/api.env
+    environment:
+      - PORT=4000
+      - NODE_ENV=production
+      - APP_ENV=staging
+      - TRUST_PROXY=1
+    networks:
+      - staging_internal
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+    stop_grace_period: 30s
+    healthcheck:
+      test: ['CMD', 'node', 'apps/api/scripts/healthcheck.js']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  web:
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/web:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    expose:
+      - '3000'
+    env_file:
+      - /opt/devhouse/staging/env/web.env
+    environment:
+      - WEB_PORT=3000
+      - NODE_ENV=production
+      - APP_ENV=staging
+      - API_INTERNAL_URL=http://api:4000/api/v1
+    networks:
+      - staging_internal
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+    stop_grace_period: 30s
+    healthcheck:
+      test: ['CMD', 'node', 'apps/web/scripts/healthcheck.js']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+  admin:
+    image: ${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}/admin:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    expose:
+      - '80'
+    networks:
+      - staging_internal
+    security_opt:
+      - no-new-privileges:true
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '5'
+    stop_grace_period: 15s
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://127.0.0.1/healthz']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+networks:
+  staging_internal:
+    driver: bridge
+
+volumes:
+  staging_nginx_cache:

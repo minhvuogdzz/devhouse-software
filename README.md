@@ -1,94 +1,88 @@
-# web-repo
+# Dev House Software
 
+Official corporate website, admin CMS, and API for Dev House Software.
 
+Built as a content-driven modular monolith with:
 
-## Getting started
+- **apps/web**: Public website using React Router 7 framework mode with Server-Side Rendering (SSR) and Tailwind CSS 4.
+- **apps/admin**: Internal administration CMS SPA using React 19, Vite, React Router 7, and TanStack Query 5.
+- **apps/api**: REST API using Express 5, Mongoose 8, structured in clean domain modules.
+- **packages/shared**: Shared schemas (Zod), permissions, error codes, and utilities.
+- **packages/content**: Code-first default content definitions, section descriptors, and resolution engine.
+- **packages/config**: Shared Tailwind CSS theme tokens, ESLint, Prettier, and test configurations.
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+---
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Project-wide Rules
 
-## Add your files
+1. **P1 — Light and Dark Themes**: Every screen supports light and dark modes with zero flash-on-load. Semantic design tokens (`bg-surface`, `text-fg`, `bg-primary`, etc.) are used exclusively.
+2. **P2 — Vietnamese and English**: Fully bilingual from day one. Unprefixed URLs for Vietnamese (`/`) and `/en` prefix for English.
+3. **P3 — Minimal Placeholder Data, No Placeholder Images**: Default content uses concise, realistic text. No fake metrics, no stock photos, and no broken placeholder images. Every component renders gracefully without images.
+4. **P4 — Hallmark Anti-AI-Slop Design**: All UI adheres to the custom design system documented in `docs/design/design-system.md`, with Dev House brand blue as the primary color.
+5. **P5 — Commercial Website**: Copy is written in plain business language focused on client outcomes and trust. No code-style typography or programmer motifs outside actual blog code snippets.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+---
 
+## Quickstart (5-Minute Local Setup)
+
+### Prerequisites
+
+- Node.js 22+ (v24 LTS recommended, see `.nvmrc`)
+- Yarn 4+ (`nodeLinker: node-modules`)
+- Local MongoDB running on port 27017 (or run `docker compose up -d mongodb`)
+
+### 1. Install dependencies
+
+```bash
+yarn install
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/thedevhouse/web-repo.git
-git branch -M main
-git push -uf origin main
+
+### 2. Environment Configuration
+
+```bash
+cp .env.example .env
 ```
 
-## Integrate with your tools
+### 3. Seed Database & Create Admin User
 
-- [ ] [Set up project integrations](https://gitlab.com/thedevhouse/web-repo/-/settings/integrations)
+```bash
+yarn workspace @devhouse/api seed
+node apps/api/scripts/create-admin.js
+```
 
-## Collaborate with your team
+The admin password is generated randomly and printed once to the terminal.
+Set `SEED_ADMIN_PASSWORD` in `.env` or inline to supply your own (min 12 chars).
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+### 4. Start Development Servers
 
-## Test and Deploy
+```bash
+yarn dev
+```
 
-Use the built-in continuous integration in GitLab.
+The apps will be available at:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- Public Website (`web`): `http://localhost:3000` (Vietnamese) and `http://localhost:3000/en` (English)
+- Admin CMS (`admin`): `http://localhost:5173`
+- REST API (`api`): `http://localhost:4000/api/v1`
 
-***
+---
 
-# Editing this README
+## Common Commands
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+| Command             | Action                                                |
+| ------------------- | ----------------------------------------------------- |
+| `yarn dev`          | Run all applications concurrently in development mode |
+| `yarn build`        | Build all applications and packages                   |
+| `yarn lint`         | Run ESLint across monorepo                            |
+| `yarn format:check` | Check code formatting with Prettier                   |
+| `yarn format`       | Automatically fix formatting with Prettier            |
+| `yarn test`         | Run tests across packages and apps with Vitest        |
 
-## Suggestions for a good README
+---
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+## Documentation
 
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- [Architecture Design Document](docs/architecture/README.md)
+- [Design System & Theme Tokens](docs/design/design-system.md)
+- [Decisions Log](docs/tasks/DECISIONS.md)
+- [MVP Build Task Specification](docs/tasks/mvp-build.md)
