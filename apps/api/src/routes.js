@@ -19,6 +19,10 @@ import { technologyPublicRoutes } from './modules/technologies/technology.public
 import { technologyAdminRoutes } from './modules/technologies/technology.admin.routes.js';
 import { categoryPublicRoutes } from './modules/categories/category.public.routes.js';
 import { categoryAdminRoutes } from './modules/categories/category.admin.routes.js';
+import { blogPublicRouter } from './modules/blog/blog.public.routes.js';
+import { postAdminRouter } from './modules/blog/post.admin.routes.js';
+import { authorAdminRouter } from './modules/blog/author.admin.routes.js';
+import { tagAdminRouter } from './modules/blog/tag.admin.routes.js';
 
 export const apiRouter = Router();
 
@@ -37,6 +41,7 @@ apiRouter.use('/solutions', solutionPublicRoutes);
 apiRouter.use('/projects', projectPublicRoutes);
 apiRouter.use('/technologies', technologyPublicRoutes);
 apiRouter.use('/categories', categoryPublicRoutes);
+apiRouter.use('/blog', blogPublicRouter);
 
 // Admin routes (requires authentication on all admin endpoints)
 export const adminRouter = Router();
@@ -51,5 +56,8 @@ adminRouter.use('/solutions', solutionAdminRoutes);
 adminRouter.use('/projects', projectAdminRoutes);
 adminRouter.use('/technologies', technologyAdminRoutes);
 adminRouter.use('/categories', categoryAdminRoutes);
+adminRouter.use('/blog/posts', postAdminRouter);
+adminRouter.use('/blog/authors', authorAdminRouter);
+adminRouter.use('/blog/tags', tagAdminRouter);
 
 apiRouter.use('/admin', adminRouter);

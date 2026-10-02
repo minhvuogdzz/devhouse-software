@@ -8,7 +8,7 @@ import {
 
 export const AuthorSchema = z.object({
   name: z.string().min(1, 'Author name is required'),
-  slug: z.string().min(1, 'Author slug is required'),
+  slug: z.string().optional(),
   role: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   bio: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   avatar: ImageRefSchema.optional().default({ publicId: '', url: '' }),
@@ -16,13 +16,13 @@ export const AuthorSchema = z.object({
 
 export const TagSchema = z.object({
   name: LocalizedStringSchema,
-  slug: LocalizedSlugSchema,
+  slug: LocalizedSlugSchema.optional(),
 });
 
 export const BlogPostSchema = z.object({
   title: LocalizedStringSchema,
-  slug: LocalizedSlugSchema,
-  excerpt: LocalizedStringSchema,
+  slug: LocalizedSlugSchema.optional(),
+  excerpt: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   content: z.object({
     vi: z.any().optional().default({ type: 'doc', content: [] }),
     en: z.any().optional().default({ type: 'doc', content: [] }),
