@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -33,25 +34,21 @@ export async function loader({ request }) {
   return {
     pageData: localize(pageData, locale),
     projects,
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Case Studies & Engineering Projects — Dev House Software'
-        : 'Dự án Tiêu biểu & Câu chuyện Khách hàng — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Dự án Tiêu biểu & Câu chuyện Khách hàng — Dev House Software';
+  const description = isEn
         ? 'Explore how we engineer robust systems, digital platforms, and software solutions for our clients.'
-        : 'Khám phá các hệ thống phần mềm và nền tảng số được Dev House thiết kế và triển khai thực tế.',
-    },
-  ];
+        : 'Khám phá các hệ thống phần mềm và nền tảng số được Dev House thiết kế và triển khai thực tế.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function ProjectsPage() {

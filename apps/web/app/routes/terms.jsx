@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData } from 'react-router';
 import { defaultPages, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -20,25 +21,21 @@ export async function loader({ request }) {
 
   return {
     pageData: localize(pageData, locale),
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Terms of Service — Dev House Software'
-        : 'Điều khoản Dịch vụ — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Điều khoản Dịch vụ — Dev House Software';
+  const description = isEn
         ? 'Review the operational and legal terms governing the use of Dev House Software services.'
-        : 'Các điều khoản và điều kiện pháp lý khi truy cập website và sử dụng dịch vụ của Dev House Software.',
-    },
-  ];
+        : 'Các điều khoản và điều kiện pháp lý khi truy cập website và sử dụng dịch vụ của Dev House Software.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function TermsPage() {

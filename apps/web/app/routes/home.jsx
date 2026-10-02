@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -56,6 +57,7 @@ export async function loader({ request }) {
     services,
     solutions,
     projects,
+    url: request.url,
     locale,
   };
 }
@@ -64,19 +66,22 @@ export function meta({ data }) {
   const locale = data?.locale || 'vi';
   const isEn = locale === 'en';
 
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Dev House Software — Enterprise Engineering & AI Solutions'
-        : 'Dev House Software — Phát triển Phần mềm Doanh nghiệp & Giải pháp AI',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Dev House Software — Phát triển Phần mềm Doanh nghiệp & Giải pháp AI';
+  const description = isEn
         ? 'Custom enterprise software development, modern operational platforms, and specialized digital solutions.'
-        : 'Tư vấn và phát triển phần mềm theo yêu cầu, hệ thống quản trị doanh nghiệp và giải pháp số chuyên sâu.',
-    },
-  ];
+        : 'Tư vấn và phát triển phần mềm theo yêu cầu, hệ thống quản trị doanh nghiệp và giải pháp số chuyên sâu.';
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Dev House Software',
+    url: data?.url,
+    logo: data?.url ? new URL(data.url).origin + '/logo.png' : 'https://devhouse.vn/logo.png',
+  };
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website', jsonLd });
 }
 
 export default function HomePage() {

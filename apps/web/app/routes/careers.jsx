@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -22,25 +23,21 @@ export async function loader({ request }) {
 
   return {
     pageData: localize(pageData, locale),
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Careers & Engineering Opportunities — Dev House Software'
-        : 'Cơ hội Nghề nghiệp & Gia nhập Đội ngũ — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Cơ hội Nghề nghiệp & Gia nhập Đội ngũ — Dev House Software';
+  const description = isEn
         ? 'Discover software engineering and systems roles at Dev House Software.'
-        : 'Khám phá các vị trí kỹ sư phần mềm và kiến trúc sư hệ thống tại Dev House Software.',
-    },
-  ];
+        : 'Khám phá các vị trí kỹ sư phần mềm và kiến trúc sư hệ thống tại Dev House Software.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function CareersPage() {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -34,25 +35,21 @@ export async function loader({ request }) {
   return {
     pageData: localize(pageData, locale),
     services,
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Software Development & Architecture Services — Dev House Software'
-        : 'Dịch vụ Kỹ thuật & Phát triển Phần mềm — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Dịch vụ Kỹ thuật & Phát triển Phần mềm — Dev House Software';
+  const description = isEn
         ? 'End-to-end software development services from system architecture to cloud modernization and maintenance.'
-        : 'Cung cấp dịch vụ phát triển phần mềm toàn diện từ kiến trúc hệ thống đến hiện đại hóa hạ tầng đám mây.',
-    },
-  ];
+        : 'Cung cấp dịch vụ phát triển phần mềm toàn diện từ kiến trúc hệ thống đến hiện đại hóa hạ tầng đám mây.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function ServicesPage() {

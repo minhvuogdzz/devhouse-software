@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { apiClient } from '../lib/api-client.js';
 import { getTranslation } from '../lib/i18n.js';
@@ -17,7 +18,8 @@ export async function loader({ params, request }) {
     const res = await apiClient(`/projects/${slug}?locale=${locale}`);
     return {
       project: res.data,
-      locale,
+      url: request.url,
+    locale,
       slug,
     };
   } catch {
@@ -71,19 +73,12 @@ export async function loader({ params, request }) {
 }
 
 export function meta({ data }) {
-  const isEn = data?.locale === 'en';
-  const title = data?.project?.title || (isEn ? 'Project Details' : 'Chi tiết Dự án');
-  return [
-    { title: `${title} — Dev House Software` },
-    {
-      name: 'description',
-      content:
-        data?.project?.shortDescription ||
-        (isEn
-          ? 'Dev House project case study.'
-          : 'Chi tiết dự án phần mềm do Dev House thực hiện.'),
-    },
-  ];
+  if (!data?.project) return [{ title: 'Not Found' }];
+  const p = data.project;
+  const title = `${p.title} — Dev House Software`;
+  const description = p.summary || '';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article' });
 }
 
 export default function ProjectDetailPage() {

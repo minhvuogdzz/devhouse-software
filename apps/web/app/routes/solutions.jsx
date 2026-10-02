@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -33,25 +34,21 @@ export async function loader({ request }) {
   return {
     pageData: localize(pageData, locale),
     solutions,
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Enterprise Software Solutions — Dev House Software'
-        : 'Giải pháp Phần mềm Doanh nghiệp — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Giải pháp Phần mềm Doanh nghiệp — Dev House Software';
+  const description = isEn
         ? 'Pre-architected, specialized software packages tailored to reduce time-to-market and operational risk.'
-        : 'Các gói giải pháp phần mềm chuyên sâu được thiết kế sẵn nhằm rút ngắn thời gian triển khai và tối ưu chi phí.',
-    },
-  ];
+        : 'Các gói giải pháp phần mềm chuyên sâu được thiết kế sẵn nhằm rút ngắn thời gian triển khai và tối ưu chi phí.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function SolutionsPage() {

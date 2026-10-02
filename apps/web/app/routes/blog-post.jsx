@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { apiClient } from '../lib/api-client.js';
 import { getTranslation } from '../lib/i18n.js';
@@ -16,7 +17,8 @@ export async function loader({ params, request }) {
     const res = await apiClient(`/blog/posts/${slug}?locale=${locale}`);
     return {
       post: res.data,
-      locale,
+      url: request.url,
+    locale,
       slug,
     };
   } catch {
@@ -57,18 +59,13 @@ export async function loader({ params, request }) {
 }
 
 export function meta({ data }) {
-  const isEn = data?.locale === 'en';
-  const post = data?.post;
-  const title = post?.title || (isEn ? 'Insights' : 'Góc nhìn Công nghệ');
-  return [
-    { title: `${title} — Dev House Software` },
-    {
-      name: 'description',
-      content:
-        post?.excerpt ||
-        (isEn ? 'Engineering insights from Dev House.' : 'Bài viết chia sẻ kỹ thuật từ Dev House.'),
-    },
-  ];
+  if (!data?.post) return [{ title: 'Not Found' }];
+  const p = data.post;
+  const title = `${p.title} — Dev House Software`;
+  const description = p.summary || p.excerpt || '';
+  const jsonLd = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: p.createdAt || p.publishedAt };
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article', jsonLd });
 }
 
 export default function BlogPostPage() {
