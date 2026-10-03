@@ -51,6 +51,24 @@ The API uses `bcryptjs`; the architecture (§16.3) specifies Argon2id. Switch to
 - Remove the old hardcoded value from the source and from any documentation under `docs/` and `README.md`.
 - Update `docs/development/setup.md` with the new way to create the first administrator.
 
+## Status update (2026-10-02, later)
+
+Already done, do not redo: items 1, 2 and 9 (committed by the first run); the root `.env` path was corrected one directory level by the coordinator; the mobile menu, logos, favicon, globe hero, About page and org chart were added by the coordinator. Rules P1–P5 in `GEMINI.md` still apply. Do not deploy anything and do not push. Work on the current branch.
+
+Remaining from above: items 3, 4, 5, 6, 7, 8. In item 6, also rewrite jargon in the About page "mission" values and in the Terms and Privacy defaults.
+
+## 10. Align deployment scripts with the compact compose file
+
+`infra/compose/docker-compose.yml` is now the main deployment file. Make `infra/scripts/deploy.sh` and `infra/scripts/rollback.sh` use it (`docker-compose.yml` in `/opt/devhouse`, reading `REGISTRY` and `IMAGE_TAG` from the shell). Delete `infra/compose/compose.prod.yml` once nothing refers to it, and update `docs/deployment/devops-handoff.md` accordingly. Keep `compose.staging.yml` only if it still matches; otherwise delete it and say so.
+
+## 11. Admin can edit the new About sections
+
+The About page content now has `company`, `leadership` (an org-chart tree: nodes with `id`, `parent`, `label`, and `members`), and `serviceTerms`. Check that Admin → Pages can display and save these sections, including the nested lists and the plain-string fields (`id`, `parent`, `name`). Fix the generic `SectionForm` if it cannot, and add a test. Also let an admin edit company contact details (email, phone, address) in Admin → Settings and confirm the public footer, contact page and About page pick the change up after the cache window.
+
+## 12. Terms of Service page
+
+`/terms` only has a short introduction. Replace it with a structured page in plain language, both languages, using the six principles in the About page "serviceTerms" section as the outline. State no numbers (no warranty periods, percentages or fees). Mark the page clearly in the code comments and in `docs/tasks/DECISIONS.md` as draft text that the company must review.
+
 ## Final report
 
 For each of the 8 items: what changed, the check you ran, and the result. List anything not fixed and why.

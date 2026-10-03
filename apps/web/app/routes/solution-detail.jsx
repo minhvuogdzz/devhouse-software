@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -33,12 +34,13 @@ export async function loader({ params, request }) {
 }
 
 export function meta({ data }) {
-  if (!data?.solution) return [{ title: 'Solution Not Found — Dev House' }];
+  if (!data?.solution) return [{ title: 'Not Found' }];
   const s = data.solution;
-  return [
-    { title: `${s.name || s.title} — Dev House Software` },
-    { name: 'description', content: s.summary || s.description || '' },
-  ];
+  const title = `${s.title || s.name} — Dev House Software`;
+  const description = s.summary || s.description || '';
+  const jsonLd = { '@context': 'https://schema.org', '@type': 'Product', name: s.title || s.name, description, brand: { '@type': 'Brand', name: 'Dev House Software' } };
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article', jsonLd });
 }
 
 export default function SolutionDetailPage() {

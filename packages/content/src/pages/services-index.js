@@ -10,16 +10,16 @@ export const servicesHero = defineSection({
   },
   defaults: {
     eyebrow: {
-      vi: 'Dịch vụ Kỹ thuật Toàn diện',
-      en: 'Comprehensive Engineering Services',
+      vi: 'Dịch vụ phần mềm toàn diện',
+      en: 'Complete Software Services',
     },
     heading: {
-      vi: 'Dịch vụ phát triển phần mềm chuyên nghiệp cho mọi giai đoạn phát triển',
-      en: 'Professional software engineering tailored to your operational needs',
+      vi: 'Giải pháp phần mềm đáp ứng đúng nhu cầu kinh doanh của bạn',
+      en: 'Professional software tools tailored to your business needs',
     },
     subheading: {
-      vi: 'Từ phát triển ứng dụng web, di động đến tích hợp AI và kiến trúc đám mây, chúng tôi đồng hành hiện thực hóa ý tưởng của bạn.',
-      en: 'From web applications and mobile engineering to cloud infrastructure and AI workflows, we deliver reliable solutions.',
+      vi: 'Từ việc thiết kế ứng dụng web, di động đến tích hợp tự động hoá, chúng tôi giúp doanh nghiệp vận hành hiệu quả hơn.',
+      en: 'From web and mobile applications to smart workflow automation, we build solutions that help you operate more efficiently.',
     },
   },
 });
@@ -30,12 +30,12 @@ export const servicesIndexPage = {
   sections: [servicesHero],
   seo: {
     title: {
-      vi: 'Dịch vụ Kỹ thuật Phần mềm — Dev House Software',
-      en: 'Software Engineering Services — Dev House Software',
+      vi: 'Dịch vụ phần mềm — Dev House Software',
+      en: 'Software Services — Dev House Software',
     },
     description: {
-      vi: 'Danh mục dịch vụ phát triển phần mềm theo yêu cầu, ứng dụng di động, kiến trúc đám mây và tự động hóa AI.',
-      en: 'Comprehensive custom software engineering, mobile app development, cloud infrastructure, and AI automation.',
+      vi: 'Các dịch vụ phát triển phần mềm tùy chỉnh, thiết kế ứng dụng di động và giải pháp tự động hoá doanh nghiệp.',
+      en: 'Custom software development, mobile applications, and reliable business automation solutions.',
     },
   },
 };

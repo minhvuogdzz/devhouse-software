@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '../ui/Button.jsx';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { GlobeBackground } from './GlobeBackground.jsx';
+import { ScrollReveal } from '../ui/ScrollReveal.jsx';
 
 export function HeroSection({
   eyebrow,
@@ -25,22 +26,17 @@ export function HeroSection({
       : ['Kiến trúc Chuẩn mực', 'Tiến độ Đảm bảo', 'Đồng hành Lâu dài'];
 
   return (
-    <section className="relative isolate overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-28 border-b border-border bg-gradient-to-b from-surface to-bg">
-      <GlobeBackground className="-z-10" />
-      {/* Fades the globe toward the page background so the text stays easy to read */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg/30 via-transparent to-bg/30"
-      />
+    <section className="relative isolate pt-24 pb-24 lg:pt-32 lg:pb-32 min-h-[85vh] flex flex-col justify-center bg-transparent">
+      <GlobeBackground className="-z-10 inset-0 h-full w-full opacity-70" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
+        <ScrollReveal direction="up" className="max-w-3xl mx-auto text-center space-y-5">
           {eyebrow && (
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary-subtle text-primary border border-border-subtle tracking-wide">
               <span>{eyebrow}</span>
             </div>
           )}
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-display text-fg tracking-tight leading-[1.12]">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-fg tracking-tight leading-[1.15]">
             {heading}
           </h1>
 
@@ -74,7 +70,7 @@ export function HeroSection({
               </div>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

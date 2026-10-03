@@ -10,16 +10,16 @@ export const blogHero = defineSection({
   },
   defaults: {
     eyebrow: {
-      vi: 'Góc nhìn & Chia sẻ Kỹ thuật',
-      en: 'Engineering Insights & Articles',
+      vi: 'Kinh nghiệm thực tiễn',
+      en: 'Articles & Insights',
     },
     heading: {
-      vi: 'Kiến thức kỹ thuật, chuyển đổi số và kinh nghiệm xây dựng sản phẩm',
-      en: 'Perspectives on software craftsmanship, architecture, and technology leadership',
+      vi: 'Kinh nghiệm thực tế về phần mềm, vận hành và quản lý số',
+      en: 'Practical advice on software tools, operations, and technical strategy',
     },
     subheading: {
-      vi: 'Tổng hợp các bài viết chuyên sâu từ đội ngũ kỹ sư Dev House Software về tối ưu vận hành và giải pháp thực tế.',
-      en: 'In-depth articles from our engineering team on software design, scaling, and digital strategy.',
+      vi: 'Các bài viết chia sẻ từ đội ngũ Dev House về kinh nghiệm triển khai phần mềm giúp doanh nghiệp tối ưu chi phí và quy trình.',
+      en: 'Read articles from our team on building better tools and planning a clear digital strategy for your business.',
     },
   },
 });
@@ -30,12 +30,12 @@ export const blogIndexPage = {
   sections: [blogHero],
   seo: {
     title: {
-      vi: 'Bài viết & Kiến thức Kỹ thuật — Dev House Software',
+      vi: 'Bài viết & Chia sẻ kinh nghiệm — Dev House Software',
       en: 'Articles & Insights — Dev House Software',
     },
     description: {
-      vi: 'Khám phá các bài viết chia sẻ kinh nghiệm phát triển phần mềm, kiến trúc hệ thống và chuyển đổi số cho doanh nghiệp.',
-      en: 'Discover practical insights on enterprise architecture, software engineering practices, and digital strategy.',
+      vi: 'Khám phá các bài viết chia sẻ kinh nghiệm phát triển phần mềm và tối ưu hóa hệ thống vận hành cho doanh nghiệp.',
+      en: 'Discover practical insights on choosing the right software and optimizing your business operations.',
     },
   },
 };

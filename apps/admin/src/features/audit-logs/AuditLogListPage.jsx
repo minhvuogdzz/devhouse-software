@@ -122,14 +122,14 @@ export default function AuditLogListPage() {
               ) : (
                 logs.map(log => (
                   <tr key={log._id} className="hover:bg-surface-raised transition-colors">
-                    <td className="px-6 py-4 text-xs font-mono text-fg-muted whitespace-nowrap">
+                    <td className="px-6 py-4 text-xs tabular-nums text-fg-muted whitespace-nowrap">
                       {new Date(log.createdAt).toLocaleString(locale === 'vi' ? 'vi-VN' : 'en-US')}
                     </td>
                     <td className="px-6 py-4 font-medium text-fg">
                       {log.actor?.email || log.actor?.name || 'System'}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-mono text-xs px-2 py-0.5 rounded bg-surface-raised border border-border text-fg">
+                      <span className="tabular-nums text-xs px-2 py-0.5 rounded bg-surface-raised border border-border text-fg">
                         {log.action}
                       </span>
                     </td>
@@ -199,7 +199,7 @@ export default function AuditLogListPage() {
                 <span className="text-xs text-fg-muted block">
                   {locale === 'vi' ? 'Thời gian' : 'Time'}
                 </span>
-                <span className="font-mono text-xs">
+                <span className="tabular-nums text-xs">
                   {new Date(selectedLog.createdAt).toISOString()}
                 </span>
               </div>
@@ -207,7 +207,7 @@ export default function AuditLogListPage() {
                 <span className="text-xs text-fg-muted block">
                   {locale === 'vi' ? 'Hành động' : 'Action'}
                 </span>
-                <span className="font-mono text-xs font-semibold">{selectedLog.action}</span>
+                <span className="tabular-nums text-xs font-semibold">{selectedLog.action}</span>
               </div>
               <div>
                 <span className="text-xs text-fg-muted block">
@@ -219,12 +219,12 @@ export default function AuditLogListPage() {
                 <span className="text-xs text-fg-muted block">
                   {locale === 'vi' ? 'Địa chỉ IP' : 'IP Address'}
                 </span>
-                <span className="font-mono text-xs">{selectedLog.ip || '—'}</span>
+                <span className="tabular-nums text-xs">{selectedLog.ip || '—'}</span>
               </div>
               {selectedLog.requestId && (
                 <div className="col-span-2">
                   <span className="text-xs text-fg-muted block">Request ID</span>
-                  <span className="font-mono text-xs">{selectedLog.requestId}</span>
+                  <span className="tabular-nums text-xs">{selectedLog.requestId}</span>
                 </div>
               )}
             </div>
@@ -234,7 +234,7 @@ export default function AuditLogListPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted block mb-1">
                   {locale === 'vi' ? 'Dữ liệu thay đổi (Changes)' : 'Recorded Changes'}
                 </span>
-                <pre className="p-3 rounded bg-surface-raised border border-border text-xs font-mono overflow-x-auto max-h-60">
+                <pre className="p-3 rounded bg-surface-raised border border-border text-xs tabular-nums overflow-x-auto max-h-60">
                   {JSON.stringify(selectedLog.changes, null, 2)}
                 </pre>
               </div>
@@ -245,7 +245,7 @@ export default function AuditLogListPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider text-fg-muted block mb-1">
                   Metadata
                 </span>
-                <pre className="p-3 rounded bg-surface-raised border border-border text-xs font-mono overflow-x-auto max-h-40">
+                <pre className="p-3 rounded bg-surface-raised border border-border text-xs tabular-nums overflow-x-auto max-h-40">
                   {JSON.stringify(selectedLog.metadata, null, 2)}
                 </pre>
               </div>

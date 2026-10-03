@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -59,25 +60,21 @@ export async function loader({ request }) {
     pageData: localize(pageData, locale),
     technologies,
     categories,
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Technology Stack & Engineering Standards — Dev House Software'
-        : 'Nền tảng Công nghệ & Tiêu chuẩn Kỹ thuật — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Nền tảng Công nghệ & Tiêu chuẩn Kỹ thuật — Dev House Software';
+  const description = isEn
         ? 'Discover the mature, reliable technologies and engineering practices we use to build durable business systems.'
-        : 'Tìm hiểu các công nghệ và tiêu chuẩn kỹ thuật được Dev House áp dụng để phát triển hệ thống bền vững.',
-    },
-  ];
+        : 'Tìm hiểu các công nghệ và tiêu chuẩn kỹ thuật được Dev House áp dụng để phát triển hệ thống bền vững.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function TechnologiesPage() {
@@ -151,7 +148,7 @@ export default function TechnologiesPage() {
           <div className="space-y-16">
             {activeGroups.map((group, idx) => (
               <div key={idx} className="space-y-6">
-                <div className="border-b border-border pb-4 space-y-1">
+                <div className="pb-4 space-y-1">
                   <h2 className="text-2xl font-bold font-display text-fg flex items-center gap-2">
                     <Layers className="w-5 h-5 text-primary" />
                     {group.title}

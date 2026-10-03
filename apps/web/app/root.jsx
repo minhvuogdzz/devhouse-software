@@ -16,6 +16,9 @@ import { Button } from './components/ui/Button.jsx';
 import stylesHref from './app.css?url';
 
 export const links = () => [
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+  { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
+  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap' },
   { rel: 'stylesheet', href: stylesHref },
   { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
   { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
@@ -48,7 +51,7 @@ export function Layout({ children }) {
         <Links />
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body className="min-h-screen bg-bg text-fg antialiased selection:bg-primary-subtle selection:text-primary">
+      <body className="min-h-screen bg-transparent text-fg antialiased selection:bg-primary-subtle selection:text-primary">
         {children}
         <ScrollRestoration />
         <Scripts />

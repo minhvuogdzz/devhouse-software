@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import bcrypt from 'bcryptjs';
 import { app } from '../src/app.js';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { runSeeds } from '../seeds/index.js';
@@ -20,7 +19,7 @@ describe('Catalog Modules (Services, Solutions, Projects, Technologies, Categori
     await connectDB();
     await runSeeds();
 
-    const passwordHash = await bcrypt.hash(testPassword, 10);
+    const passwordHash = await UserModel.hashPassword(testPassword);
 
     await UserModel.deleteMany({
       email: 'catalog-admin@devhouse.example',
@@ -61,6 +60,23 @@ describe('Catalog Modules (Services, Solutions, Projects, Technologies, Categori
   });
 
   describe('Public Catalog Endpoints', () => {
+    it('should not leak internal fields on public list', async () => {
+      const res = await request(app).get('/api/v1/services?locale=en');
+      expect(res.status).toBe(200);
+      const items = res.body.data;
+      expect(items.length).toBeGreaterThan(0);
+      
+      const first = items[0];
+      const restrictedFields = ['__v', 'createdBy', 'updatedBy', 'isDeleted', 'deletedAt', 'deletedBy', 'passwordHash'];
+      
+      restrictedFields.forEach(field => {
+        expect(first).not.toHaveProperty(field);
+      });
+
+      // Also ensure it is flattened to the requested locale
+      expect(typeof first.name).toBe('string');
+    });
+
     it('GET /api/v1/services returns published services with alternates', async () => {
       const res = await request(app).get('/api/v1/services?locale=vi');
       expect(res.status).toBe(200);

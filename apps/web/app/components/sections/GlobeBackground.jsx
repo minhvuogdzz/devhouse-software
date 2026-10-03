@@ -127,9 +127,9 @@ export function GlobeBackground({ className = '' }) {
       canvas.height = Math.round(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       radius =
-        width < 768 ? Math.min(width * 0.7, height * 0.55) : Math.min(width * 0.36, height * 0.78);
+        width < 768 ? Math.min(width * 0.4, height * 0.4) : Math.min(width * 0.35, height * 0.42);
       cx = width / 2;
-      cy = height * 0.55;
+      cy = height * 0.52;
       dots = buildDots(width < 640 ? 700 : 1300);
     };
 
@@ -310,7 +310,7 @@ export function GlobeBackground({ className = '' }) {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className={`pointer-events-none absolute inset-0 h-full w-full ${className}`}
+      className={`pointer-events-none absolute ${className}`}
     />
   );
 }

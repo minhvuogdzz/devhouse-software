@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData } from 'react-router';
 import { defaultPages, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -20,25 +21,21 @@ export async function loader({ request }) {
 
   return {
     pageData: localize(pageData, locale),
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Privacy Policy — Dev House Software'
-        : 'Chính sách Bảo mật Thông tin — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Chính sách Bảo mật Thông tin — Dev House Software';
+  const description = isEn
         ? 'Read our commitments and guidelines on safeguarding your personal and business data.'
-        : 'Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Dev House Software.',
-    },
-  ];
+        : 'Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Dev House Software.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function PrivacyPage() {

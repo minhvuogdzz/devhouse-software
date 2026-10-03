@@ -13,6 +13,7 @@
   "dependencies": {
     "@devhouse/content": "workspace:*",
     "@devhouse/shared": "workspace:*",
+    "argon2": "^0.45.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",

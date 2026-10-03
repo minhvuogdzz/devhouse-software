@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { apiClient } from '../lib/api-client.js';
 import { getTranslation } from '../lib/i18n.js';
@@ -67,6 +68,7 @@ export async function loader({ request, params }) {
     posts: postsData.data,
     pagination: postsData.pagination,
     tags,
+    url: request.url,
     locale,
     currentFilter: {
       type: isCategory ? 'category' : isTag ? 'tag' : 'all',
@@ -77,19 +79,14 @@ export async function loader({ request, params }) {
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Engineering Insights & Architecture Perspectives — Dev House Software'
-        : 'Góc nhìn Công nghệ & Kiến trúc Hệ thống — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Góc nhìn Công nghệ & Kiến trúc Hệ thống — Dev House Software';
+  const description = isEn
         ? 'Pragmatic perspectives on software design, scalable architecture, and engineering management from Dev House.'
-        : 'Chia sẻ thực tế về thiết kế kiến trúc phần mềm, quản trị vận hành và giải pháp số từ Dev House.',
-    },
-  ];
+        : 'Chia sẻ thực tế về thiết kế kiến trúc phần mềm, quản trị vận hành và giải pháp số từ Dev House.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function BlogPage() {
@@ -130,7 +127,7 @@ export default function BlogPage() {
         </div>
 
         {/* Filters / Tags */}
-        <div className="flex flex-wrap items-center gap-2 pt-2 border-b border-border pb-6">
+        <div className="flex flex-wrap items-center gap-2 pt-2 pb-6">
           <Link
             to={`${prefix}/blog`}
             className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${

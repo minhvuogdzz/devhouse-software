@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -6,6 +7,8 @@ import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
+import { ScrollReveal } from '../components/ui/ScrollReveal.jsx';
+import { Marquee } from '../components/ui/Marquee.jsx';
 import { Layers, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export async function loader({ request }) {
@@ -32,25 +35,21 @@ export async function loader({ request }) {
   return {
     pageData: localize(pageData, locale),
     services,
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Software Development & Architecture Services — Dev House Software'
-        : 'Dịch vụ Kỹ thuật & Phát triển Phần mềm — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Dịch vụ Kỹ thuật & Phát triển Phần mềm — Dev House Software';
+  const description = isEn
         ? 'End-to-end software development services from system architecture to cloud modernization and maintenance.'
-        : 'Cung cấp dịch vụ phát triển phần mềm toàn diện từ kiến trúc hệ thống đến hiện đại hóa hạ tầng đám mây.',
-    },
-  ];
+        : 'Cung cấp dịch vụ phát triển phần mềm toàn diện từ kiến trúc hệ thống đến hiện đại hóa hạ tầng đám mây.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function ServicesPage() {
@@ -61,77 +60,81 @@ export default function ServicesPage() {
   const hero = pageData.sections?.hero || defaultPages['services-index'].defaults.hero;
 
   return (
-    <div className="py-12 lg:py-20">
+    <div className="py-12 lg:py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Header Banner */}
-        <div className="max-w-3xl space-y-4">
+        <ScrollReveal direction="up" className="max-w-3xl space-y-4">
           <Badge variant="default">{t('header.nav.services')}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-fg tracking-tight">
             {hero.heading}
           </h1>
-          <p className="text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
-        </div>
+          <p className="text-base sm:text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
+        </ScrollReveal>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map(service => (
-            <Card key={service._id || service.slug} className="flex flex-col justify-between">
-              <div className="space-y-5">
-                <div className="w-12 h-12 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
-                  <Layers className="w-6 h-6" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold font-display text-fg mb-2">
-                    {service.name || service.title}
-                  </h2>
-                  <p className="text-sm text-fg-muted leading-relaxed line-clamp-3">
-                    {service.summary || service.description}
-                  </p>
-                </div>
-
-                {service.deliverables && service.deliverables.length > 0 && (
-                  <div className="space-y-2 pt-2">
-                    {service.deliverables.slice(0, 3).map((d, i) => (
-                      <div key={i} className="flex items-center gap-2 text-xs text-fg-muted">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                        <span>{typeof d === 'string' ? d : d.title || d.name}</span>
-                      </div>
-                    ))}
+        <ScrollReveal direction="left" delay={0.2}>
+          <Marquee speed={45}>
+            {services.map(service => (
+              <Card key={service._id || service.slug} className="flex flex-col justify-between p-6 min-w-[320px] max-w-[360px]">
+                <div className="space-y-5">
+                  <div className="w-10 h-10 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
+                    <Layers className="w-5 h-5" />
                   </div>
-                )}
-              </div>
+                  <div>
+                    <h2 className="text-xl font-bold font-display text-fg mb-2">
+                      {service.name || service.title}
+                    </h2>
+                    <p className="text-sm text-fg-muted leading-relaxed line-clamp-3">
+                      {service.summary || service.description}
+                    </p>
+                  </div>
 
-              <div className="pt-6 mt-6 border-t border-border-subtle">
-                <Link
-                  to={`${prefix}/services/${service.slug}`}
-                  className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-hover gap-1.5"
-                >
-                  {t('common.viewDetails')}
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </Card>
-          ))}
-        </div>
+                  {service.deliverables && service.deliverables.length > 0 && (
+                    <div className="space-y-2 pt-2">
+                      {service.deliverables.slice(0, 3).map((d, i) => (
+                        <div key={i} className="flex items-center gap-2 text-xs text-fg-muted">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
+                          <span>{typeof d === 'string' ? d : d.title || d.name}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="pt-6 mt-6 border-t border-border-subtle">
+                  <Link
+                    to={`${prefix}/services/${service.slug}`}
+                    className="inline-flex items-center text-sm font-semibold text-primary hover:text-primary-hover gap-1.5"
+                  >
+                    {t('common.viewDetails')}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </Card>
+            ))}
+          </Marquee>
+        </ScrollReveal>
 
         {/* Contact Banner */}
-        <div className="rounded-2xl border border-border bg-surface p-8 sm:p-12 text-center space-y-4">
-          <h3 className="text-2xl sm:text-3xl font-bold font-display text-fg">
-            {locale === 'en'
-              ? 'Need a tailored engineering plan?'
-              : 'Cần kế hoạch kỹ thuật riêng cho doanh nghiệp?'}
-          </h3>
-          <p className="text-base text-fg-muted max-w-xl mx-auto">
-            {locale === 'en'
-              ? 'Connect with our engineering leads to discuss your scope and architecture requirements.'
-              : 'Trao đổi cùng đội ngũ kỹ sư trưởng của chúng tôi để xác định phạm vi và kiến trúc giải pháp.'}
-          </p>
-          <div className="pt-2">
-            <Button to={`${prefix}/contact`} size="lg">
-              {t('common.contactUs')}
-            </Button>
+        <ScrollReveal direction="up" delay={0.4}>
+          <div className="rounded-2xl border border-border bg-surface p-8 sm:p-12 text-center space-y-4">
+            <h3 className="text-2xl sm:text-3xl font-bold font-display text-fg">
+              {locale === 'en'
+                ? 'Need a tailored engineering plan?'
+                : 'Cần kế hoạch kỹ thuật riêng cho doanh nghiệp?'}
+            </h3>
+            <p className="text-sm sm:text-base text-fg-muted max-w-xl mx-auto">
+              {locale === 'en'
+                ? 'Connect with our engineering leads to discuss your scope and architecture requirements.'
+                : 'Trao đổi cùng đội ngũ kỹ sư trưởng của chúng tôi để xác định phạm vi và kiến trúc giải pháp.'}
+            </p>
+            <div className="pt-2">
+              <Button to={`${prefix}/contact`} size="lg">
+                {t('common.contactUs')}
+              </Button>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </div>
   );
