@@ -1,6 +1,6 @@
 # MVD Photo Picker Suite - Deployment Guide (DevOps)
 
-Tài liệu hướng dẫn triển khai bộ giải pháp **MVD Photo Picker Suite** (Web, Admin, Backend API) cho đội ngũ DevOps.
+Tài liệu hướng dẫn triển khai bộ giải pháp **MVD Photo Picker Suite** (Web Showcase, Admin Dashboard, Backend API) cho đội ngũ DevOps.
 
 ---
 
@@ -14,18 +14,29 @@ Tài liệu hướng dẫn triển khai bộ giải pháp **MVD Photo Picker Sui
 
 ---
 
-## 🗄️ Cấu hình MongoDB Atlas (Đã kiểm tra tương thích 100%)
+## 🔌 Danh mục các API Bên Thứ 3 (Third-Party Services)
 
-Prisma Client trong Backend đã được build sẵn với `binaryTargets`:
-```prisma
-binaryTargets = ["native", "rhel-openssl-3.0.x", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
-```
-Đảm bảo kết nối tới **MongoDB Atlas** mượt mà trên môi trường Docker Alpine mà không bị lỗi thiếu engine.
+Trong file `.env`, hệ thống tích hợp sẵn các dịch vụ sau:
 
-Chuỗi kết nối trong file `.env`:
-```env
-DATABASE_URL=mongodb+srv://<username>:<password>@cluster0.xxx.mongodb.net/photodb?retryWrites=true&w=majority
-```
+1. **MongoDB Atlas (Database chính):**
+   - Biến môi trường: `DATABASE_URL`
+   - Đã cấu hình `binaryTargets` trong Prisma hỗ trợ cả Alpine và Debian (`linux-musl-openssl-3.0.x`, `debian-openssl-3.0.x`), **chạy mượt mà trong Docker mà không gặp lỗi Query Engine**.
+
+2. **Cloudinary (CDN lưu trữ ảnh):**
+   - Biến môi trường: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+   - Dùng để lưu trữ và phân phối ảnh showcase, album mẫu, ảnh benchmark độ phân giải cao.
+
+3. **Cổng thanh toán SePay & VietQR:**
+   - Biến môi trường: `SEPAY_WEBHOOK_API_KEY`, `BANK_BIN`, `BANK_ACCOUNT_NO`, `BANK_ACCOUNT_NAME`
+   - Nhận Webhook chuyển khoản ngân hàng tự động từ SePay để kích hoạt License Key cho khách hàng.
+
+4. **Dịch vụ gửi Email (OTP & cấp License):**
+   - Biến môi trường: `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM` (hoặc `RESEND_API_KEY` / `BREVO_API_KEY`)
+   - Dùng để gửi mã OTP khi đăng nhập/đăng ký và gửi mã kích hoạt bản quyền về email người dùng.
+
+5. **JWT Secret:**
+   - Biến môi trường: `JWT_SECRET`
+   - Mã hóa token phiên đăng nhập của Admin và Client Desktop App.
 
 ---
 
@@ -35,16 +46,16 @@ DATABASE_URL=mongodb+srv://<username>:<password>@cluster0.xxx.mongodb.net/photod
 ```bash
 cd mvd-ecosystem
 cp .env.example .env
-# Chỉnh sửa .env với domain thật, DATABASE_URL MongoDB Atlas, JWT_SECRET, Cloudinary
+# Kiểm tra và điều chỉnh các giá trị trong .env (domain thật, email, keys...)
 nano .env
 ```
 
-### Bước 2: Khởi chạy Docker Compose
+### Bước 2: Khởi chạy cụm Docker Compose
 ```bash
 docker compose up -d --build
 ```
 
-Kiểm tra trạng thái container và logs:
+Kiểm tra trạng thái các container:
 ```bash
 docker compose ps
 docker compose logs -f backend
@@ -96,6 +107,7 @@ server {
     }
 }
 ```
+
 Cấp chứng chỉ SSL bằng Certbot:
 ```bash
 certbot --nginx -d api.mvdstudio.vn -d admin.mvdstudio.vn -d mvdstudio.vn
