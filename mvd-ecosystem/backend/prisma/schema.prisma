@@ -1,0 +1,216 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "linux-musl-openssl-3.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(auto()) @map("_id") @db.ObjectId
+  email             String             @unique
+  username          String?            @unique
+  password          String
+  name              String
+  phone             String?
+  role              Role               @default(USER)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  subscription      Subscription?
+  devices           Device[]
+  verificationCodes VerificationCode[]
+  licenseKeys       LicenseKey[]
+  orders            Order[]
+}
+
+type Entitlement {
+  app       String    // "ALL" | "photo-picker" | "contact-the-sheet" | "photo-counter" | "mvd-convert" | "resources"
+  expiresAt DateTime
+  isTrial   Boolean   @default(false)
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  TRIAL
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+  CANCELLED
+}
+
+enum SubscriptionPlan {
+  STARTER
+  PROFESSIONAL
+  STUDIO
+}
+
+model Subscription {
+  id           String             @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String             @unique @db.ObjectId
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status       SubscriptionStatus @default(TRIAL)
+  plan         SubscriptionPlan   @default(STARTER)
+  entitlements Entitlement[]
+  expiresAt    DateTime?          // Mốc xa nhất của các entitlements
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+}
+
+model Device {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId            String   @db.ObjectId
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deviceFingerprint String   @unique
+  lastActiveAt      DateTime @default(now())
+  createdAt         DateTime @default(now())
+
+  @@index([userId])
+}
+
+model VerificationCode {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String?  @db.ObjectId
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String?
+  code      String
+  type      CodeType @default(PASSWORD_RESET)
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([userId, code])
+}
+
+enum CodeType {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum KeyType {
+  ORIGINAL
+  PREMIUM
+}
+
+enum KeyStatus {
+  UNUSED
+  ACTIVE
+  EXPIRED
+}
+
+model LicenseKey {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  key          String    @unique
+  targetApp    String    @default("ALL") // "ALL" hoặc app cụ thể
+  keyType      KeyType?  @default(ORIGINAL)
+  durationDays Int       @default(30)
+  status       KeyStatus @default(UNUSED)
+  userId       String?   @db.ObjectId
+  user         User?     @relation(fields: [userId], references: [id])
+  activatedAt  DateTime?
+  orderId      String?   @db.ObjectId
+  note         String?   // Ghi chú của Admin (VD: Tặng khuyến mại)
+  createdAt    DateTime  @default(now())
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PARTIAL
+  CANCELLED
+}
+
+model Order {
+  id                 String      @id @default(auto()) @map("_id") @db.ObjectId
+  orderCode          String      @unique
+  userId             String      @db.ObjectId
+  user               User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  buyerName          String
+  buyerEmail         String
+  buyerPhone         String
+  targetApp          String      // "ALL" hoặc "photo-picker"
+  packageName        String      // "Gói Super App 12 tháng"
+  amount             Int         // VND
+  durationDays       Int         // 30, 90, 180, 365
+  status             OrderStatus @default(PENDING)
+  generatedKey       String?
+  sepayTransactionId String?     @unique
+  paidAmount         Int?        @default(0)
+  paidAt             DateTime?
+  paymentNote        String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model ShowcaseImage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  url       String
+  publicId  String?
+  title     String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+type ShowcasePhoto {
+  id        String?
+  url       String
+  publicId  String?
+  title     String?
+  order     Int      @default(0)
+}
+
+model ShowcaseAlbum {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  order       Int             @default(0)
+  isActive    Boolean         @default(true)
+  images      ShowcasePhoto[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model Resource {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  category     String
+  title        String
+  description  String
+  hashtags     String[]  @default([])
+  isVip        Boolean   @default(false)
+  isHot        Boolean   @default(false)
+  fileFormat   String    @default(".ZIP")
+  rating       Float     @default(5.0)
+  size         String    @default("0 MB")
+  downloadType String    @default("DIRECT") // "DIRECT" | "DRIVE"
+  downloadUrl  String?
+  fileData     String?   // Base64 file data for direct DB storage (<5MB)
+  fileName     String?
+  mimeType     String?
+  fileSize     Int?
+  author       String    @default("MVD Academy")
+  downloads    Int       @default(0)
+  isActive     Boolean   @default(true)
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model SystemConfig {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  key         String   @unique
+  value       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
