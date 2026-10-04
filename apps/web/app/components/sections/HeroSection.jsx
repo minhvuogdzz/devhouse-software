@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '../ui/Button.jsx';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { GlobeBackground } from './GlobeBackground.jsx';
+import { WeatherHeroEffect } from './WeatherHeroEffect.jsx';
+import { WeatherWidget } from './WeatherWidget.jsx';
 
 export function HeroSection({
   eyebrow,
@@ -11,6 +13,7 @@ export function HeroSection({
   secondaryCta,
   locale = 'vi',
 }) {
+  const [weatherCondition, setWeatherCondition] = useState('sunny');
   const prefix = locale === 'en' ? '/en' : '';
   const primaryUrl = primaryCta?.url?.startsWith('/')
     ? `${prefix}${primaryCta.url}`.replace(/\/+/g, '/')
@@ -27,6 +30,7 @@ export function HeroSection({
   return (
     <section className="relative isolate overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-28 border-b border-border bg-gradient-to-b from-surface to-bg">
       <GlobeBackground className="-z-10" />
+      <WeatherHeroEffect condition={weatherCondition} className="-z-10" />
       {/* Fades the globe toward the page background so the text stays easy to read */}
       <div
         aria-hidden="true"
@@ -34,11 +38,18 @@ export function HeroSection({
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-6">
-          {eyebrow && (
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary-subtle text-primary border border-border-subtle tracking-wide">
-              <span>{eyebrow}</span>
-            </div>
-          )}
+          <div className="flex flex-wrap items-center justify-center gap-2.5">
+            {eyebrow && (
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-primary-subtle text-primary border border-border-subtle tracking-wide">
+                <span>{eyebrow}</span>
+              </div>
+            )}
+            <WeatherWidget
+              locale={locale}
+              currentCondition={weatherCondition}
+              onConditionChange={setWeatherCondition}
+            />
+          </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-display text-fg tracking-tight leading-[1.12]">
             {heading}
