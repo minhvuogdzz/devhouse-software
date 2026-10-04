@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import {
   useLoaderData,
   useActionData,
@@ -47,6 +48,7 @@ export async function loader({ request }) {
     pageData: localize(pageData, locale),
     services,
     siteSettings,
+    url: request.url,
     locale,
     mountTime: Date.now(),
   };
@@ -88,19 +90,14 @@ export async function action({ request }) {
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-  return [
-    {
-      title: isEn
+    const title = isEn
         ? 'Contact Our Technical Team — Dev House Software'
-        : 'Liên hệ Tư vấn Phần mềm Doanh nghiệp — Dev House Software',
-    },
-    {
-      name: 'description',
-      content: isEn
+        : 'Liên hệ Tư vấn Phần mềm Doanh nghiệp — Dev House Software';
+  const description = isEn
         ? 'Connect with Dev House Software to evaluate project feasibility, architecture, and timeline.'
-        : 'Liên hệ đội ngũ Dev House để được phân tích yêu cầu, tư vấn kiến trúc và dự toán kinh phí triển khai.',
-    },
-  ];
+        : 'Liên hệ đội ngũ Dev House để được phân tích yêu cầu, tư vấn kiến trúc và dự toán kinh phí triển khai.';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 export default function ContactPage() {

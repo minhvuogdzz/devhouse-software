@@ -267,7 +267,7 @@ export default function UserEditorPage() {
                   />
                   <div>
                     <div className="text-sm font-semibold text-fg">{label}</div>
-                    <div className="text-xs text-fg-muted font-mono">{r.key}</div>
+                    <div className="text-xs text-fg-muted tabular-nums">{r.key}</div>
                   </div>
                 </label>
               );

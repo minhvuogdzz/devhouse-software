@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, useRouteLoaderData, Link } from 'react-router';
 import { resolveDefaultPage } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -42,10 +43,10 @@ export async function loader({ request }) {
 
 export function meta({ data }) {
   const seo = data?.seo || {};
-  return [
-    { title: seo.title || 'Dev House Software' },
-    { name: 'description', content: seo.description || '' },
-  ];
+    const title = seo.title || 'Dev House Software';
+  const description = seo.description || '';
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
 }
 
 const offeringIcons = [Globe, Building2, Cpu];

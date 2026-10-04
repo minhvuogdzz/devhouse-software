@@ -18,8 +18,8 @@ export const privacyHero = defineSection({
       en: 'Last updated: October 2026',
     },
     content: {
-      vi: 'Dev House Software cam kết bảo mật tuyệt đối các thông tin khách hàng và đối tác cung cấp. Chúng tôi chỉ thu thập các thông tin liên hệ cần thiết phục vụ quá trình trao đổi công việc, tư vấn giải pháp và đảm bảo không chia sẻ cho bên thứ ba vì bất kỳ mục đích thương mại nào.',
-      en: 'Dev House Software is strictly committed to protecting the privacy and confidentiality of our clients and partners. Information collected via this website is used solely for project correspondence and technical consultations, and is never disclosed to external parties for commercial gain.',
+      vi: 'Dev House Software luôn tôn trọng và bảo vệ thông tin của bạn. Chúng tôi chỉ lưu lại thông tin để trao đổi công việc, tư vấn và cam kết không chia sẻ cho bên thứ ba.',
+      en: 'We respect your privacy. Any information you give us is only used to talk about your project and will never be shared with anyone else.',
     },
   },
 });

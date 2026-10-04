@@ -6,7 +6,7 @@ import { sendSuccess } from '../../core/http/index.js';
 import { cache } from '../../core/cache/index.js';
 import { audit } from '../../core/audit/index.js';
 import { NotFoundError, ConflictError } from '../../core/errors/index.js';
-import { localize } from '@devhouse/content';
+import { sanitizePublicDTO } from '../../core/utils/dto.js';
 
 export const categoryController = {
   async listPublic(req, res) {
@@ -15,7 +15,7 @@ export const categoryController = {
     if (type) filter.type = type;
 
     const categories = await CategoryModel.find(filter).sort({ order: 1 }).lean();
-    const localized = categories.map(cat => localize(cat, locale));
+    const localized = categories.map(cat => sanitizePublicDTO(cat, locale));
     return sendSuccess(res, localized);
   },
 

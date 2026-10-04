@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../ui/Button.jsx';
 import { ArrowRight } from 'lucide-react';
+import { ScrollReveal } from '../ui/ScrollReveal.jsx';
 
 export function CtaSection({ heading, subheading, primaryCta, secondaryCta, locale = 'vi' }) {
   const prefix = locale === 'en' ? '/en' : '';
@@ -12,13 +13,13 @@ export function CtaSection({ heading, subheading, primaryCta, secondaryCta, loca
     : secondaryCta?.url || `${prefix}/about`;
 
   return (
-    <section className="py-20 lg:py-28 bg-gradient-to-br from-surface to-surface-2 border-b border-border">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display text-fg tracking-tight">
+    <section className="py-16 lg:py-20 bg-transparent border-b border-border">
+      <ScrollReveal direction="up" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+        <h2 className="text-3xl sm:text-4xl font-bold font-display text-fg tracking-tight">
           {heading}
         </h2>
         {subheading && (
-          <p className="text-base sm:text-xl text-fg-muted max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg text-fg-muted max-w-2xl mx-auto leading-relaxed">
             {subheading}
           </p>
         )}
@@ -35,7 +36,7 @@ export function CtaSection({ heading, subheading, primaryCta, secondaryCta, loca
             </Button>
           )}
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 }

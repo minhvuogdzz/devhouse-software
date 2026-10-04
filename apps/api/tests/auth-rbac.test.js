@@ -1,11 +1,10 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import request from 'supertest';
-import bcrypt from 'bcryptjs';
+import { UserModel } from '../src/modules/users/user.model.js';
 import { app } from '../src/app.js';
 import { adminRouter } from '../src/routes.js';
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { runSeeds } from '../seeds/index.js';
-import { UserModel } from '../src/modules/users/user.model.js';
 import { SessionModel } from '../src/modules/auth/session.model.js';
 
 describe('Auth & RBAC', () => {
@@ -34,7 +33,7 @@ describe('Auth & RBAC', () => {
     });
     await SessionModel.deleteMany({});
 
-    const passwordHash = await bcrypt.hash(testPassword, 10);
+    const passwordHash = await UserModel.hashPassword(testPassword);
 
     superAdminUser = await UserModel.create({
       email: 'test-sa@devhouse.example',
@@ -107,7 +106,7 @@ describe('Auth & RBAC', () => {
     });
 
     it('Account lockout after 5 consecutive failures', async () => {
-      const passwordHash = await bcrypt.hash(testPassword, 10);
+      const passwordHash = await UserModel.hashPassword(testPassword);
       await UserModel.create({
         email: 'test-locked@devhouse.example',
         passwordHash,

@@ -181,8 +181,11 @@ export async function runSeeds() {
   logger.info('Database seeding completed successfully.');
 }
 
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+
 // Direct execution
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   connectDB()
     .then(runSeeds)
     .then(async () => {

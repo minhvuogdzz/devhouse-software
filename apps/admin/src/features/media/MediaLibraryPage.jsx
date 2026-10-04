@@ -231,7 +231,7 @@ export default function MediaLibraryPage() {
               </div>
               <div className="col-span-2 truncate">
                 <span className="text-fg-subtle">Public ID: </span>
-                <span className="font-mono text-fg text-[11px]">{selectedAsset.publicId}</span>
+                <span className="tabular-nums text-fg text-[11px]">{selectedAsset.publicId}</span>
               </div>
             </div>
 

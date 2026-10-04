@@ -257,7 +257,7 @@ export default function RoleEditorPage() {
               return (
                 <div key={module} className="pt-4 first:pt-0 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold uppercase tracking-wider text-fg font-mono">
+                    <span className="text-xs font-bold uppercase tracking-wider text-fg tabular-nums">
                       {module}
                     </span>
                     {!isSystem && (

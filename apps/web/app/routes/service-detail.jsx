@@ -1,4 +1,5 @@
 import React from 'react';
+import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
@@ -32,17 +33,19 @@ export async function loader({ params, request }) {
 
   return {
     service,
+    url: request.url,
     locale,
   };
 }
 
 export function meta({ data }) {
-  if (!data?.service) return [{ title: 'Service Not Found — Dev House' }];
+  if (!data?.service) return [{ title: 'Not Found' }];
   const s = data.service;
-  return [
-    { title: `${s.name || s.title} — Dev House Software` },
-    { name: 'description', content: s.summary || s.description || '' },
-  ];
+  const title = `${s.title || s.name} — Dev House Software`;
+  const description = s.summary || s.description || '';
+  const jsonLd = { '@context': 'https://schema.org', '@type': 'Service', name: s.title || s.name, description, provider: { '@type': 'Organization', name: 'Dev House Software' } };
+
+  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article', jsonLd });
 }
 
 export default function ServiceDetailPage() {

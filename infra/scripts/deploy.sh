@@ -14,7 +14,7 @@ if [[ -z "$IMAGE_TAG" ]]; then
 fi
 
 BASE_DIR="/opt/devhouse"
-COMPOSE_FILE="${BASE_DIR}/compose.prod.yml"
+COMPOSE_FILE="${BASE_DIR}/docker-compose.yml"
 REGISTRY="${REGISTRY:-registry.gitlab.com/thedevhouse/web-repo}"
 RELEASE_LOG="${BASE_DIR}/releases.log"
 CURRENT_TAG_FILE="${BASE_DIR}/current_tag"
