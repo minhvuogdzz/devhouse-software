@@ -56,20 +56,24 @@ import AuditLogListPage from '../features/audit-logs/AuditLogListPage.jsx';
 import AccountPage from '../features/account/AccountPage.jsx';
 import ForbiddenPage from '../features/errors/ForbiddenPage.jsx';
 import NotFoundPage from '../features/errors/NotFoundPage.jsx';
+import ErrorPage from '../features/errors/ErrorPage.jsx';
 
 export const router = createBrowserRouter([
   // Public auth routes
   {
     path: '/login',
     element: <LoginPage />,
+    errorElement: <ErrorPage />,
   },
   {
     path: '/forgot-password',
     element: <ForgotPasswordPage />,
+    errorElement: <ErrorPage />,
   },
   {
     path: '/reset-password',
     element: <ResetPasswordPage />,
+    errorElement: <ErrorPage />,
   },
 
   // Protected admin routes
@@ -80,6 +84,7 @@ export const router = createBrowserRouter([
         <AdminShell />
       </RequireAuth>
     ),
+    errorElement: <ErrorPage />,
     children: [
       {
         index: true,

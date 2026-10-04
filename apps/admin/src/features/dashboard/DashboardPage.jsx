@@ -37,6 +37,20 @@ export default function DashboardPage() {
     newContacts: 0,
   };
 
+  const getCount = val => {
+    if (val == null) return 0;
+    if (typeof val === 'object') return val.total ?? val.published ?? 0;
+    return val;
+  };
+
+  const newContactsCount =
+    data?.newContactRequests ??
+    data?.newContacts ??
+    (typeof counts.newContacts === 'object' ? counts.newContacts.total : counts.newContacts) ??
+    0;
+
+  const recentContacts = data?.recentContactRequests || data?.recentContacts || [];
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -74,7 +88,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-3xl font-extrabold font-display text-fg">
-              {counts.newContacts || 0}
+              {newContactsCount}
             </div>
             <p className="text-xs text-fg-muted">
               {locale === 'en' ? 'Awaiting response from team' : 'Đang chờ xử lý và phản hồi'}
@@ -103,7 +117,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-3xl font-extrabold font-display text-fg">
-              {counts.services || 0}
+              {getCount(counts.services)}
             </div>
             <p className="text-xs text-fg-muted">
               {locale === 'en' ? 'Catalog offerings' : 'Gói dịch vụ kỹ thuật'}
@@ -132,7 +146,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <div className="text-3xl font-extrabold font-display text-fg">
-              {counts.projects || 0}
+              {getCount(counts.projects)}
             </div>
             <p className="text-xs text-fg-muted">
               {locale === 'en' ? 'Published case studies' : 'Dự án thực tế'}
@@ -160,7 +174,7 @@ export default function DashboardPage() {
                 <BookOpen className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-3xl font-extrabold font-display text-fg">{counts.posts || 0}</div>
+            <div className="text-3xl font-extrabold font-display text-fg">{getCount(counts.posts)}</div>
             <p className="text-xs text-fg-muted">
               {locale === 'en' ? 'Technical insights' : 'Bài viết góc nhìn công nghệ'}
             </p>
@@ -196,13 +210,13 @@ export default function DashboardPage() {
 
           {isLoading ? (
             <div className="text-center py-8 text-xs text-fg-muted">Đang tải...</div>
-          ) : !data?.recentContacts || data.recentContacts.length === 0 ? (
+          ) : !recentContacts || recentContacts.length === 0 ? (
             <div className="text-center py-8 text-xs text-fg-muted border border-dashed border-border rounded-lg">
               Chưa có yêu cầu liên hệ mới nào.
             </div>
           ) : (
             <div className="divide-y divide-border">
-              {data.recentContacts.slice(0, 5).map(c => (
+              {recentContacts.slice(0, 5).map(c => (
                 <div key={c._id} className="py-3 flex items-center justify-between gap-3 text-xs">
                   <div className="space-y-0.5 truncate">
                     <p className="font-bold text-fg truncate">{c.name}</p>
