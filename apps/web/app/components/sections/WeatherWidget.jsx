@@ -89,6 +89,12 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
   const [isManualOverride, setIsManualOverride] = useState(false);
   const dropdownRef = useRef(null);
 
+  // Only allow test simulator in development mode or via ?weather-dev
+  const isDev =
+    typeof window !== 'undefined'
+      ? Boolean(import.meta.env?.DEV) || window.location.search.includes('weather-dev')
+      : Boolean(import.meta.env?.DEV);
+
   // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(e) {
@@ -288,90 +294,92 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
             </div>
           </div>
 
-          {/* Effect Simulator Mode Switcher */}
-          <div className="pt-3 space-y-2">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-fg">
-              <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
-                {locale === 'en' ? 'Test Visual Effect' : 'Thử hiệu ứng thời tiết'}
-              </span>
-              {isManualOverride && (
+          {/* Effect Simulator Mode Switcher (DEV ONLY) */}
+          {isDev && (
+            <div className="pt-3 space-y-2">
+              <div className="flex items-center justify-between text-[11px] font-semibold text-fg">
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  {locale === 'en' ? 'Test Visual Effect (Dev)' : 'Thử hiệu ứng thời tiết (Dev)'}
+                </span>
+                {isManualOverride && (
+                  <button
+                    type="button"
+                    onClick={() => selectEffect('auto')}
+                    className="text-[10px] font-medium text-primary hover:underline cursor-pointer"
+                  >
+                    {locale === 'en' ? 'Reset to Live' : 'Về tự động'}
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-1">
                 <button
                   type="button"
-                  onClick={() => selectEffect('auto')}
-                  className="text-[10px] font-medium text-primary hover:underline cursor-pointer"
+                  onClick={() => selectEffect('thunderstorm')}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
+                    currentCondition === 'thunderstorm' && isManualOverride
+                      ? 'bg-primary text-primary-fg border-primary shadow-sm'
+                      : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
+                  }`}
                 >
-                  {locale === 'en' ? 'Reset to Live' : 'Về tự động'}
+                  <CloudLightning className="w-4 h-4 text-warning shrink-0" />
+                  <div className="truncate">
+                    <span className="block leading-tight">{locale === 'en' ? 'Lightning' : 'Sấm chớp'}</span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Storm & Flash' : 'Bão & Tia sét'}</span>
+                  </div>
                 </button>
-              )}
+
+                <button
+                  type="button"
+                  onClick={() => selectEffect('cloudy')}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
+                    currentCondition === 'cloudy' && isManualOverride
+                      ? 'bg-primary text-primary-fg border-primary shadow-sm'
+                      : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
+                  }`}
+                >
+                  <Cloud className="w-4 h-4 text-fg-muted shrink-0" />
+                  <div className="truncate">
+                    <span className="block leading-tight">{locale === 'en' ? 'Rolling Mist' : 'Mây mù che'}</span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Clouds & Fog' : 'Mây bồng bềnh'}</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => selectEffect('rain')}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
+                    currentCondition === 'rain' && isManualOverride
+                      ? 'bg-primary text-primary-fg border-primary shadow-sm'
+                      : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
+                  }`}
+                >
+                  <CloudRain className="w-4 h-4 text-primary shrink-0" />
+                  <div className="truncate">
+                    <span className="block leading-tight">{locale === 'en' ? 'Heavy Rain' : 'Mưa rơi'}</span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Rain & Splash' : 'Giọt mưa xiên'}</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => selectEffect('sunny')}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
+                    currentCondition === 'sunny' && isManualOverride
+                      ? 'bg-primary text-primary-fg border-primary shadow-sm'
+                      : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
+                  }`}
+                >
+                  <Sun className="w-4 h-4 text-warning shrink-0" />
+                  <div className="truncate">
+                    <span className="block leading-tight">{locale === 'en' ? 'Sun Rays' : 'Nắng ấm'}</span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Golden Flare' : 'Tia nắng vàng'}</span>
+                  </div>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => selectEffect('thunderstorm')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
-                  currentCondition === 'thunderstorm' && isManualOverride
-                    ? 'bg-primary text-primary-fg border-primary shadow-sm'
-                    : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
-                }`}
-              >
-                <CloudLightning className="w-4 h-4 text-warning shrink-0" />
-                <div className="truncate">
-                  <span className="block leading-tight">{locale === 'en' ? 'Lightning' : 'Sấm chớp'}</span>
-                  <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Storm & Flash' : 'Bão & Tia sét'}</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => selectEffect('cloudy')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
-                  currentCondition === 'cloudy' && isManualOverride
-                    ? 'bg-primary text-primary-fg border-primary shadow-sm'
-                    : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
-                }`}
-              >
-                <Cloud className="w-4 h-4 text-fg-muted shrink-0" />
-                <div className="truncate">
-                  <span className="block leading-tight">{locale === 'en' ? 'Rolling Mist' : 'Mây mù che'}</span>
-                  <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Clouds & Fog' : 'Mây bồng bềnh'}</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => selectEffect('rain')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
-                  currentCondition === 'rain' && isManualOverride
-                    ? 'bg-primary text-primary-fg border-primary shadow-sm'
-                    : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
-                }`}
-              >
-                <CloudRain className="w-4 h-4 text-primary shrink-0" />
-                <div className="truncate">
-                  <span className="block leading-tight">{locale === 'en' ? 'Heavy Rain' : 'Mưa rơi'}</span>
-                  <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Rain & Splash' : 'Giọt mưa xiên'}</span>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => selectEffect('sunny')}
-                className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer border ${
-                  currentCondition === 'sunny' && isManualOverride
-                    ? 'bg-primary text-primary-fg border-primary shadow-sm'
-                    : 'bg-surface-sunken hover:bg-surface-sunken/80 text-fg border-border/50'
-                }`}
-              >
-                <Sun className="w-4 h-4 text-warning shrink-0" />
-                <div className="truncate">
-                  <span className="block leading-tight">{locale === 'en' ? 'Sun Rays' : 'Nắng ấm'}</span>
-                  <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Golden Flare' : 'Tia nắng vàng'}</span>
-                </div>
-              </button>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>
