@@ -29,13 +29,13 @@ export function HeroSection({
 
   return (
     <section className="relative isolate overflow-hidden pt-12 pb-16 lg:pt-20 lg:pb-28 border-b border-border bg-gradient-to-b from-surface to-bg">
-      <GlobeBackground className="-z-10" />
-      <WeatherHeroEffect condition={weatherCondition} className="-z-10" />
+      <GlobeBackground className="-z-20" />
       {/* Fades the globe toward the page background so the text stays easy to read */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-bg/30 via-transparent to-bg/30"
+        className="pointer-events-none absolute inset-0 -z-20 bg-gradient-to-b from-bg/25 via-transparent to-bg/25"
       />
+      <WeatherHeroEffect condition={weatherCondition} className="-z-10" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <div className="flex flex-wrap items-center justify-center gap-2.5">
