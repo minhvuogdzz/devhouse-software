@@ -104,3 +104,19 @@ Still open:
 ## 6. Repository note
 
 The code is meant for `https://gitlab.com/thedevhouse/web-repo`, which already holds three inactive projects (`devhouse_web`, `w1_mobileapp`, `w2_ecommerce`) at its root. They are to be moved unchanged into a `legacy/` folder, and this monorepo takes the root. The pipeline in `.gitlab-ci.yml` must be the only CI file at the root, and the project's CI settings must point to `.gitlab-ci.yml` (the last pipeline of the old repo failed; check Auto DevOps is off).
+
+## 7. Syncing the content added in development into the server database
+
+The pages, menu, settings, services, packages, templates, solutions, technologies, categories and pictures that were entered on the development database (Atlas `devhouse_dev`) are in `apps/api/seeds/content-export.json`. One command puts them into the server database, from the folder where the stack runs (after the new `api` image is built and started, and after the seed ran, which `deploy.sh` does):
+
+```bash
+docker compose exec api node apps/api/scripts/import-content.js
+```
+
+To look first without writing anything, add `--dry-run` at the end.
+
+- Safe to run more than once: the second run changes nothing. A record that already exists (same page key, slug, picture) is updated in place and keeps the server's id; a new one is added. Nothing is deleted.
+- Links between records (service group, template category, pictures) are rewritten to the server's ids.
+- Not included on purpose: users, roles, sessions, audit logs and contact requests (passwords, logins and visitors' details). Who created or edited a record is not carried over either.
+- The pictures are on Cloudinary; the server must use the same Cloudinary account, or the picture addresses in `media` will not open.
+- To make a newer file from the development database: `node apps/api/scripts/export-content.js` (read only), then commit `apps/api/seeds/content-export.json`.
