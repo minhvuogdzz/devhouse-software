@@ -3,7 +3,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
 import { Collection } from '../app/components/ui/Collection.jsx';
-import { SliderDots } from '../app/components/ui/SliderDots.jsx';
+import { MAX_DOTS, SliderDots } from '../app/components/ui/SliderDots.jsx';
 
 const items = ['Một', 'Hai', 'Ba', 'Bốn'].map((name, index) => ({ id: index, name }));
 const render = display =>
@@ -109,19 +109,50 @@ describe('SliderDots', () => {
     expect(html.match(/<button/g)).toHaveLength(4);
     expect(html.match(/aria-current="true"/g)).toHaveLength(1);
     expect(html).toContain('aria-label="Trang 2/4"');
+    // earlier pages, the current page and later pages are told apart for the CSS
+    expect(html.match(/data-state="done"/g)).toHaveLength(1);
+    expect(html.match(/data-state="active"/g)).toHaveLength(1);
+    expect(html.match(/data-state="todo"/g)).toHaveLength(2);
   });
 
-  it('draws progress bars: earlier pages full, later pages empty', () => {
+  it('puts every mark in one row, so the row is centred as a single box', () => {
+    for (const style of ['dot', 'progress', 'slide']) {
+      const html = draw({ style });
+      expect(html.match(/slider-dots-row/g)).toHaveLength(1);
+      expect(html.match(/slider-dots-mark/g)).toHaveLength(4);
+    }
+  });
+
+  it('draws progress bars, each with a fill the slider can grow', () => {
     const html = draw({ style: 'progress' });
     expect(html).toContain('slider-dots--progress');
-    expect(html.match(/transform:scaleX\(1\)/g)).toHaveLength(1);
-    expect(html.match(/transform:scaleX\(0\)/g)).toHaveLength(3);
+    expect(html.match(/slider-dots-fill/g)).toHaveLength(4);
+    expect(html).toContain('data-running="true"');
+    expect(draw({ style: 'progress', running: false })).toContain('data-running="false"');
+    // the fill of a bar is drawn by the CSS from the page state; nothing is baked into the markup
+    expect(html).not.toContain('scaleX');
   });
 
-  it('draws a gliding pill that sits on the current page', () => {
+  it('does not draw bar fills for the other kinds', () => {
+    expect(draw({ style: 'dot' })).not.toContain('slider-dots-fill');
+    expect(draw({ style: 'slide' })).not.toContain('slider-dots-fill');
+  });
+
+  it('draws a gliding pill inside the row, after the dots, sitting on the current page', () => {
     const html = draw({ style: 'slide', page: 2 });
     expect(html).toContain('slider-dots--slide');
-    expect(html).toContain('slider-dots-thumb');
+    expect(html.match(/slider-dots-thumb/g)).toHaveLength(1);
     expect(html).toContain('--index:2');
+    // the pill is drawn after the buttons so it paints on top of them, and before the row ends
+    expect(html.lastIndexOf('</button>')).toBeLessThan(html.indexOf('slider-dots-thumb'));
+    expect(html.indexOf('slider-dots-thumb')).toBeLessThan(html.lastIndexOf('</div>'));
+    expect(draw({ style: 'dot', page: 2 })).not.toContain('slider-dots-thumb');
+  });
+
+  it('shows a counter instead of dots when there are too many pages for a row', () => {
+    const html = draw({ style: 'slide', pages: MAX_DOTS + 5, page: 3 });
+    expect(html).toContain(`4 / ${MAX_DOTS + 5}`);
+    expect(html).not.toContain('<button');
+    expect(draw({ style: 'slide', pages: MAX_DOTS, page: 3 })).toContain('<button');
   });
 });
