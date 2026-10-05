@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Plus, Edit, Trash2, RotateCcw } from 'lucide-react';
+import { Plus, Edit, Trash2, RotateCcw, FileText } from 'lucide-react';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
@@ -152,10 +152,16 @@ export default function PackageListPage() {
             Các gói bạn bán: gồm gì, mức hỗ trợ và giá. Để trống giá nếu chưa công bố.
           </p>
         </div>
-        <Button as={Link} to="/packages/new" variant="primary" size="md">
-          <Plus className="mr-1.5 h-4 w-4" />
-          Thêm gói mới
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button as={Link} to="/pages/packages-index" variant="outline" size="md">
+            <FileText className="mr-1.5 h-4 w-4" />
+            Sửa tiêu đề & nội dung trang
+          </Button>
+          <Button as={Link} to="/packages/new" variant="primary" size="md">
+            <Plus className="mr-1.5 h-4 w-4" />
+            Thêm gói mới
+          </Button>
+        </div>
       </div>
 
       <DataTable

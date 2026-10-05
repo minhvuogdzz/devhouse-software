@@ -106,36 +106,78 @@ export default function PageEditorPage() {
     );
   }
 
+const PUBLIC_URL_MAP = {
+  home: '/',
+  about: '/about',
+  'services-index': '/services',
+  'packages-index': '/packages',
+  'products-index': '/products',
+  'solutions-index': '/solutions',
+  'projects-index': '/projects',
+  'technologies-index': '/technologies',
+  'blog-index': '/blog',
+  careers: '/careers',
+  contact: '/contact',
+  privacy: '/privacy',
+  terms: '/terms',
+};
+
+function friendlySectionLabel(sectionKey, rawLabel) {
+  if (sectionKey === 'hero') return 'Đầu trang (Heading & Mô tả)';
+  if (sectionKey === 'cta') return 'Khung kêu gọi (CTA)';
+  if (sectionKey === 'empty') return 'Khi chưa có dữ liệu';
+  if (sectionKey === 'payment') return 'Cách thanh toán';
+  if (sectionKey === 'commitments') return 'Cam kết dịch vụ';
+  if (sectionKey === 'company') return 'Giới thiệu công ty';
+  if (sectionKey === 'mission') return 'Giá trị cốt lõi';
+  if (sectionKey === 'leadership') return 'Đội ngũ lãnh đạo';
+  if (sectionKey === 'serviceTerms') return 'Điều khoản dịch vụ';
+  return rawLabel || sectionKey;
+}
+
   const definitions = page.definition?.sections || [];
   const overridden = new Set(Object.keys(page.overrides || {}));
   const tabItems = [
     ...definitions.map(section => ({
       id: section.key,
-      label: `${section.label || section.key}${overridden.has(section.key) ? ' ●' : ''}`,
+      label: `${friendlySectionLabel(section.key, section.label)}${overridden.has(section.key) ? ' ●' : ''}`,
     })),
-    { id: 'seo', label: 'SEO & Meta' },
+    { id: 'seo', label: 'Tối ưu SEO Google' },
   ];
   const currentDefinition = definitions.find(section => section.key === activeTab);
+  const publicPath = PUBLIC_URL_MAP[key];
 
   return (
     <ResourceForm
-      title={`Chỉnh sửa trang: ${page.title?.vi || key}`}
-      subtitle="Sửa chữ, nút bấm và nội dung bằng cả hai ngôn ngữ. Dấu ● nghĩa là phần đó đã được bạn chỉnh; phần còn lại dùng nội dung mặc định của hệ thống."
+      title={`Chỉnh sửa trang: ${typeof page.title === 'object' ? page.title.vi || page.title.en : page.title || key}`}
+      subtitle="Chỉnh sửa Tiêu đề chính (Heading), Đoạn mô tả (Subheading), Lời giới thiệu và nút bấm bằng cả 2 ngôn ngữ. Dấu ● nghĩa là phần đó đã được bạn chỉnh sửa riêng."
       backUrl="/pages"
       onSubmit={handleSave}
       isSubmitting={isSubmitting}
       extraActions={
-        currentDefinition && overridden.has(activeTab) ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => handleResetSection(activeTab)}
-          >
-            <RotateCcw className="w-3.5 h-3.5 mr-1" />
-            Đặt lại phần này
-          </Button>
-        ) : null
+        <div className="flex items-center gap-2">
+          {publicPath && (
+            <a
+              href={publicPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-sunken text-xs font-semibold text-fg transition-colors"
+            >
+              <span>Xem trang ngoài web</span>
+            </a>
+          )}
+          {currentDefinition && overridden.has(activeTab) && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => handleResetSection(activeTab)}
+            >
+              <RotateCcw className="w-3.5 h-3.5 mr-1" />
+              Đặt lại phần này
+            </Button>
+          )}
+        </div>
       }
     >
       {feedback && (

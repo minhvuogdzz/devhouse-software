@@ -4,7 +4,7 @@ const translations = {
   vi: {
     nav: {
       dashboard: 'Bảng điều khiển',
-      pages: 'Trang tĩnh',
+      pages: 'Nội dung Trang web',
       services: 'Dịch vụ',
       packages: 'Gói dịch vụ',
       products: 'Mẫu website',
@@ -76,7 +76,7 @@ const translations = {
   en: {
     nav: {
       dashboard: 'Dashboard',
-      pages: 'Static Pages',
+      pages: 'Page Content',
       services: 'Services',
       packages: 'Packages',
       products: 'Templates',

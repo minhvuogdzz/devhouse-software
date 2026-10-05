@@ -1,8 +1,8 @@
 import React from 'react';
 import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
-import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
-import { apiClient } from '../lib/api-client.js';
+import { defaultCatalog, localize } from '@devhouse/content';
+import { loadPage, loadList, isShown } from '../lib/page-data.js';
 import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
@@ -11,32 +11,12 @@ import { Marquee } from '../components/ui/Marquee.jsx';
 import { Cpu, ArrowRight } from 'lucide-react';
 
 export async function loader({ request }) {
-  const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
-
-  let pageData = null;
-  let solutions = [];
-
-  try {
-    const pageRes = await apiClient(`/pages/solutions-index?locale=${locale}`);
-    pageData = pageRes.data?.resolved || pageRes.data;
-  } catch {
-    pageData = defaultPages['solutions-index'];
-  }
-
-  try {
-    const solRes = await apiClient(`/solutions?limit=20&locale=${locale}`);
-    solutions = solRes.data || [];
-  } catch {
-    solutions = defaultCatalog.solutions.map(s => localize(s, locale));
-  }
-
-  return {
-    pageData: localize(pageData, locale),
-    solutions,
-    url: request.url,
-    locale,
-  };
+  const page = await loadPage('solutions-index', request);
+  const solutions = await loadList(
+    `/solutions?limit=20&locale=${page.locale}`,
+    defaultCatalog.solutions ? defaultCatalog.solutions.map(s => localize(s, page.locale)) : [],
+  );
+  return { ...page, solutions };
 }
 
 export function meta({ data }) {
@@ -52,11 +32,10 @@ export function meta({ data }) {
 }
 
 export default function SolutionsPage() {
-  const { pageData, solutions, locale } = useLoaderData();
+  const { sections, solutions, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
-
-  const hero = pageData?.sections?.hero || defaultPages['solutions-index']?.defaults?.hero || {
+  const hero = sections?.hero || {
     heading: locale === 'en' ? 'Enterprise Software & Cloud Engineering Solutions' : 'Giải pháp Phần mềm & Kỹ thuật Đám mây',
     subheading: locale === 'en' ? 'Engineered for reliability, velocity, and business growth.' : 'Được tối ưu cho sự ổn định, tốc độ và mở rộng kinh doanh.',
   };
@@ -65,13 +44,17 @@ export default function SolutionsPage() {
     <div className="py-12 lg:py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Header */}
-        <ScrollReveal direction="up" className="max-w-3xl space-y-4">
-          <Badge variant="accent">{t('header.nav.solutions')}</Badge>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-fg tracking-tight">
-            {hero.heading}
-          </h1>
-          <p className="text-base sm:text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
-        </ScrollReveal>
+        {isShown(hero) && (
+          <ScrollReveal direction="up" className="max-w-3xl space-y-4">
+            {hero.eyebrow && <Badge variant="accent">{hero.eyebrow}</Badge>}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-fg tracking-tight">
+              {hero.heading}
+            </h1>
+            {hero.subheading && (
+              <p className="text-base sm:text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
+            )}
+          </ScrollReveal>
+        )}
 
         {/* Solutions Grid */}
         <ScrollReveal direction="left" delay={0.2}>

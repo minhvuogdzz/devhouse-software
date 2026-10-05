@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import { Plus, Edit, Trash2, RotateCcw } from 'lucide-react';
+import { Plus, Edit, Trash2, RotateCcw, FileText } from 'lucide-react';
 
 export default function ServiceListPage() {
   const [data, setData] = useState([]);
@@ -127,10 +127,16 @@ export default function ServiceListPage() {
           </p>
         </div>
 
-        <Button as={Link} to="/services/new" variant="primary" size="md">
-          <Plus className="w-4 h-4 mr-1.5" />
-          Thêm dịch vụ mới
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button as={Link} to="/pages/services-index" variant="outline" size="md">
+            <FileText className="w-4 h-4 mr-1.5" />
+            Sửa tiêu đề & giới thiệu trang
+          </Button>
+          <Button as={Link} to="/services/new" variant="primary" size="md">
+            <Plus className="w-4 h-4 mr-1.5" />
+            Thêm dịch vụ mới
+          </Button>
+        </div>
       </div>
 
       <DataTable

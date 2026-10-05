@@ -13,12 +13,12 @@ import { ImageField } from '../media-picker/MediaPickerModal.jsx';
  */
 
 const LABELS = {
-  eyebrow: 'Nhãn nhỏ phía trên tiêu đề',
-  heading: 'Tiêu đề',
-  subheading: 'Mô tả ngắn dưới tiêu đề',
-  intro: 'Đoạn giới thiệu',
-  title: 'Tiêu đề',
-  description: 'Mô tả',
+  eyebrow: 'Nhãn phụ phía trên (Eyebrow)',
+  heading: 'Tiêu đề chính (Heading)',
+  subheading: 'Mô tả ngắn dưới tiêu đề (Subheading)',
+  intro: 'Đoạn giới thiệu (Intro)',
+  title: 'Tiêu đề (Title)',
+  description: 'Mô tả chi tiết (Description)',
   text: 'Nội dung',
   body: 'Nội dung',
   items: 'Danh sách',

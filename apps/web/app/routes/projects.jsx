@@ -1,8 +1,8 @@
 import React from 'react';
 import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
-import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
-import { apiClient } from '../lib/api-client.js';
+import { defaultCatalog, localize } from '@devhouse/content';
+import { loadPage, loadList, isShown } from '../lib/page-data.js';
 import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
@@ -11,32 +11,12 @@ import { Marquee } from '../components/ui/Marquee.jsx';
 import { Briefcase, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export async function loader({ request }) {
-  const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
-
-  let pageData = null;
-  let projects = [];
-
-  try {
-    const pageRes = await apiClient(`/pages/projects-index?locale=${locale}`);
-    pageData = pageRes.data?.resolved || pageRes.data;
-  } catch {
-    pageData = defaultPages['projects-index'];
-  }
-
-  try {
-    const pRes = await apiClient(`/projects?limit=20&locale=${locale}`);
-    projects = pRes.data || [];
-  } catch {
-    projects = defaultCatalog.projects ? defaultCatalog.projects.map(p => localize(p, locale)) : [];
-  }
-
-  return {
-    pageData: localize(pageData, locale),
-    projects,
-    url: request.url,
-    locale,
-  };
+  const page = await loadPage('projects-index', request);
+  const projects = await loadList(
+    `/projects?limit=20&locale=${page.locale}`,
+    defaultCatalog.projects ? defaultCatalog.projects.map(p => localize(p, page.locale)) : [],
+  );
+  return { ...page, projects };
 }
 
 export function meta({ data }) {
@@ -52,11 +32,10 @@ export function meta({ data }) {
 }
 
 export default function ProjectsPage() {
-  const { pageData, projects, locale } = useLoaderData();
+  const { sections, projects, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
-
-  const hero = pageData?.sections?.hero || defaultPages['projects-index']?.defaults?.hero || {
+  const hero = sections?.hero || {
     heading: locale === 'en' ? 'Selected client initiatives and successful software deliveries' : 'Các dự án công nghệ tiêu biểu cùng đối tác',
     subheading: locale === 'en' ? 'Explore how we collaborate with business partners to engineer reliable, scalable software products.' : 'Khám phá cách chúng tôi đồng hành cùng khách hàng giải quyết bài toán kỹ thuật.',
   };
@@ -65,13 +44,17 @@ export default function ProjectsPage() {
     <div className="py-12 lg:py-20 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Header */}
-        <ScrollReveal direction="up" className="max-w-3xl space-y-4">
-          <Badge variant="default">{t('header.nav.projects')}</Badge>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-fg tracking-tight">
-            {hero.heading}
-          </h1>
-          <p className="text-base sm:text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
-        </ScrollReveal>
+        {isShown(hero) && (
+          <ScrollReveal direction="up" className="max-w-3xl space-y-4">
+            {hero.eyebrow && <Badge variant="default">{hero.eyebrow}</Badge>}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-display text-fg tracking-tight">
+              {hero.heading}
+            </h1>
+            {hero.subheading && (
+              <p className="text-base sm:text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
+            )}
+          </ScrollReveal>
+        )}
 
         {/* Projects Grid */}
         {projects.length > 0 ? (

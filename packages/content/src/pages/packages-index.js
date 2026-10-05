@@ -115,7 +115,7 @@ export const packagesCommitments = defineSection({
 
 export const packagesIndexPage = {
   key: 'packages-index',
-  title: { vi: 'Gói dịch vụ', en: 'Packages' },
+  title: { vi: 'Bảng Giá & Gói Cước', en: 'Pricing & Packages' },
   sections: [packagesHero, packagesPayment, packagesCommitments],
   seo: {
     title: {

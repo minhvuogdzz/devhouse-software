@@ -299,7 +299,7 @@ export const aboutServiceTerms = defineSection({
 
 export const aboutPage = {
   key: 'about',
-  title: { vi: 'Giới thiệu', en: 'About' },
+  title: { vi: 'Về Dev House', en: 'About Dev House' },
   sections: [aboutHero, aboutCompany, aboutLeadership, aboutMission, aboutServiceTerms],
   seo: {
     title: {

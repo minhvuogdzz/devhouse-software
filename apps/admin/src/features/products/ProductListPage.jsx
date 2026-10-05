@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
-import { Plus, Edit, Trash2, RotateCcw, Star, Eye, ImageOff } from 'lucide-react';
+import { Plus, Edit, Trash2, RotateCcw, Star, Eye, ImageOff, FileText } from 'lucide-react';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
@@ -185,10 +185,16 @@ export default function ProductListPage() {
             Các thẻ mẫu hiện ở trang Mẫu website: ảnh, thể loại, đánh giá, lượt xem và bản xem thử.
           </p>
         </div>
-        <Button as={Link} to="/products/new" variant="primary" size="md">
-          <Plus className="mr-1.5 h-4 w-4" />
-          Thêm mẫu mới
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button as={Link} to="/pages/products-index" variant="outline" size="md">
+            <FileText className="mr-1.5 h-4 w-4" />
+            Sửa tiêu đề & giới thiệu trang
+          </Button>
+          <Button as={Link} to="/products/new" variant="primary" size="md">
+            <Plus className="mr-1.5 h-4 w-4" />
+            Thêm mẫu mới
+          </Button>
+        </div>
       </div>
 
       <DataTable

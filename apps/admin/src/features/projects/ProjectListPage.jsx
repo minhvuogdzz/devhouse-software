@@ -4,7 +4,7 @@ import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
-import { Plus, Edit, Trash2, RotateCcw, ShieldCheck } from 'lucide-react';
+import { Plus, Edit, Trash2, RotateCcw, ShieldCheck, FileText } from 'lucide-react';
 
 export default function ProjectListPage() {
   const [data, setData] = useState([]);
@@ -131,10 +131,16 @@ export default function ProjectListPage() {
           </p>
         </div>
 
-        <Button as={Link} to="/projects/new" variant="primary" size="md">
-          <Plus className="w-4 h-4 mr-1.5" />
-          Thêm dự án mới
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button as={Link} to="/pages/projects-index" variant="outline" size="md">
+            <FileText className="w-4 h-4 mr-1.5" />
+            Sửa tiêu đề & giới thiệu trang
+          </Button>
+          <Button as={Link} to="/projects/new" variant="primary" size="md">
+            <Plus className="w-4 h-4 mr-1.5" />
+            Thêm dự án mới
+          </Button>
+        </div>
       </div>
 
       <DataTable
