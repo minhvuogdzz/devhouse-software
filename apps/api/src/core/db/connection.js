@@ -9,6 +9,13 @@ export const connectDB = async (uri = config.MONGODB_URI, dbName = config.MONGOD
     return mongoose.connection;
   }
 
+  // Safety net: a test run may only ever connect to a database whose name contains "test".
+  if (config.NODE_ENV === 'test' && !/test/i.test(dbName)) {
+    throw new Error(
+      `Refusing to connect tests to database "${dbName}". Tests must use an isolated test database.`,
+    );
+  }
+
   mongoose.set('strictQuery', true);
 
   try {

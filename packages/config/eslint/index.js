@@ -56,7 +56,8 @@ export const noRawPalettePlugin = {
             if (filename && filename.includes('RichTextRenderer.jsx')) return;
             context.report({
               node,
-              message: 'Forbidden utility "font-mono". Rule P5 forbids monospace anywhere except a real code block inside a blog article. Use tabular-nums where alignment is needed.',
+              message:
+                'Forbidden utility "font-mono". Rule P5 forbids monospace anywhere except a real code block inside a blog article. Use tabular-nums where alignment is needed.',
             });
           }
         }
@@ -166,6 +167,7 @@ export const createEslintConfig = () => [
       '**/coverage/**',
       '**/.hallmark/**',
       'legacy/**',
+      'mvd-ecosystem/**',
     ],
   },
 ];
