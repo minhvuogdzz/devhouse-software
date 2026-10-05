@@ -43,3 +43,16 @@ export async function apiClient(endpoint, options = {}) {
     throw new ApiError(err.message || 'Network error', 503, 'NETWORK_ERROR');
   }
 }
+
+// Convenience helpers used across the admin: apiClient.get('/x'), apiClient.put('/x', body) ...
+apiClient.get = (endpoint, options = {}) => apiClient(endpoint, { ...options, method: 'GET' });
+apiClient.delete = (endpoint, options = {}) =>
+  apiClient(endpoint, { ...options, method: 'DELETE' });
+for (const method of ['post', 'put', 'patch']) {
+  apiClient[method] = (endpoint, body, options = {}) =>
+    apiClient(endpoint, {
+      ...options,
+      method: method.toUpperCase(),
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+}

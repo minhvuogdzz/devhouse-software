@@ -19,6 +19,10 @@ import PageEditorPage from '../features/pages/PageEditorPage.jsx';
 // Catalog
 import ServiceListPage from '../features/services/ServiceListPage.jsx';
 import ServiceEditorPage from '../features/services/ServiceEditorPage.jsx';
+import ProductListPage from '../features/products/ProductListPage.jsx';
+import ProductEditorPage from '../features/products/ProductEditorPage.jsx';
+import PackageListPage from '../features/packages/PackageListPage.jsx';
+import PackageEditorPage from '../features/packages/PackageEditorPage.jsx';
 import SolutionListPage from '../features/solutions/SolutionListPage.jsx';
 import SolutionEditorPage from '../features/solutions/SolutionEditorPage.jsx';
 import ProjectListPage from '../features/projects/ProjectListPage.jsx';
@@ -127,6 +131,38 @@ export const router = createBrowserRouter([
         element: (
           <RequirePermission permission="services:read">
             <ServiceEditorPage />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'products',
+        element: (
+          <RequirePermission permission="products:read">
+            <ProductListPage />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'products/:id',
+        element: (
+          <RequirePermission permission="products:read">
+            <ProductEditorPage />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'packages',
+        element: (
+          <RequirePermission permission="packages:read">
+            <PackageListPage />
+          </RequirePermission>
+        ),
+      },
+      {
+        path: 'packages/:id',
+        element: (
+          <RequirePermission permission="packages:read">
+            <PackageEditorPage />
           </RequirePermission>
         ),
       },

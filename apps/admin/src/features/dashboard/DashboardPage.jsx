@@ -5,7 +5,16 @@ import { useI18n } from '../../lib/i18n.jsx';
 import { Card } from '../../components/ui/Card.jsx';
 import { Badge } from '../../components/ui/Badge.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import { Inbox, Layers, Briefcase, BookOpen, ArrowRight, Plus, Activity } from 'lucide-react';
+import {
+  Inbox,
+  Layers,
+  Package,
+  LayoutTemplate,
+  BookOpen,
+  ArrowRight,
+  Plus,
+  Activity,
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const { t, locale } = useI18n();
@@ -75,7 +84,7 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {/* New Inquiries (Most Prominent) */}
         <Card className="p-5 border-primary/30 bg-primary-subtle/20 flex flex-col justify-between">
           <div className="space-y-2">
@@ -87,9 +96,7 @@ export default function DashboardPage() {
                 <Inbox className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-3xl font-extrabold font-display text-fg">
-              {newContactsCount}
-            </div>
+            <div className="text-3xl font-extrabold font-display text-fg">{newContactsCount}</div>
             <p className="text-xs text-fg-muted">
               {locale === 'en' ? 'Awaiting response from team' : 'Đang chờ xử lý và phản hồi'}
             </p>
@@ -120,7 +127,7 @@ export default function DashboardPage() {
               {getCount(counts.services)}
             </div>
             <p className="text-xs text-fg-muted">
-              {locale === 'en' ? 'Catalog offerings' : 'Gói dịch vụ kỹ thuật'}
+              {locale === 'en' ? 'Service groups on the website' : 'Nhóm dịch vụ trên website'}
             </p>
           </div>
           <div className="pt-4 mt-2 border-t border-border">
@@ -134,27 +141,56 @@ export default function DashboardPage() {
           </div>
         </Card>
 
-        {/* Projects Count */}
+        {/* Packages Count */}
         <Card className="p-5 flex flex-col justify-between">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-fg-subtle uppercase tracking-wider">
-                {t('dashboard.totalProjects')}
+                {locale === 'en' ? 'Sellable packages' : 'Gói đang bán'}
               </span>
               <div className="w-8 h-8 rounded-lg bg-surface-sunken text-fg-muted flex items-center justify-center">
-                <Briefcase className="w-4 h-4" />
+                <Package className="w-4 h-4" />
               </div>
             </div>
             <div className="text-3xl font-extrabold font-display text-fg">
-              {getCount(counts.projects)}
+              {getCount(counts.packages)}
             </div>
             <p className="text-xs text-fg-muted">
-              {locale === 'en' ? 'Published case studies' : 'Dự án thực tế'}
+              {locale === 'en' ? 'Packages on the website' : 'Gói hiện trên website'}
             </p>
           </div>
           <div className="pt-4 mt-2 border-t border-border">
             <Link
-              to="/projects"
+              to="/packages"
+              className="inline-flex items-center text-xs font-semibold text-fg-muted hover:text-fg gap-1"
+            >
+              <span>{t('common.preview')}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+        </Card>
+
+        {/* Products Count */}
+        <Card className="p-5 flex flex-col justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-fg-subtle uppercase tracking-wider">
+                {locale === 'en' ? 'Website templates' : 'Mẫu website'}
+              </span>
+              <div className="w-8 h-8 rounded-lg bg-surface-sunken text-fg-muted flex items-center justify-center">
+                <LayoutTemplate className="w-4 h-4" />
+              </div>
+            </div>
+            <div className="text-3xl font-extrabold font-display text-fg">
+              {getCount(counts.products)}
+            </div>
+            <p className="text-xs text-fg-muted">
+              {locale === 'en' ? 'Templates visitors can try' : 'Mẫu khách có thể xem thử'}
+            </p>
+          </div>
+          <div className="pt-4 mt-2 border-t border-border">
+            <Link
+              to="/products"
               className="inline-flex items-center text-xs font-semibold text-fg-muted hover:text-fg gap-1"
             >
               <span>{t('common.preview')}</span>
@@ -174,14 +210,16 @@ export default function DashboardPage() {
                 <BookOpen className="w-4 h-4" />
               </div>
             </div>
-            <div className="text-3xl font-extrabold font-display text-fg">{getCount(counts.posts)}</div>
+            <div className="text-3xl font-extrabold font-display text-fg">
+              {getCount(counts.posts)}
+            </div>
             <p className="text-xs text-fg-muted">
               {locale === 'en' ? 'Technical insights' : 'Bài viết góc nhìn công nghệ'}
             </p>
           </div>
           <div className="pt-4 mt-2 border-t border-border">
             <Link
-              to="/blog/posts"
+              to="/blog"
               className="inline-flex items-center text-xs font-semibold text-fg-muted hover:text-fg gap-1"
             >
               <span>{t('common.preview')}</span>

@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
+import { RotateCcw, CheckCircle2, AlertCircle } from 'lucide-react';
 import { apiClient } from '../../lib/api-client.js';
+import { diffSections, isEqual } from '../../lib/content-diff.js';
 import { ResourceForm } from '../../components/form/ResourceForm.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
+import { SectionForm } from '../../components/content/SectionForm.jsx';
 import { Card } from '../../components/ui/Card.jsx';
 import { Tabs } from '../../components/ui/Tabs.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import { Input } from '../../components/ui/Input.jsx';
-import { RotateCcw, CheckCircle2, AlertCircle } from 'lucide-react';
+
+const clone = value => JSON.parse(JSON.stringify(value ?? null));
 
 export default function PageEditorPage() {
   const { key } = useParams();
 
+  const [page, setPage] = useState(null);
   const [sections, setSections] = useState({});
   const [seo, setSeo] = useState({ title: { vi: '', en: '' }, description: { vi: '', en: '' } });
-  const [activeTab, setActiveTab] = useState('hero');
+  const [activeTab, setActiveTab] = useState('seo');
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [feedback, setFeedback] = useState(null);
@@ -23,22 +27,16 @@ export default function PageEditorPage() {
     loadPage();
   }, [key]);
 
-  const loadPage = async () => {
+  const loadPage = async keepTab => {
     try {
       setIsLoading(true);
       const res = await apiClient(`/admin/pages/${key}`);
-      const d = res.data;
-
-      // Initialize resolved sections
-      const resolvedSections = d.resolved?.sections || d.defaults?.sections || {};
-      setSections(JSON.parse(JSON.stringify(resolvedSections)));
-
-      const resolvedSeo = d.resolved?.seo || d.defaults?.seo || { title: {}, description: {} };
-      setSeo(JSON.parse(JSON.stringify(resolvedSeo)));
-
-      // Set active tab to first section
-      const firstSectionKey = Object.keys(resolvedSections)[0] || 'seo';
-      setActiveTab(firstSectionKey);
+      const data = res.data;
+      setPage(data);
+      setSections(clone(data.resolved));
+      setSeo(clone(data.seo) || { title: { vi: '', en: '' }, description: { vi: '', en: '' } });
+      const first = data.definition?.sections?.[0]?.key || 'seo';
+      setActiveTab(current => (keepTab && current ? current : first));
     } catch (err) {
       setFeedback({ type: 'error', message: err.message || 'Không thể tải dữ liệu trang.' });
     } finally {
@@ -52,19 +50,20 @@ export default function PageEditorPage() {
     setFeedback(null);
 
     try {
+      // Only what differs from the built-in defaults is stored, so untouched text keeps
+      // following the defaults when those are improved.
       await apiClient(`/admin/pages/${key}`, {
         method: 'PUT',
         body: JSON.stringify({
-          overrides: {
-            sections,
-            seo,
-          },
+          sections: diffSections(sections, page.defaults),
+          seo: isEqual(seo, page.defaultSeo) ? {} : seo,
         }),
       });
       setFeedback({
         type: 'success',
-        message: 'Lưu thay đổi thành công! Dữ liệu sẽ cập nhật trên website trong ít phút.',
+        message: 'Đã lưu. Thay đổi sẽ hiện trên website trong khoảng một phút.',
       });
+      await loadPage(true);
     } catch (err) {
       setFeedback({ type: 'error', message: err.message || 'Lỗi khi lưu trang.' });
     } finally {
@@ -75,19 +74,16 @@ export default function PageEditorPage() {
   const handleResetSection = async sectionKey => {
     if (
       !window.confirm(
-        `Bạn có chắc chắn muốn đặt lại phần "${sectionKey}" về mặc định của hệ thống?`,
+        'Đặt phần này về nội dung mặc định của hệ thống? Các chỉnh sửa của bạn trong phần này sẽ mất.',
       )
     ) {
       return;
     }
-
     try {
       setIsSubmitting(true);
-      await apiClient(`/admin/pages/${key}/sections/${sectionKey}`, {
-        method: 'DELETE',
-      });
-      await loadPage();
-      setFeedback({ type: 'success', message: `Đã đặt lại phần "${sectionKey}" về mặc định!` });
+      await apiClient(`/admin/pages/${key}/sections/${sectionKey}`, { method: 'DELETE' });
+      await loadPage(true);
+      setFeedback({ type: 'success', message: 'Đã đặt phần này về mặc định.' });
     } catch (err) {
       setFeedback({ type: 'error', message: err.message || 'Không thể đặt lại phần này.' });
     } finally {
@@ -95,7 +91,7 @@ export default function PageEditorPage() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading && !page) {
     return (
       <div className="text-center py-20 text-fg-muted">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -104,26 +100,32 @@ export default function PageEditorPage() {
     );
   }
 
-  const sectionKeys = Object.keys(sections);
+  if (!page) {
+    return (
+      <p className="p-8 text-sm text-danger">{feedback?.message || 'Không tìm thấy trang.'}</p>
+    );
+  }
+
+  const definitions = page.definition?.sections || [];
+  const overridden = new Set(Object.keys(page.overrides || {}));
   const tabItems = [
-    ...sectionKeys.map(sKey => ({
-      id: sKey,
-      label: sKey.toUpperCase(),
+    ...definitions.map(section => ({
+      id: section.key,
+      label: `${section.label || section.key}${overridden.has(section.key) ? ' ●' : ''}`,
     })),
     { id: 'seo', label: 'SEO & Meta' },
   ];
-
-  const currentSection = sections[activeTab];
+  const currentDefinition = definitions.find(section => section.key === activeTab);
 
   return (
     <ResourceForm
-      title={`Chỉnh sửa trang: ${key}`}
-      subtitle="Tùy biến các trường nội dung song ngữ. Nội dung không thay đổi sẽ sử dụng giá trị mặc định của hệ thống."
-      backUrl="/content/pages"
+      title={`Chỉnh sửa trang: ${page.title?.vi || key}`}
+      subtitle="Sửa chữ, nút bấm và nội dung bằng cả hai ngôn ngữ. Dấu ● nghĩa là phần đó đã được bạn chỉnh; phần còn lại dùng nội dung mặc định của hệ thống."
+      backUrl="/pages"
       onSubmit={handleSave}
       isSubmitting={isSubmitting}
       extraActions={
-        activeTab !== 'seo' && (
+        currentDefinition && overridden.has(activeTab) ? (
           <Button
             type="button"
             variant="outline"
@@ -133,11 +135,12 @@ export default function PageEditorPage() {
             <RotateCcw className="w-3.5 h-3.5 mr-1" />
             Đặt lại phần này
           </Button>
-        )
+        ) : null
       }
     >
       {feedback && (
         <div
+          role="status"
           className={`p-4 rounded-xl text-xs flex items-start gap-2.5 border ${
             feedback.type === 'success'
               ? 'bg-success-subtle text-success border-success/20'
@@ -153,91 +156,36 @@ export default function PageEditorPage() {
         </div>
       )}
 
-      {/* Tabs */}
       <Tabs tabs={tabItems} activeTab={activeTab} onChange={setActiveTab} />
 
-      {/* Active Tab Form */}
       {activeTab === 'seo' ? (
         <Card className="p-6 space-y-6">
           <h3 className="text-sm font-bold text-fg border-b border-border pb-3">
-            Cấu hình Thẻ Tiêu đề & Mô tả Tìm kiếm (SEO)
+            Tiêu đề và mô tả hiển thị trên Google
           </h3>
           <LocalizedField
-            label="Tiêu đề trang (Meta Title)"
+            label="Tiêu đề trang (Meta title)"
             value={seo.title || { vi: '', en: '' }}
             onChange={val => setSeo({ ...seo, title: val })}
           />
           <LocalizedField
-            label="Mô tả tóm tắt (Meta Description)"
+            label="Mô tả ngắn (Meta description)"
             type="textarea"
             rows={3}
             value={seo.description || { vi: '', en: '' }}
             onChange={val => setSeo({ ...seo, description: val })}
           />
         </Card>
-      ) : currentSection ? (
-        <Card className="p-6 space-y-6">
-          <div className="flex items-center justify-between border-b border-border pb-3">
-            <h3 className="text-sm font-bold text-fg">
-              Phần nội dung: <span className="text-primary font-display">{activeTab}</span>
-            </h3>
-          </div>
-
-          <div className="space-y-4">
-            {Object.keys(currentSection).map(fieldKey => {
-              const fieldValue = currentSection[fieldKey];
-
-              // Localized string field
-              if (
-                typeof fieldValue === 'object' &&
-                fieldValue !== null &&
-                ('vi' in fieldValue || 'en' in fieldValue)
-              ) {
-                const isLong =
-                  fieldKey.toLowerCase().includes('desc') || fieldKey.toLowerCase().includes('sub');
-                return (
-                  <LocalizedField
-                    key={fieldKey}
-                    label={`Trường: ${fieldKey}`}
-                    type={isLong ? 'textarea' : 'text'}
-                    rows={3}
-                    value={fieldValue}
-                    onChange={val =>
-                      setSections({
-                        ...sections,
-                        [activeTab]: {
-                          ...sections[activeTab],
-                          [fieldKey]: val,
-                        },
-                      })
-                    }
-                  />
-                );
-              }
-
-              // Simple string/number/boolean
-              if (typeof fieldValue === 'string' || typeof fieldValue === 'number') {
-                return (
-                  <Input
-                    key={fieldKey}
-                    label={`Trường: ${fieldKey}`}
-                    value={fieldValue}
-                    onChange={e =>
-                      setSections({
-                        ...sections,
-                        [activeTab]: {
-                          ...sections[activeTab],
-                          [fieldKey]: e.target.value,
-                        },
-                      })
-                    }
-                  />
-                );
-              }
-
-              return null;
-            })}
-          </div>
+      ) : currentDefinition ? (
+        <Card className="p-6">
+          <h3 className="mb-5 border-b border-border pb-3 text-sm font-bold text-fg">
+            {currentDefinition.label || currentDefinition.key}
+          </h3>
+          <SectionForm
+            section={currentDefinition}
+            value={sections[activeTab]}
+            onChange={next => setSections({ ...sections, [activeTab]: next })}
+          />
         </Card>
       ) : null}
     </ResourceForm>

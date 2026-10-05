@@ -6,6 +6,17 @@ import { Button } from '../../components/ui/Button.jsx';
 import { Select, Textarea } from '../../components/ui/Input.jsx';
 import { ArrowLeft, Mail, Phone, Building, Send, Trash2, MessageSquare } from 'lucide-react';
 
+// What the website's "when would you like to start" choices mean (older requests used other values)
+const TIMELINE_LABELS = {
+  urgent: 'Càng sớm càng tốt',
+  oneMonth: 'Trong vòng 1 tháng',
+  threeMonths: 'Từ 1 đến 3 tháng',
+  exploring: 'Chưa gấp, đang tìm hiểu',
+  '1-3-months': 'Từ 1 đến 3 tháng',
+  '3-6-months': 'Từ 3 đến 6 tháng',
+  planning: 'Đang lập kế hoạch',
+};
+
 export default function ContactRequestDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -108,7 +119,7 @@ export default function ContactRequestDetailPage() {
           </Button>
           <Button
             as="a"
-            href={`mailto:${request.email}?subject=Phản hồi từ Dev House Software về yêu cầu dự án`}
+            href={`mailto:${request.email}?subject=Phản hồi từ Dev House Software về yêu cầu của bạn`}
             variant="primary"
             size="sm"
           >
@@ -123,7 +134,7 @@ export default function ContactRequestDetailPage() {
         <div className="md:col-span-2 space-y-6">
           <Card className="p-6 space-y-4">
             <h2 className="text-sm font-bold text-fg border-b border-border pb-2">
-              Nội dung Yêu cầu Dự án
+              Nội dung yêu cầu
             </h2>
             <div className="p-4 rounded-xl bg-surface-sunken text-sm text-fg whitespace-pre-wrap leading-relaxed border border-border">
               {request.message}
@@ -131,17 +142,25 @@ export default function ContactRequestDetailPage() {
 
             <div className="grid grid-cols-2 gap-4 pt-2 text-xs">
               <div>
+                <span className="text-fg-subtle block">Quan tâm đến:</span>
+                <span className="font-semibold text-fg">{request.subject || 'Chưa nêu'}</span>
+              </div>
+              <div>
                 <span className="text-fg-subtle block">Dịch vụ quan tâm:</span>
                 <span className="font-semibold text-fg">{request.service || 'Chưa chọn'}</span>
               </div>
               <div>
-                <span className="text-fg-subtle block">Ngân sách dự kiến:</span>
-                <span className="font-semibold text-fg">{request.budget || 'Chưa cung cấp'}</span>
+                <span className="text-fg-subtle block">Muốn bắt đầu:</span>
+                <span className="font-semibold text-fg">
+                  {TIMELINE_LABELS[request.timeline] || request.timeline || 'Chưa cung cấp'}
+                </span>
               </div>
-              <div>
-                <span className="text-fg-subtle block">Tiến độ mong muốn:</span>
-                <span className="font-semibold text-fg">{request.timeline || 'Chưa cung cấp'}</span>
-              </div>
+              {request.budget && (
+                <div>
+                  <span className="text-fg-subtle block">Ngân sách dự kiến:</span>
+                  <span className="font-semibold text-fg">{request.budget}</span>
+                </div>
+              )}
               <div>
                 <span className="text-fg-subtle block">Ngôn ngữ gửi biểu mẫu:</span>
                 <span className="font-semibold text-fg uppercase">{request.locale || 'vi'}</span>

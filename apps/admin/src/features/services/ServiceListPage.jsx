@@ -13,8 +13,9 @@ export default function ServiceListPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadServices();
-  }, [pagination.page, statusFilter]);
+    const timer = setTimeout(loadServices, search ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [pagination.page, statusFilter, search]);
 
   const loadServices = async () => {
     try {
@@ -119,11 +120,10 @@ export default function ServiceListPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">
-            Quản lý Dịch vụ (Services)
-          </h1>
+          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Dịch vụ</h1>
           <p className="text-xs text-fg-muted mt-1">
-            Danh mục các dịch vụ kỹ thuật số và gói giải pháp phát triển phần mềm cốt lõi.
+            Các nhóm dịch vụ công ty cung cấp: thiết kế website, máy chủ, tên miền, bảo mật và hỗ
+            trợ.
           </p>
         </div>
 

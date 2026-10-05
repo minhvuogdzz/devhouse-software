@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import { slugify } from '@devhouse/shared';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable } from '../../components/data-table/DataTable.jsx';
 import { Tabs } from '../../components/ui/Tabs.jsx';
@@ -12,7 +13,7 @@ import { Plus, Edit, Trash2 } from 'lucide-react';
 export default function CategoryManagerPage() {
   const { type: rawType } = useParams();
   const navigate = useNavigate();
-  const activeType = rawType || 'service';
+  const activeType = rawType || 'product-segment';
 
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -26,10 +27,11 @@ export default function CategoryManagerPage() {
   });
 
   const categoryTypes = [
-    { id: 'service', label: 'Dịch vụ (Service)' },
-    { id: 'solution', label: 'Giải pháp (Solution)' },
-    { id: 'technology', label: 'Công nghệ (Technology)' },
-    { id: 'post', label: 'Bài viết (Blog)' },
+    { id: 'product-segment', label: 'Mẫu website: Mảng' },
+    { id: 'product', label: 'Mẫu website: Thể loại' },
+    { id: 'solution', label: 'Giải pháp' },
+    { id: 'project', label: 'Dự án' },
+    { id: 'technology', label: 'Công nghệ' },
   ];
 
   useEffect(() => {
@@ -82,6 +84,11 @@ export default function CategoryManagerPage() {
           body: JSON.stringify({
             ...form,
             type: activeType,
+            // The address of the category is made from its name; it stays fixed once created.
+            slug: {
+              vi: slugify(form.name.vi),
+              en: slugify(form.name.en || form.name.vi),
+            },
           }),
         });
       }
@@ -150,11 +157,10 @@ export default function CategoryManagerPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">
-            Quản lý Danh mục (Categories)
-          </h1>
+          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Danh mục</h1>
           <p className="text-xs text-fg-muted mt-1">
-            Phân loại dịch vụ, giải pháp, công nghệ và bài viết blog theo từng nhóm chuyên biệt.
+            Tạo và sắp xếp các mảng và thể loại của mẫu website, cùng các nhóm khác. Bạn có thể thêm
+            bao nhiêu tuỳ ý.
           </p>
         </div>
 

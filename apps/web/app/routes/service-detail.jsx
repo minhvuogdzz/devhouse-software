@@ -1,29 +1,30 @@
 import React from 'react';
-import { generateSeoMeta } from '../lib/seo.js';
-import { useLoaderData, Link } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import { defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
-import { getTranslation } from '../lib/i18n.js';
+import { generateSeoMeta } from '../lib/seo.js';
+import { getLocaleFromUrl, getTranslation } from '../lib/i18n.js';
+import { localePrefix } from '../lib/navigation.js';
+import { iconFor } from '../lib/icons.js';
+import { resizedImage } from '../lib/images.js';
 import { Button } from '../components/ui/Button.jsx';
-import { Card } from '../components/ui/Card.jsx';
-import { CheckCircle2, ChevronRight, HelpCircle, Layers } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ChevronDown, ChevronRight, HelpCircle } from 'lucide-react';
 
 export async function loader({ params, request }) {
-  const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
-  const slug = params.slug;
+  const locale = getLocaleFromUrl(request.url);
+  const { slug } = params;
 
   let service = null;
-
   try {
     const res = await apiClient(`/services/${slug}?locale=${locale}`);
     service = res.data;
-  } catch {
-    const fallback = defaultCatalog.services.find(
-      s => s.slug?.vi === slug || s.slug?.en === slug || s.slug === slug,
-    );
-    if (fallback) {
-      service = localize(fallback, locale);
+  } catch (error) {
+    // A missing service is a real 404; only an unreachable API falls back to the code defaults.
+    if (error.status !== 404) {
+      const fallback = defaultCatalog.services.find(
+        item => item.slug?.vi === slug || item.slug?.en === slug,
+      );
+      if (fallback) service = localize(fallback, locale);
     }
   }
 
@@ -31,127 +32,176 @@ export async function loader({ params, request }) {
     throw new Response('Service Not Found', { status: 404 });
   }
 
-  return {
-    service,
-    url: request.url,
-    locale,
-  };
+  return { service, url: request.url, locale };
 }
 
 export function meta({ data }) {
-  if (!data?.service) return [{ title: 'Not Found' }];
-  const s = data.service;
-  const title = `${s.title || s.name} — Dev House Software`;
-  const description = s.summary || s.description || '';
-  const jsonLd = { '@context': 'https://schema.org', '@type': 'Service', name: s.title || s.name, description, provider: { '@type': 'Organization', name: 'Dev House Software' } };
+  if (!data?.service) return [{ title: 'Dev House Software' }];
+  const { service } = data;
+  const title = service.seo?.title || `${service.name} — Dev House Software`;
+  const description = service.seo?.description || service.shortDescription || '';
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.name,
+    description,
+    provider: { '@type': 'Organization', name: 'Dev House Software' },
+  };
 
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article', jsonLd });
+  return generateSeoMeta({
+    title,
+    description,
+    url: data.url,
+    locale: data.locale,
+    type: 'website',
+    jsonLd,
+  });
 }
 
 export default function ServiceDetailPage() {
   const { service, locale } = useLoaderData();
   const t = getTranslation(locale);
-  const prefix = locale === 'en' ? '/en' : '';
+  const prefix = localePrefix(locale);
+  const Icon = iconFor(service.icon);
+  const interest = encodeURIComponent(service.name);
+  const features = service.features || [];
+  const faqs = (service.faqs || []).filter(faq => faq.question);
 
   return (
     <div className="py-10 lg:py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-2 text-xs text-fg-subtle">
+        <nav
+          aria-label="breadcrumb"
+          className="flex flex-wrap items-center gap-2 text-xs text-fg-subtle"
+        >
           <Link to={prefix || '/'} className="hover:text-fg">
             {t('header.nav.home')}
           </Link>
-          <ChevronRight className="w-3 h-3" />
+          <ChevronRight className="w-3 h-3" aria-hidden="true" />
           <Link to={`${prefix}/services`} className="hover:text-fg">
             {t('header.nav.services')}
           </Link>
-          <ChevronRight className="w-3 h-3" />
-          <span className="text-fg font-medium">{service.name || service.title}</span>
+          <ChevronRight className="w-3 h-3" aria-hidden="true" />
+          <span className="text-fg font-medium" aria-current="page">
+            {service.name}
+          </span>
         </nav>
 
-        {/* Hero header */}
-        <div className="space-y-6">
-          <div className="w-14 h-14 rounded-2xl bg-primary-subtle text-primary flex items-center justify-center">
-            <Layers className="w-7 h-7" />
+        <header className="grid gap-8 lg:grid-cols-[1fr_minmax(0,22rem)] lg:items-center">
+          <div className="space-y-5">
+            <div className="flex items-center gap-3">
+              <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-subtle text-primary">
+                <Icon className="w-7 h-7" aria-hidden="true" />
+              </span>
+              {service.billing && (
+                <span className="rounded-full border border-border-subtle bg-surface-2 px-3 py-1 text-xs font-medium text-fg-muted">
+                  {t(`services.billing.${service.billing}`)}
+                </span>
+              )}
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
+              {service.name}
+            </h1>
+            {service.shortDescription && (
+              <p className="text-lg sm:text-xl text-fg-muted leading-relaxed">
+                {service.shortDescription}
+              </p>
+            )}
+            <div className="pt-1 flex flex-wrap gap-3">
+              <Button to={`${prefix}/contact?interest=${interest}`} size="lg">
+                {t('services.askAbout')}
+              </Button>
+              <Button to={`${prefix}/packages`} size="lg" variant="outline">
+                {t('services.seePackages')}
+              </Button>
+            </div>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
-            {service.name || service.title}
-          </h1>
-          <p className="text-lg sm:text-xl text-fg-muted leading-relaxed max-w-3xl">
-            {service.summary || service.description}
-          </p>
-          <div className="pt-2">
-            <Button to={`${prefix}/contact`} size="lg">
-              {t('common.contactUs')}
-            </Button>
-          </div>
-        </div>
 
-        {/* Key Deliverables / Features */}
-        {service.deliverables && service.deliverables.length > 0 && (
-          <div className="space-y-6 pt-6 border-t border-border">
-            <h2 className="text-2xl font-bold font-display text-fg">
-              {locale === 'en' ? 'What You Receive (Deliverables)' : 'Kết quả Bàn giao Cụ thể'}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {service.deliverables.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-start gap-3 p-4 rounded-xl border border-border bg-surface"
+          {service.image?.url && (
+            <img
+              src={resizedImage(service.image.url, 900)}
+              alt={service.image.alt || ''}
+              width={service.image.width || 900}
+              height={service.image.height || 506}
+              decoding="async"
+              className="aspect-video w-full rounded-xl border border-border object-cover"
+            />
+          )}
+        </header>
+
+        {service.description && (
+          <div className="max-w-3xl text-base leading-relaxed text-fg-muted whitespace-pre-line">
+            {service.description}
+          </div>
+        )}
+
+        {features.length > 0 && (
+          <section className="space-y-6 pt-6 border-t border-border">
+            <h2 className="text-2xl font-bold font-display text-fg">{t('services.includes')}</h2>
+            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {features.map((item, index) => (
+                <li
+                  key={index}
+                  className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4"
                 >
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <CheckCircle2
+                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
+                    aria-hidden="true"
+                  />
                   <div>
-                    <h3 className="text-base font-semibold text-fg">
-                      {typeof item === 'string' ? item : item.title || item.name}
-                    </h3>
+                    <h3 className="text-base font-semibold text-fg">{item.title}</h3>
                     {item.description && (
-                      <p className="text-sm text-fg-muted mt-1 leading-relaxed">
+                      <p className="mt-1 text-sm leading-relaxed text-fg-muted">
                         {item.description}
                       </p>
                     )}
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </section>
         )}
 
-        {/* FAQs if present */}
-        {service.faqs && service.faqs.length > 0 && (
-          <div className="space-y-6 pt-6 border-t border-border">
+        {faqs.length > 0 && (
+          <section className="space-y-6 pt-6 border-t border-border">
             <h2 className="text-2xl font-bold font-display text-fg flex items-center gap-2">
-              <HelpCircle className="w-6 h-6 text-primary" />
-              <span>{locale === 'en' ? 'Frequently Asked Questions' : 'Câu hỏi Thường gặp'}</span>
+              <HelpCircle className="w-6 h-6 text-primary" aria-hidden="true" />
+              {t('services.faq')}
             </h2>
-            <div className="space-y-4">
-              {service.faqs.map((faq, idx) => (
-                <Card key={idx} className="p-6">
-                  <h3 className="text-lg font-bold font-display text-fg mb-2">{faq.question}</h3>
-                  <p className="text-sm text-fg-muted leading-relaxed">{faq.answer}</p>
-                </Card>
+            <div className="space-y-3">
+              {faqs.map((faq, index) => (
+                <details
+                  key={index}
+                  className="group rounded-xl border border-border bg-surface open:border-primary/40"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 font-display text-base font-bold text-fg">
+                    {faq.question}
+                    <ChevronDown
+                      className="h-5 w-5 shrink-0 text-fg-subtle transition-transform group-open:rotate-180"
+                      aria-hidden="true"
+                    />
+                  </summary>
+                  <p className="px-5 pb-5 text-sm leading-relaxed text-fg-muted whitespace-pre-line">
+                    {faq.answer}
+                  </p>
+                </details>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* Bottom CTA Card */}
-        <div className="p-8 sm:p-12 rounded-2xl bg-surface-2 border border-border text-center space-y-4">
+        <section className="rounded-2xl border border-border bg-surface-raised p-8 text-center sm:p-12 space-y-4">
           <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg">
-            {locale === 'en'
-              ? 'Ready to move your initiative forward?'
-              : 'Sẵn sàng khởi động giải pháp cho doanh nghiệp?'}
+            {t('services.ctaTitle')}
           </h2>
-          <p className="text-base text-fg-muted max-w-xl mx-auto">
-            {locale === 'en'
-              ? 'Book a direct conversation with our engineering team to assess technical feasibility and timeline.'
-              : 'Liên hệ trực tiếp với chúng tôi để nhận lộ trình phát triển và đánh giá khả thi chuyên sâu.'}
-          </p>
+          <p className="mx-auto max-w-xl text-base text-fg-muted">{t('services.ctaText')}</p>
           <div className="pt-2">
-            <Button to={`${prefix}/contact`} size="lg">
-              {t('common.contactUs')}
+            <Button to={`${prefix}/contact?interest=${interest}`} size="lg">
+              {t('services.askAbout')}
+              <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
             </Button>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

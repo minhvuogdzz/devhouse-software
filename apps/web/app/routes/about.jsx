@@ -1,17 +1,17 @@
 import React from 'react';
 import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, useRouteLoaderData, Link } from 'react-router';
-import { resolveDefaultPage } from '@devhouse/content';
-import { apiClient } from '../lib/api-client.js';
+import { loadPage } from '../lib/page-data.js';
 import { getTranslation } from '../lib/i18n.js';
+import { localePrefix } from '../lib/navigation.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { OrgChart } from '../components/sections/OrgChart.jsx';
 import {
-  Shield,
-  Target,
-  Award,
+  ShieldCheck,
+  Clock,
+  CheckCircle2,
   ArrowRight,
   Mail,
   Phone,
@@ -19,45 +19,33 @@ import {
   FileText,
   Globe,
   Building2,
-  Cpu,
+  Cloud,
+  Link2,
   Layers,
 } from 'lucide-react';
 
 export async function loader({ request }) {
-  const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
-
-  let page;
-  try {
-    const res = await apiClient(`/pages/about?locale=${locale}`);
-    page = res.data;
-  } catch {
-    page = null;
-  }
-  // Fill any section the API did not return from code defaults, so the page is never blank.
-  const fallback = resolveDefaultPage('about', locale);
-  const sections = { ...fallback.sections, ...(page?.sections || {}) };
-
-  return { sections, seo: page?.seo || fallback.seo, locale };
+  return loadPage('about', request);
 }
 
 export function meta({ data }) {
-  const seo = data?.seo || {};
-    const title = seo.title || 'Dev House Software';
-  const description = seo.description || '';
-
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
+  return generateSeoMeta({
+    title: data?.seo?.title || 'Dev House Software',
+    description: data?.seo?.description || '',
+    url: data?.url,
+    locale: data?.locale,
+  });
 }
 
-const offeringIcons = [Globe, Building2, Cpu];
-const valueIcons = [Shield, Target, Award];
+const offeringIcons = [Globe, Cloud, Link2, ShieldCheck];
+const valueIcons = [ShieldCheck, Clock, CheckCircle2, FileText];
 
 export default function AboutPage() {
   const { sections, locale } = useLoaderData();
   const site = useRouteLoaderData('root');
   const settings = site?.settings || {};
   const t = getTranslation(locale);
-  const prefix = locale === 'en' ? '/en' : '';
+  const prefix = localePrefix(locale);
   const phoneHref = (settings.hotline || '').replace(/[^+\d]/g, '');
 
   const { hero, company, leadership, mission, serviceTerms } = sections;
@@ -87,9 +75,7 @@ export default function AboutPage() {
 
             <div className="lg:col-span-5">
               <Card className="space-y-5 p-6 sm:p-8">
-                <h3 className="text-lg font-bold font-display text-fg">
-                  {locale === 'en' ? 'Company information' : 'Thông tin công ty'}
-                </h3>
+                <h3 className="text-lg font-bold font-display text-fg">{t('about.companyInfo')}</h3>
                 <ul className="space-y-4 text-sm text-fg-muted">
                   {settings.legalName && (
                     <li className="flex items-start gap-3">
@@ -131,7 +117,7 @@ export default function AboutPage() {
                 <h3 className="text-xl font-bold font-display text-fg">
                   {company.offeringsHeading}
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {company.offerings.map((item, idx) => {
                     const Icon = offeringIcons[idx % offeringIcons.length] || Layers;
                     return (
@@ -171,7 +157,7 @@ export default function AboutPage() {
                 {mission.heading}
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {mission.values.map((val, idx) => {
                 const Icon = valueIcons[idx % valueIcons.length];
                 return (
@@ -224,15 +210,9 @@ export default function AboutPage() {
         <div className="rounded-2xl bg-primary text-primary-fg p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2 max-w-xl text-center md:text-left">
             <h2 className="text-2xl sm:text-3xl font-bold font-display text-primary-fg">
-              {locale === 'en'
-                ? 'Have a project in mind?'
-                : 'Bạn đang có một dự án cần triển khai?'}
+              {t('about.ctaTitle')}
             </h2>
-            <p className="text-primary-fg/90 text-sm sm:text-base">
-              {locale === 'en'
-                ? 'Tell us what you need and we will reply with a clear plan and quote.'
-                : 'Hãy cho chúng tôi biết nhu cầu của bạn, chúng tôi sẽ phản hồi bằng một kế hoạch và báo giá rõ ràng.'}
-            </p>
+            <p className="text-primary-fg/90 text-sm sm:text-base">{t('about.ctaText')}</p>
           </div>
           <Button
             as={Link}

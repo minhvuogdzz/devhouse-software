@@ -1,6 +1,7 @@
 /**
  * Default menus. The admin can edit both in Navigation; until then these apply.
- * Solutions, Projects, Technologies and Blog pages still exist and can be added back to the menu.
+ * The Solutions, Projects, Technologies, Blog and Careers pages still exist; add them in Navigation
+ * once they have real content.
  */
 export const defaultNavigation = {
   header: [
@@ -76,8 +77,6 @@ export const defaultNavigation = {
           { label: { vi: 'Về chúng tôi', en: 'About us' }, path: '/about' },
           { label: { vi: 'Gói dịch vụ', en: 'Packages' }, path: '/packages' },
           { label: { vi: 'Mẫu website', en: 'Templates' }, path: '/products' },
-          { label: { vi: 'Bài viết', en: 'Blog' }, path: '/blog' },
-          { label: { vi: 'Tuyển dụng', en: 'Careers' }, path: '/careers' },
         ],
       },
       {

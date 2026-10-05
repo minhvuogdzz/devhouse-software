@@ -9,6 +9,8 @@ import {
   LayoutDashboard,
   FileText,
   Layers,
+  Package as PackageIcon,
+  LayoutTemplate,
   Cpu,
   Briefcase,
   Boxes,
@@ -57,8 +59,20 @@ export function AdminShell() {
     {
       title: locale === 'en' ? 'Content & Catalog' : 'Nội dung & Danh mục',
       items: [
-        { to: '/content/pages', label: t('nav.pages'), icon: FileText, permission: 'pages:read' },
+        { to: '/pages', label: t('nav.pages'), icon: FileText, permission: 'pages:read' },
         { to: '/services', label: t('nav.services'), icon: Layers, permission: 'services:read' },
+        {
+          to: '/packages',
+          label: t('nav.packages'),
+          icon: PackageIcon,
+          permission: 'packages:read',
+        },
+        {
+          to: '/products',
+          label: t('nav.products'),
+          icon: LayoutTemplate,
+          permission: 'products:read',
+        },
         { to: '/solutions', label: t('nav.solutions'), icon: Boxes, permission: 'solutions:read' },
         { to: '/projects', label: t('nav.projects'), icon: Briefcase, permission: 'projects:read' },
         {
@@ -68,12 +82,12 @@ export function AdminShell() {
           permission: 'technologies:read',
         },
         {
-          to: '/categories/service',
+          to: '/categories/product-segment',
           label: t('nav.categories'),
           icon: FolderTree,
           permission: 'categories:read',
         },
-        { to: '/blog/posts', label: t('nav.blog'), icon: BookOpen, permission: 'blog:read' },
+        { to: '/blog', label: t('nav.blog'), icon: BookOpen, permission: 'blog:read' },
         { to: '/blog/tags', label: t('nav.tags'), icon: Tag, permission: 'tags:read' },
         {
           to: '/blog/authors',
@@ -94,13 +108,13 @@ export function AdminShell() {
           permission: 'navigation:read',
         },
         {
-          to: '/settings/company',
+          to: '/settings',
           label: t('nav.settings'),
           icon: SettingsIcon,
           permission: 'settings:read',
         },
         {
-          to: '/seo/redirects',
+          to: '/redirects',
           label: t('nav.redirects'),
           icon: Compass,
           permission: 'redirects:read',

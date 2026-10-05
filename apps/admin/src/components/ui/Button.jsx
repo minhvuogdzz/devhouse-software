@@ -8,6 +8,7 @@ export function Button({
   disabled = false,
   isLoading = false,
   type = 'button',
+  as: Component = 'button',
   ...props
 }) {
   const baseStyles =
@@ -29,10 +30,13 @@ export function Button({
     lg: 'px-5 py-2.5 text-base gap-2.5',
   };
 
+  // `as` lets a button render as a router <Link> (or any element) while keeping its look.
+  const isNativeButton = Component === 'button';
+  const elementProps = isNativeButton ? { type, disabled: disabled || isLoading } : {};
+
   return (
-    <button
-      type={type}
-      disabled={disabled || isLoading}
+    <Component
+      {...elementProps}
       className={`${baseStyles} ${variants[variant] || variants.primary} ${sizes[size] || sizes.md} ${className}`}
       {...props}
     >
@@ -40,6 +44,6 @@ export function Button({
         <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-1" />
       ) : null}
       {children}
-    </button>
+    </Component>
   );
 }

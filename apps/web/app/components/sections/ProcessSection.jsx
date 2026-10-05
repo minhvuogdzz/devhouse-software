@@ -1,38 +1,37 @@
 import React from 'react';
+import { SectionHeading } from '../ui/SectionHeading.jsx';
 import { ScrollReveal } from '../ui/ScrollReveal.jsx';
-import { Marquee } from '../ui/Marquee.jsx';
 
+/** The working process as numbered steps. The id lets the menu link straight to it (/#process). */
 export function ProcessSection({ heading, subheading, steps = [] }) {
+  if (!steps.length) return null;
   return (
-    <section className="py-12 lg:py-16 bg-transparent">
+    <section id="process" className="scroll-mt-24 py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal direction="up">
-          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg tracking-tight">
-              {heading}
-            </h2>
-            {subheading && (
-              <p className="text-sm sm:text-base text-fg-muted leading-relaxed">{subheading}</p>
-            )}
-          </div>
-        </ScrollReveal>
+        <SectionHeading heading={heading} subheading={subheading} align="center" />
 
-        <ScrollReveal direction="right" delay={0.2}>
-          <Marquee speed={45} direction="right">
-            {steps.map((step, index) => (
-              <div
-                key={index}
-                className="relative p-6 rounded-xl border border-border bg-surface flex flex-col min-w-[300px] max-w-[320px]"
+        <ol className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+          {steps.map((step, index) => (
+            <li
+              key={`${step.title}-${index}`}
+              className="relative flex lg:[&:not(:last-child)]:after:absolute lg:[&:not(:last-child)]:after:left-full lg:[&:not(:last-child)]:after:top-10 lg:[&:not(:last-child)]:after:h-px lg:[&:not(:last-child)]:after:w-6 lg:[&:not(:last-child)]:after:bg-border lg:[&:not(:last-child)]:after:content-['']"
+            >
+              <ScrollReveal
+                direction="up"
+                delay={Math.min(index, 4) * 0.08}
+                className="flex w-full"
               >
-                <div className="text-2xl font-black font-display text-primary/30 mb-3">
-                  {step.stepNumber || `0${index + 1}`}
+                <div className="flex w-full flex-col gap-3 rounded-xl border border-border bg-surface p-5">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-subtle font-display text-sm font-bold text-primary">
+                    {step.stepNumber || String(index + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-display text-base font-bold text-fg">{step.title}</h3>
+                  <p className="flex-1 text-sm leading-relaxed text-fg-muted">{step.description}</p>
                 </div>
-                <h3 className="text-base font-bold font-display text-fg mb-2">{step.title}</h3>
-                <p className="text-sm text-fg-muted leading-relaxed flex-1">{step.description}</p>
-              </div>
-            ))}
-          </Marquee>
-        </ScrollReveal>
+              </ScrollReveal>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );

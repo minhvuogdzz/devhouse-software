@@ -36,7 +36,7 @@ export default function PageListPage() {
           </div>
           <div>
             <Link
-              to={`/content/pages/${row.key}`}
+              to={`/pages/${row.key}`}
               className="font-bold text-fg hover:text-primary transition-colors text-xs"
             >
               {typeof row.title === 'object' ? row.title.vi || row.title.en : row.title}
@@ -72,7 +72,7 @@ export default function PageListPage() {
       className: 'text-right',
       render: row => (
         <div className="flex items-center justify-end gap-2">
-          <Button as={Link} to={`/content/pages/${row.key}`} variant="outline" size="sm">
+          <Button as={Link} to={`/pages/${row.key}`} variant="outline" size="sm">
             <Edit className="w-3.5 h-3.5 mr-1" />
             Chỉnh sửa
           </Button>

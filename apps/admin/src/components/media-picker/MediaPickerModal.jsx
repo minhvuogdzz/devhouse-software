@@ -194,14 +194,22 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, value }) {
   );
 }
 
-export function ImageField({ label, value, onChange }) {
+const IMAGE_FRAME = {
+  video: 'w-48 aspect-video',
+  portrait: 'w-full aspect-[4/6]',
+  square: 'w-40 aspect-square',
+};
+
+export function ImageField({ label, value, onChange, aspect = 'video' }) {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   return (
     <div className="space-y-2">
       {label && <label className="block text-xs font-semibold text-fg">{label}</label>}
       {value?.url ? (
-        <div className="relative w-48 aspect-video rounded-xl border border-border overflow-hidden group bg-surface-sunken">
+        <div
+          className={`relative ${IMAGE_FRAME[aspect] || IMAGE_FRAME.video} rounded-xl border border-border overflow-hidden group bg-surface-sunken`}
+        >
           <img
             src={value.url}
             alt={value.alt?.vi || 'Preview'}

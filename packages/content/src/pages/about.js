@@ -303,12 +303,12 @@ export const aboutPage = {
   sections: [aboutHero, aboutCompany, aboutLeadership, aboutMission, aboutServiceTerms],
   seo: {
     title: {
-      vi: 'Giới thiệu về Dev House Software — Đội ngũ Kỹ sư Công nghệ Chuyên nghiệp',
-      en: 'About Dev House Software — Enterprise Engineering & Consulting',
+      vi: 'Về chúng tôi — Dev House Software',
+      en: 'About us — Dev House Software',
     },
     description: {
-      vi: 'Tìm hiểu về văn hóa, sứ mệnh và năng lực triển khai các dự án phần mềm quy mô lớn của Dev House Software.',
-      en: 'Learn about our mission, culture, and track record in delivering high-assurance software systems.',
+      vi: 'Dev House Software là ai, làm gì, và cam kết gì với khách hàng: an toàn, ổn định, đơn giản và minh bạch.',
+      en: 'Who Dev House Software is, what we do and what we promise our customers: safe, stable, simple and transparent.',
     },
   },
 };
