@@ -120,9 +120,10 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
 
   const rootRef = useRef(null);
   const trackRef = useRef(null);
-  const progressRef = useRef(null);
+  const dotsRef = useRef(null);
   const elapsedRef = useRef(0);
   const lockRef = useRef(0);
+  const settleRef = useRef(0);
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(0);
   const [hovering, setHovering] = useState(false);
@@ -151,21 +152,29 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
     };
   }, [items.length]);
 
+  // Start the wait for the next move again, and empty the filling bar of the dots
+  const restartClock = useCallback(() => {
+    elapsedRef.current = 0;
+    dotsRef.current?.style.setProperty('--progress', '0');
+  }, []);
+
   const goTo = useCallback(
     index => {
       const m = measure();
       if (!m || !trackRef.current) return;
       const target = wrapPage(index, 0, m.pages);
-      elapsedRef.current = 0;
+      restartClock();
       setPage(target);
       // While the slide is gliding, the scroll position must not move the dots around
       lockRef.current = Date.now() + (reduced ? 0 : 700);
+      // A check planned by an earlier move must not undo this one
+      clearTimeout(settleRef.current);
       trackRef.current.scrollTo({
         left: scrollLeftForPage(target, m),
         behavior: reduced ? 'auto' : 'smooth',
       });
     },
-    [measure, reduced],
+    [measure, reduced, restartClock],
   );
 
   // Follow the size of the row, and the visitor's own swipes
@@ -173,7 +182,6 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
     const track = trackRef.current;
     if (!track) return undefined;
     let frame = 0;
-    let settle = 0;
 
     const sync = () => {
       const m = measure();
@@ -181,32 +189,37 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
       setPages(m.pages);
       setPage(pageFromScroll(track.scrollLeft, m));
     };
+    // While the slide is gliding the scroll position is not a page yet: look again once it stops
+    const syncWhenSettled = () => {
+      clearTimeout(settleRef.current);
+      const wait = lockRef.current - Date.now();
+      if (wait > 0) {
+        settleRef.current = setTimeout(syncWhenSettled, wait + 60);
+        return;
+      }
+      sync();
+    };
     const onScroll = () => {
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
-        const wait = lockRef.current - Date.now();
-        if (wait > 0) {
-          clearTimeout(settle);
-          settle = setTimeout(sync, wait + 60);
-          return;
-        }
-        elapsedRef.current = 0;
-        sync();
+        // A scroll the slider did not start is the visitor swiping: the wait begins again
+        if (lockRef.current - Date.now() <= 0) restartClock();
+        syncWhenSettled();
       });
     };
 
     sync();
     track.addEventListener('scroll', onScroll, { passive: true });
-    const observer = new ResizeObserver(sync);
+    const observer = new ResizeObserver(syncWhenSettled);
     observer.observe(track);
     return () => {
       track.removeEventListener('scroll', onScroll);
       observer.disconnect();
       cancelAnimationFrame(frame);
-      clearTimeout(settle);
+      clearTimeout(settleRef.current);
     };
-  }, [measure]);
+  }, [measure, restartClock]);
 
   // Do not run while nobody can see it
   useEffect(() => {
@@ -239,7 +252,7 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
       elapsedRef.current += now - last;
       last = now;
       const progress = Math.min(1, elapsedRef.current / duration);
-      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
+      dotsRef.current?.style.setProperty('--progress', String(progress));
       if (progress >= 1) {
         clearInterval(id);
         goTo(page + 1);
@@ -271,53 +284,56 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
         touchTimer.current = setTimeout(() => setTouching(false), 2500);
       }}
     >
-      <ul
-        ref={trackRef}
-        className="collection-track"
-        tabIndex={0}
-        aria-label={label}
-        onKeyDown={event => {
-          if (event.key === 'ArrowRight') {
-            event.preventDefault();
-            move(1);
-          } else if (event.key === 'ArrowLeft') {
-            event.preventDefault();
-            move(-1);
-          }
-        }}
-      >
-        {items.map((item, index) => (
-          <li key={getKey(item, index)}>{renderItem(item, index, { layout: 'slide' })}</li>
-        ))}
-      </ul>
+      <div className="collection-stage">
+        <ul
+          ref={trackRef}
+          className="collection-track"
+          tabIndex={0}
+          aria-label={label}
+          onKeyDown={event => {
+            if (event.key === 'ArrowRight') {
+              event.preventDefault();
+              move(1);
+            } else if (event.key === 'ArrowLeft') {
+              event.preventDefault();
+              move(-1);
+            }
+          }}
+        >
+          {items.map((item, index) => (
+            <li key={getKey(item, index)}>{renderItem(item, index, { layout: 'slide' })}</li>
+          ))}
+        </ul>
 
-      {slide.arrows && pages > 1 && (
-        <>
-          <button
-            type="button"
-            className="slider-arrow slider-arrow--prev"
-            aria-label={t('slider.previous')}
-            onClick={() => move(-1)}
-          >
-            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            className="slider-arrow slider-arrow--next"
-            aria-label={t('slider.next')}
-            onClick={() => move(1)}
-          >
-            <ChevronRight className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </>
-      )}
+        {slide.arrows && pages > 1 && (
+          <>
+            <button
+              type="button"
+              className="slider-arrow slider-arrow--prev"
+              aria-label={t('slider.previous')}
+              onClick={() => move(-1)}
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="slider-arrow slider-arrow--next"
+              aria-label={t('slider.next')}
+              onClick={() => move(1)}
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </>
+        )}
+      </div>
 
       <SliderDots
         style={slide.dots}
         pages={pages}
         page={page}
+        count={items.length}
         onSelect={goTo}
-        progressRef={progressRef}
+        rowRef={dotsRef}
         running={running}
         label={(current, total) =>
           t('slider.page').replace('{current}', String(current)).replace('{total}', String(total))

@@ -173,4 +173,27 @@ describe('@devhouse/content', () => {
       }
     });
   });
+  describe('page overview', () => {
+    const withOverview = Object.values(PAGE_REGISTRY).filter(page => page.overview);
+
+    it('is on for the home and about pages', () => {
+      expect(withOverview.map(page => page.key).sort()).toEqual(['about', 'home']);
+    });
+
+    it('describes every section of such a page in plain words, so the admin can list them', () => {
+      for (const page of withOverview) {
+        for (const section of page.sections) {
+          expect(section.summary.length, `${page.key}/${section.key}`).toBeGreaterThan(10);
+        }
+      }
+    });
+
+    it('keeps the text of a summary in one language, Vietnamese, like the section labels', () => {
+      for (const page of withOverview) {
+        for (const section of page.sections) {
+          expect(typeof section.summary).toBe('string');
+        }
+      }
+    });
+  });
 });

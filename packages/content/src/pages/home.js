@@ -15,6 +15,8 @@ const cardList = withIcon =>
 export const homeHero = defineSection({
   key: 'hero',
   label: 'Hero (đầu trang)',
+  summary:
+    'Khối đầu tiên của trang: tiêu đề lớn, đoạn giới thiệu, hai nút và vài dòng điểm nhấn. Nên để bật, vì đây là tiêu đề chính của trang.',
   fields: {
     eyebrow: field.text({ max: 80 }),
     heading: field.text({ max: 150, required: true }),
@@ -57,6 +59,7 @@ export const homeHero = defineSection({
 export const homeValues = defineSection({
   key: 'values',
   label: 'Bốn giá trị cam kết',
+  summary: 'Các thẻ cam kết của công ty (an toàn, ổn định, đơn giản, minh bạch).',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -110,6 +113,7 @@ export const homeValues = defineSection({
 export const homeServicesIntro = defineSection({
   key: 'servicesIntro',
   label: 'Mục Dịch vụ trên trang chủ',
+  summary: 'Các nhóm dịch vụ, lấy từ mục Dịch vụ. Muốn đổi nội dung từng thẻ, vào mục Dịch vụ.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -132,6 +136,7 @@ export const homeServicesIntro = defineSection({
 export const homeProductsIntro = defineSection({
   key: 'productsIntro',
   label: 'Mục Mẫu website trên trang chủ',
+  summary: 'Các mẫu website, lấy từ mục Mẫu website (ưu tiên mẫu được đánh dấu Nổi bật).',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -154,6 +159,7 @@ export const homeProductsIntro = defineSection({
 export const homeAudiences = defineSection({
   key: 'audiences',
   label: 'Dành cho ai',
+  summary: 'Các nhóm khách hàng phù hợp với dịch vụ.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -199,6 +205,7 @@ export const homeAudiences = defineSection({
 export const homePackagesIntro = defineSection({
   key: 'packagesIntro',
   label: 'Mục Gói dịch vụ trên trang chủ',
+  summary: 'Các gói dịch vụ, lấy từ mục Bảng Giá & Gói Cước.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -217,6 +224,7 @@ export const homePackagesIntro = defineSection({
 export const homeProcess = defineSection({
   key: 'process',
   label: 'Quy trình làm việc',
+  summary: 'Các bước làm việc, từ lúc tiếp nhận đến khi kết thúc hợp đồng.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -286,6 +294,7 @@ export const homeProcess = defineSection({
 export const homeCta = defineSection({
   key: 'cta',
   label: 'Kêu gọi hành động',
+  summary: 'Khung cuối trang mời khách liên hệ hoặc xem gói dịch vụ.',
   fields: {
     heading: field.text({ max: 150 }),
     subheading: field.textarea({ max: 300 }),
@@ -312,6 +321,8 @@ export const homeCta = defineSection({
 });
 
 export const homePage = {
+  // The admin shows every section with a switch (on/off) and its display settings
+  overview: true,
   key: 'home',
   title: { vi: 'Trang chủ', en: 'Home' },
   sections: [

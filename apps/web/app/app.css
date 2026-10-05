@@ -162,7 +162,12 @@ h6 {
   }
 }
 
-/* Previous / next buttons of a slide */
+/* The row the slide moves in, so the arrows line up with the cards and not with the dots below */
+.collection-stage {
+  position: relative;
+}
+
+/* Previous / next buttons of a slide. They sit half outside the row, so they never cover a card. */
 .slider-arrow {
   position: absolute;
   top: 50%;
@@ -187,10 +192,10 @@ h6 {
   background: var(--color-surface);
 }
 .slider-arrow--prev {
-  left: 0.25rem;
+  left: -1.125rem;
 }
 .slider-arrow--next {
-  right: 0.25rem;
+  right: -1.125rem;
 }
 @media (max-width: 639px) {
   .slider-arrow {
@@ -198,53 +203,85 @@ h6 {
   }
 }
 
-/* The three kinds of dots under a slide */
+/* ───────────────────────── The three kinds of dots under a slide ─────────────────────────
+   One row per slide. Each mark sits in a button that is bigger than the mark, so it is easy to
+   tap. The pill of the "slide" kind lives in the same row, so it always lines up with the marks. */
 .slider-dots {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+/* Room kept for dots that are not drawn yet: none when everything fits on one page */
+.slider-dots--pending {
+  --needed: clamp(0, var(--items, 0) - var(--per-view, 1), 1);
+  height: calc(var(--needed) * 1.5rem);
+  margin-top: calc(var(--needed) * 0.5rem);
+}
+.slider-dots-row {
   --dot: 0.5rem;
-  --dot-gap: 0.5rem;
+  --cell: 1rem; /* the width one mark takes, including the space around it */
+  --gap: 0;
+  --idle: color-mix(in oklch, var(--color-fg) 28%, transparent);
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--dot-gap);
-  margin-top: 1rem;
+  gap: var(--gap);
+  max-width: 100%;
 }
-.slider-dots button {
-  position: relative;
+.slider-dots-row > button {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--cell);
+  height: 1.5rem;
   padding: 0;
   border: 0;
+  background: none;
   cursor: pointer;
-  background: var(--color-border);
-  border-radius: 9999px;
-  height: var(--dot);
-  width: var(--dot);
 }
-.slider-dots button:focus-visible {
+.slider-dots-mark {
+  position: relative;
+  display: block;
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 9999px;
+  background: var(--idle);
+  overflow: hidden;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+}
+.slider-dots-row > button:hover .slider-dots-mark {
+  background: color-mix(in oklch, var(--color-fg) 50%, transparent);
+}
+.slider-dots-row > button:focus-visible {
+  outline: none;
+}
+.slider-dots-row > button:focus-visible .slider-dots-mark {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;
 }
 
 /* dot: plain round dots, the current one is solid and a little larger */
-.slider-dots--dot button {
-  transition:
-    background-color 0.2s,
-    transform 0.2s;
-}
-.slider-dots--dot button[aria-current='true'] {
+.slider-dots--dot .slider-dots-row > button[aria-current='true'] .slider-dots-mark {
   background: var(--color-primary);
   transform: scale(1.25);
 }
 
 /* progress: little bars, the current one fills up while the slide waits for the next move */
-.slider-dots--progress {
-  --dot-gap: 0.375rem;
+.slider-dots--progress .slider-dots-row {
+  --gap: 0.375rem;
+  --cell: 1.75rem;
 }
-.slider-dots--progress button {
-  width: 1.75rem;
+.slider-dots--progress .slider-dots-row > button {
+  flex: 0 1 var(--cell);
+  min-width: 0.5rem;
+}
+.slider-dots--progress .slider-dots-mark {
+  width: 100%;
   height: 0.25rem;
-  overflow: hidden;
 }
-.slider-dots--progress button > span {
+.slider-dots-fill {
   position: absolute;
   inset: 0;
   background: var(--color-primary);
@@ -252,29 +289,47 @@ h6 {
   transform: scaleX(0);
   transition: transform 0.12s linear;
 }
-.slider-dots--progress button[data-done='true'] > span {
+.slider-dots-row > button[data-state='done'] .slider-dots-fill {
+  transform: scaleX(1);
+}
+.slider-dots-row > button[data-state='active'] .slider-dots-fill {
+  transform: scaleX(var(--progress, 0));
+}
+.slider-dots-row[data-running='false'] > button[data-state='active'] .slider-dots-fill {
   transform: scaleX(1);
 }
 
 /* slide: round dots with one pill that glides to the current one */
-.slider-dots--slide button {
-  background: var(--color-border);
+.slider-dots--slide .slider-dots-row {
+  --cell: 1.25rem;
+  --pill: 1.5rem;
 }
-.slider-dots--slide .slider-dots-thumb {
+.slider-dots-thumb {
   position: absolute;
-  left: 0;
   top: 50%;
+  left: calc((var(--cell) - var(--pill)) / 2);
+  width: var(--pill);
   height: var(--dot);
-  width: calc(var(--dot) * 3);
   border-radius: 9999px;
   background: var(--color-primary);
-  transform: translate(calc(var(--index, 0) * (var(--dot) + var(--dot-gap))), -50%);
+  transform: translate(calc(var(--index, 0) * var(--cell)), -50%);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
+
+/* More pages than dots fit: a plain counter instead */
+.slider-dots-count {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-fg-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .slider-dots--slide .slider-dots-thumb,
-  .slider-dots--dot button {
+  .slider-dots-thumb,
+  .slider-dots-mark,
+  .slider-dots-fill {
     transition: none;
   }
 }

@@ -6,11 +6,44 @@ import { diffSections, isEqual } from '../../lib/content-diff.js';
 import { ResourceForm } from '../../components/form/ResourceForm.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
 import { SectionForm } from '../../components/content/SectionForm.jsx';
+import { PageOverview } from '../../components/content/PageOverview.jsx';
 import { Card } from '../../components/ui/Card.jsx';
 import { Tabs } from '../../components/ui/Tabs.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 
 const clone = value => JSON.parse(JSON.stringify(value ?? null));
+
+// Tab that lists every section of a page with its on/off switch and display settings
+const OVERVIEW_TAB = 'overview';
+
+const PUBLIC_URL_MAP = {
+  home: '/',
+  about: '/about',
+  'services-index': '/services',
+  'packages-index': '/packages',
+  'products-index': '/products',
+  'solutions-index': '/solutions',
+  'projects-index': '/projects',
+  'technologies-index': '/technologies',
+  'blog-index': '/blog',
+  careers: '/careers',
+  contact: '/contact',
+  privacy: '/privacy',
+  terms: '/terms',
+};
+
+export function friendlySectionLabel(sectionKey, rawLabel) {
+  if (sectionKey === 'hero') return 'Đầu trang (Heading & Mô tả)';
+  if (sectionKey === 'cta') return 'Khung kêu gọi (CTA)';
+  if (sectionKey === 'empty') return 'Khi chưa có dữ liệu';
+  if (sectionKey === 'payment') return 'Cách thanh toán';
+  if (sectionKey === 'commitments') return 'Cam kết dịch vụ';
+  if (sectionKey === 'company') return 'Giới thiệu công ty';
+  if (sectionKey === 'mission') return 'Giá trị cốt lõi';
+  if (sectionKey === 'leadership') return 'Đội ngũ lãnh đạo';
+  if (sectionKey === 'serviceTerms') return 'Điều khoản dịch vụ';
+  return rawLabel || sectionKey;
+}
 
 export default function PageEditorPage() {
   const { key } = useParams();
@@ -35,7 +68,9 @@ export default function PageEditorPage() {
       setPage(data);
       setSections(clone(data.resolved));
       setSeo(clone(data.seo) || { title: { vi: '', en: '' }, description: { vi: '', en: '' } });
-      const first = data.definition?.sections?.[0]?.key || 'seo';
+      const first = data.definition?.overview
+        ? OVERVIEW_TAB
+        : data.definition?.sections?.[0]?.key || 'seo';
       setActiveTab(current => (keepTab && current ? current : first));
     } catch (err) {
       setFeedback({ type: 'error', message: err.message || 'Không thể tải dữ liệu trang.' });
@@ -106,38 +141,10 @@ export default function PageEditorPage() {
     );
   }
 
-const PUBLIC_URL_MAP = {
-  home: '/',
-  about: '/about',
-  'services-index': '/services',
-  'packages-index': '/packages',
-  'products-index': '/products',
-  'solutions-index': '/solutions',
-  'projects-index': '/projects',
-  'technologies-index': '/technologies',
-  'blog-index': '/blog',
-  careers: '/careers',
-  contact: '/contact',
-  privacy: '/privacy',
-  terms: '/terms',
-};
-
-function friendlySectionLabel(sectionKey, rawLabel) {
-  if (sectionKey === 'hero') return 'Đầu trang (Heading & Mô tả)';
-  if (sectionKey === 'cta') return 'Khung kêu gọi (CTA)';
-  if (sectionKey === 'empty') return 'Khi chưa có dữ liệu';
-  if (sectionKey === 'payment') return 'Cách thanh toán';
-  if (sectionKey === 'commitments') return 'Cam kết dịch vụ';
-  if (sectionKey === 'company') return 'Giới thiệu công ty';
-  if (sectionKey === 'mission') return 'Giá trị cốt lõi';
-  if (sectionKey === 'leadership') return 'Đội ngũ lãnh đạo';
-  if (sectionKey === 'serviceTerms') return 'Điều khoản dịch vụ';
-  return rawLabel || sectionKey;
-}
-
   const definitions = page.definition?.sections || [];
   const overridden = new Set(Object.keys(page.overrides || {}));
   const tabItems = [
+    ...(page.definition?.overview ? [{ id: OVERVIEW_TAB, label: 'Các khối trên trang' }] : []),
     ...definitions.map(section => ({
       id: section.key,
       label: `${friendlySectionLabel(section.key, section.label)}${overridden.has(section.key) ? ' ●' : ''}`,
@@ -200,7 +207,20 @@ function friendlySectionLabel(sectionKey, rawLabel) {
 
       <Tabs tabs={tabItems} activeTab={activeTab} onChange={setActiveTab} />
 
-      {activeTab === 'seo' ? (
+      {activeTab === OVERVIEW_TAB ? (
+        <Card className="p-6">
+          <h3 className="mb-5 border-b border-border pb-3 text-sm font-bold text-fg">
+            Các khối trên trang
+          </h3>
+          <PageOverview
+            sections={definitions}
+            values={sections}
+            labelOf={section => friendlySectionLabel(section.key, section.label)}
+            onChange={(sectionKey, next) => setSections({ ...sections, [sectionKey]: next })}
+            onEdit={sectionKey => setActiveTab(sectionKey)}
+          />
+        </Card>
+      ) : activeTab === 'seo' ? (
         <Card className="p-6 space-y-6">
           <h3 className="text-sm font-bold text-fg border-b border-border pb-3">
             Tiêu đề và mô tả hiển thị trên Google

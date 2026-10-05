@@ -20,6 +20,7 @@ const titleAndText = withIcon =>
 export const aboutHero = defineSection({
   key: 'hero',
   label: 'Hero Giới thiệu',
+  summary: 'Tiêu đề và đoạn giới thiệu ngắn ở đầu trang.',
   fields: {
     heading: field.text({ max: 120, required: true }),
     subheading: field.textarea({ max: 400 }),
@@ -39,6 +40,7 @@ export const aboutHero = defineSection({
 export const aboutCompany = defineSection({
   key: 'company',
   label: 'Câu chuyện công ty',
+  summary: 'Câu chuyện và phần giới thiệu về công ty.',
   fields: {
     heading: field.text({ max: 120 }),
     intro: field.textarea({ max: 600 }),
@@ -75,6 +77,7 @@ export const aboutCompany = defineSection({
 export const aboutGallery = defineSection({
   key: 'gallery',
   label: 'Ảnh về công ty (slide)',
+  summary: 'Ảnh về công ty chạy dạng slide, không giới hạn số ảnh. Chỉ hiện khi đã tải ảnh lên.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -97,6 +100,7 @@ export const aboutGallery = defineSection({
 export const aboutVision = defineSection({
   key: 'vision',
   label: 'Tầm nhìn và sứ mệnh',
+  summary: 'Tầm nhìn và sứ mệnh của công ty.',
   fields: {
     heading: field.text({ max: 120 }),
     items: titleAndText(true),
@@ -129,6 +133,7 @@ export const aboutVision = defineSection({
 export const aboutOfferings = defineSection({
   key: 'offerings',
   label: 'Chúng tôi làm gì',
+  summary: 'Những việc công ty làm cho khách hàng.',
   fields: {
     heading: field.text({ max: 120 }),
     items: field.list({
@@ -190,6 +195,7 @@ export const aboutOfferings = defineSection({
 export const aboutValues = defineSection({
   key: 'values',
   label: 'Bốn giá trị cam kết',
+  summary: 'Các giá trị cam kết của công ty.',
   fields: {
     heading: field.text({ max: 120 }),
     items: titleAndText(true),
@@ -241,6 +247,7 @@ export const aboutValues = defineSection({
 export const aboutServiceTerms = defineSection({
   key: 'serviceTerms',
   label: 'Điều khoản dịch vụ (tóm tắt)',
+  summary: 'Tóm tắt các điều khoản dịch vụ.',
   fields: {
     heading: field.text({ max: 120 }),
     intro: field.textarea({ max: 400 }),
@@ -313,6 +320,7 @@ export const aboutServiceTerms = defineSection({
 export const aboutCta = defineSection({
   key: 'cta',
   label: 'Kêu gọi hành động',
+  summary: 'Khung cuối trang mời khách liên hệ.',
   fields: {
     heading: field.text({ max: 150 }),
     subheading: field.textarea({ max: 300 }),
@@ -333,6 +341,8 @@ export const aboutCta = defineSection({
 });
 
 export const aboutPage = {
+  // The admin shows every section with a switch (on/off) and its display settings
+  overview: true,
   key: 'about',
   title: { vi: 'Về Dev House', en: 'About Dev House' },
   sections: [

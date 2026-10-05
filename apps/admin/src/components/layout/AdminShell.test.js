@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { isCurrentNavItem } from './AdminShell.jsx';
 
-const pages = { to: '/pages', except: ['/pages/about', '/pages/contact'] };
+const pages = { to: '/pages', except: ['/pages/home', '/pages/about', '/pages/contact'] };
+const home = { to: '/pages/home' };
 const about = { to: '/pages/about' };
 const blog = { to: '/blog', except: ['/blog/tags', '/blog/authors'] };
 const tags = { to: '/blog/tags' };
@@ -12,7 +13,9 @@ describe('sidebar highlight', () => {
     expect(isCurrentNavItem(about, '/pages/about')).toBe(true);
     expect(isCurrentNavItem(pages, '/pages/about')).toBe(false);
     expect(isCurrentNavItem(pages, '/pages')).toBe(true);
-    expect(isCurrentNavItem(pages, '/pages/home')).toBe(true);
+    expect(isCurrentNavItem(home, '/pages/home')).toBe(true);
+    expect(isCurrentNavItem(pages, '/pages/home')).toBe(false);
+    expect(isCurrentNavItem(pages, '/pages/privacy')).toBe(true);
     expect(isCurrentNavItem(pages, '/pages/contact')).toBe(false);
   });
 

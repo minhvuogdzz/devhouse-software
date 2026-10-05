@@ -151,7 +151,7 @@ function buildFieldSchema(descriptor) {
 }
 
 export function defineSection(config) {
-  const { key, label, fields = {}, defaults = {} } = config;
+  const { key, label, summary = '', fields = {}, defaults = {} } = config;
 
   const shape = {
     visible: z.boolean().optional().default(true),
@@ -166,6 +166,8 @@ export function defineSection(config) {
   return {
     key,
     label,
+    // One plain sentence for the admin: what the section is and where it shows on the website
+    summary,
     fields,
     defaults: {
       visible: true,

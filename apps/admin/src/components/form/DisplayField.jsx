@@ -35,35 +35,41 @@ const DOT_LABELS = {
   slide: 'Chấm trượt',
 };
 
-/** A tiny drawing of each dot style, so the admin can see what they are choosing. */
+/**
+ * A small drawing of each kind of dots, so the admin can see what they are choosing. Same
+ * proportions as on the website: round dots 8px wide, little bars 28px wide, and a pill that
+ * sits on the first dot.
+ */
 function DotPreview({ style }) {
   if (style === 'none') return <span className="text-[10px] text-fg-subtle">—</span>;
   if (style === 'progress') {
     return (
-      <span className="flex items-center gap-1" aria-hidden="true">
-        <span className="h-1 w-4 rounded-full bg-primary" />
-        <span className="relative h-1 w-4 overflow-hidden rounded-full bg-border">
-          <span className="absolute inset-y-0 left-0 w-2/3 bg-primary" />
+      <span className="flex items-center gap-1.5" aria-hidden="true">
+        <span className="h-1 w-7 rounded-full bg-primary" />
+        <span className="relative h-1 w-7 overflow-hidden rounded-full bg-fg/25">
+          <span className="absolute inset-y-0 left-0 w-3/5 bg-primary" />
         </span>
-        <span className="h-1 w-4 rounded-full bg-border" />
+        <span className="h-1 w-7 rounded-full bg-fg/25" />
       </span>
     );
   }
   if (style === 'slide') {
     return (
-      <span className="relative flex items-center gap-1" aria-hidden="true">
-        <span className="h-2 w-2 rounded-full bg-border" />
-        <span className="h-2 w-2 rounded-full bg-border" />
-        <span className="h-2 w-2 rounded-full bg-border" />
-        <span className="absolute left-0 h-2 w-5 rounded-full bg-primary" />
+      <span className="relative flex items-center" aria-hidden="true">
+        {[0, 1, 2].map(index => (
+          <span key={index} className="flex w-5 justify-center">
+            <span className="h-2 w-2 rounded-full bg-fg/25" />
+          </span>
+        ))}
+        <span className="absolute -left-0.5 h-2 w-6 rounded-full bg-primary" />
       </span>
     );
   }
   return (
-    <span className="flex items-center gap-1" aria-hidden="true">
+    <span className="flex items-center gap-2" aria-hidden="true">
       <span className="h-2 w-2 scale-125 rounded-full bg-primary" />
-      <span className="h-2 w-2 rounded-full bg-border" />
-      <span className="h-2 w-2 rounded-full bg-border" />
+      <span className="h-2 w-2 rounded-full bg-fg/25" />
+      <span className="h-2 w-2 rounded-full bg-fg/25" />
     </span>
   );
 }
