@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 export function Input({ label, error, helperText, className = '', id, ...props }) {
-  const inputId = id || props.name;
+  const autoId = useId();
+  const inputId = id || autoId;
 
   return (
     <div className="space-y-1.5 w-full">
@@ -24,7 +25,8 @@ export function Input({ label, error, helperText, className = '', id, ...props }
 }
 
 export function Textarea({ label, error, helperText, className = '', id, rows = 4, ...props }) {
-  const inputId = id || props.name;
+  const autoId = useId();
+  const inputId = id || autoId;
 
   return (
     <div className="space-y-1.5 w-full">
@@ -48,7 +50,8 @@ export function Textarea({ label, error, helperText, className = '', id, rows = 
 }
 
 export function Select({ label, error, helperText, className = '', id, children, ...props }) {
-  const inputId = id || props.name;
+  const autoId = useId();
+  const inputId = id || autoId;
 
   return (
     <div className="space-y-1.5 w-full">

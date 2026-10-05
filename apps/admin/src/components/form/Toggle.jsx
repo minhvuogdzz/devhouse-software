@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 /** Accessible on/off switch with a visible label. */
 export function Toggle({ label, hint, checked, onChange, id }) {
-  const inputId = id || `toggle-${label}`;
+  // Each switch needs an id of its own. Lists repeat one label (a switch per menu item), and a
+  // shared id makes the label of one switch operate the first switch on the page instead.
+  const autoId = useId();
+  const inputId = id || autoId;
   return (
     <label htmlFor={inputId} className="flex cursor-pointer items-start gap-3">
       <input
