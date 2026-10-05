@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { apiClient } from '../../lib/api-client.js';
 import { Button } from '../../components/ui/Button.jsx';
-import { Input } from '../../components/ui/Input.jsx';
+import { LocalizedField } from '../../components/form/LocalizedField.jsx';
+import { MediaUploader } from '../../components/media-picker/MediaUploader.jsx';
 import { Modal } from '../../components/ui/Modal.jsx';
 import { Image as ImageIcon, Upload, Trash2, AlertTriangle } from 'lucide-react';
 
@@ -12,8 +13,6 @@ export default function MediaLibraryPage() {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [manualUrl, setManualUrl] = useState('');
-  const [manualPublicId, setManualPublicId] = useState('');
   const [alt, setAlt] = useState({ vi: '', en: '' });
 
   useEffect(() => {
@@ -89,32 +88,6 @@ export default function MediaLibraryPage() {
     }
   };
 
-  const handleManualRegister = async e => {
-    e.preventDefault();
-    try {
-      await apiClient('/admin/media', {
-        method: 'POST',
-        body: JSON.stringify({
-          publicId: manualPublicId || `manual-${Date.now()}`,
-          url: manualUrl,
-          secureUrl: manualUrl,
-          width: 1200,
-          height: 800,
-          format: 'webp',
-          resourceType: 'image',
-          bytes: 1024,
-          alt,
-        }),
-      });
-      setIsUploadOpen(false);
-      setManualUrl('');
-      setManualPublicId('');
-      await loadMedia();
-    } catch (err) {
-      alert(err.message || 'Không thể đăng ký ảnh');
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
@@ -123,8 +96,7 @@ export default function MediaLibraryPage() {
             Thư viện Phương tiện (Media Library)
           </h1>
           <p className="text-xs text-fg-muted mt-1">
-            Quản lý tài nguyên hình ảnh được lưu trữ trên Cloudinary và kiểm soát vị trí sử dụng
-            trong hệ thống.
+            Tải ảnh từ máy tính (tự động chuyển WebP, dưới 1 MB), xem vị trí sử dụng và xoá ảnh.
           </p>
         </div>
 
@@ -140,9 +112,8 @@ export default function MediaLibraryPage() {
           <div>
             <p className="font-bold">Cloudinary chưa được cấu hình (Chế độ chờ)</p>
             <p>
-              Hệ thống đang chạy trong môi trường phát triển chưa có biến môi trường CLOUDINARY_*.
-              Bạn có thể đăng ký URL ảnh trực tiếp bên dưới mà không làm gián đoạn trải nghiệm người
-              dùng.
+              Máy chủ chưa có các biến môi trường CLOUDINARY_* nên chưa thể tải ảnh lên. Hãy nhờ
+              quản trị hệ thống điền thông tin tài khoản Cloudinary.
             </p>
           </div>
         </div>
@@ -158,7 +129,7 @@ export default function MediaLibraryPage() {
           <ImageIcon className="w-10 h-10 mx-auto mb-2 opacity-40" />
           <p className="text-sm font-semibold text-fg">Chưa có hình ảnh nào</p>
           <p className="text-xs text-fg-subtle mt-1">
-            Nhấn "Thêm ảnh mới" để đăng ký tài nguyên ảnh đầu tiên.
+            Nhấn "Thêm ảnh mới" để tải ảnh đầu tiên từ máy tính.
           </p>
         </div>
       ) : (
@@ -244,40 +215,18 @@ export default function MediaLibraryPage() {
         )}
       </Modal>
 
-      {/* Manual Upload/Register Modal */}
+      {/* Upload Modal */}
       <Modal
         isOpen={isUploadOpen}
         onClose={() => setIsUploadOpen(false)}
-        title="Đăng ký hình ảnh mới"
+        title="Tải ảnh lên thư viện"
         footer={
-          <>
-            <Button variant="secondary" onClick={() => setIsUploadOpen(false)}>
-              Hủy
-            </Button>
-            <Button variant="primary" onClick={handleManualRegister} disabled={!manualUrl}>
-              Xác nhận thêm
-            </Button>
-          </>
+          <Button variant="secondary" onClick={() => setIsUploadOpen(false)}>
+            Đóng
+          </Button>
         }
       >
-        <form onSubmit={handleManualRegister} className="space-y-4">
-          <Input
-            label="Đường dẫn ảnh trực tiếp (URL)"
-            required
-            placeholder="https://images.unsplash.com/... hoặc Cloudinary URL"
-            value={manualUrl}
-            onChange={e => setManualUrl(e.target.value)}
-          />
-
-          <Input
-            label="Mã định danh ảnh (Public ID - Tùy chọn)"
-            placeholder="devhouse/services/banner-1"
-            value={manualPublicId}
-            onChange={e => setManualPublicId(e.target.value)}
-          />
-
-          <LocalizedField label="Mô tả ảnh (Alt text)" value={alt} onChange={setAlt} />
-        </form>
+        <MediaUploader folder="site" onUploaded={() => loadMedia()} />
       </Modal>
     </div>
   );

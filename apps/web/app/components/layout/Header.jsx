@@ -1,12 +1,34 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useRouteLoaderData } from 'react-router';
 import { Sun, Moon, Menu, X, Globe } from 'lucide-react';
 import { useTheme } from '../../lib/theme.js';
 import { getTranslation, getLocaleFromUrl, getAlternateLocalePath } from '../../lib/i18n.js';
+import {
+  isActivePath,
+  isExternalUrl,
+  resolveNavigation,
+  withLocale,
+} from '../../lib/navigation.js';
 import { Button } from '../ui/Button.jsx';
 import { Logo } from '../ui/Logo.jsx';
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+/** One menu entry: a router link for our own pages, a plain link for anything outside the site. */
+function NavEntry({ item, className }) {
+  if (item.external) {
+    return (
+      <a href={item.path} className={className} rel="noopener noreferrer">
+        {item.label}
+      </a>
+    );
+  }
+  return (
+    <Link to={item.path} className={className} aria-current={item.active ? 'page' : undefined}>
+      {item.label}
+    </Link>
+  );
+}
 
 export function Header({ alternateUrl = null }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,21 +43,18 @@ export function Header({ alternateUrl = null }) {
   const prefix = locale === 'en' ? '/en' : '';
   const homePath = prefix || '/';
 
-  const navItems = [
-    { label: t('header.nav.services'), path: `${prefix}/services` },
-    { label: t('header.nav.solutions'), path: `${prefix}/solutions` },
-    { label: t('header.nav.projects'), path: `${prefix}/projects` },
-    { label: t('header.nav.technologies'), path: `${prefix}/technologies` },
-    { label: t('header.nav.blog'), path: `${prefix}/blog` },
-    { label: t('header.nav.about'), path: `${prefix}/about` },
-    { label: t('header.nav.contact'), path: `${prefix}/contact` },
-  ];
+  // The menu is managed in Admin → Navigation
+  const site = useRouteLoaderData('root');
+  const navItems = resolveNavigation(site, locale).header.map(item => ({
+    id: item.id || item.path,
+    label: item.label,
+    path: withLocale(item.path, locale),
+    external: isExternalUrl(item.path),
+    active: isActivePath(item.path, locale, location),
+  }));
 
   // Target path for language switch
   const langSwitchPath = alternateUrl || getAlternateLocalePath(location.pathname);
-
-  const isActive = path =>
-    location.pathname === path || (path !== prefix && location.pathname.startsWith(`${path}/`));
 
   // Close the drawer whenever the page changes
   useEffect(() => {
@@ -90,10 +109,10 @@ export function Header({ alternateUrl = null }) {
       <header className="sticky top-0 z-50 w-full border-b border-border bg-surface/90 backdrop-blur-md transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between gap-3">
           {/* Brand */}
-          <Link to={homePath} className="flex items-center gap-3 group focus:outline-none">
+          <Link to={homePath} className="flex shrink-0 items-center gap-3 group focus:outline-none">
             <Logo variant="mark" className="h-10 w-auto" />
             <div className="flex flex-col">
-              <span className="font-display font-bold text-xl tracking-tight text-fg group-hover:text-primary transition-colors">
+              <span className="font-display font-bold text-xl tracking-tight text-fg whitespace-nowrap group-hover:text-primary transition-colors">
                 Dev House
               </span>
               <span className="text-[11px] font-medium text-fg-subtle -mt-1 tracking-wider uppercase">
@@ -108,17 +127,15 @@ export function Header({ alternateUrl = null }) {
             aria-label={t('header.menuLabel')}
           >
             {navItems.map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
+              <NavEntry
+                key={item.id}
+                item={item}
                 className={`px-2 py-1.5 xl:px-3 xl:py-2 text-[13px] xl:text-sm font-medium whitespace-nowrap rounded-md transition-colors ${
-                  isActive(item.path)
+                  item.active
                     ? 'text-primary bg-primary-subtle font-semibold'
                     : 'text-fg-muted hover:text-fg hover:bg-surface-2'
                 }`}
-              >
-                {item.label}
-              </Link>
+              />
             ))}
           </nav>
 
@@ -158,14 +175,17 @@ export function Header({ alternateUrl = null }) {
               )}
             </button>
 
-            <Button
-              to={`${prefix}/contact`}
-              size="sm"
-              variant="primary"
-              className="hidden sm:inline-flex"
-            >
-              {t('header.contactCta')}
-            </Button>
+            {/* Wrapped, because Button sets its own display and would ignore `hidden` */}
+            <div className="hidden sm:block">
+              <Button
+                to={`${prefix}/contact`}
+                size="sm"
+                variant="primary"
+                className="whitespace-nowrap"
+              >
+                {t('header.contactCta')}
+              </Button>
+            </div>
 
             <button
               ref={openButtonRef}
@@ -222,17 +242,15 @@ export function Header({ alternateUrl = null }) {
           <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={t('header.menuLabel')}>
             <ul className="space-y-1">
               {navItems.map(item => (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
+                <li key={item.id}>
+                  <NavEntry
+                    item={item}
                     className={`block rounded-lg px-4 py-3 text-base font-medium transition-colors ${
-                      isActive(item.path)
+                      item.active
                         ? 'bg-primary-subtle text-primary font-semibold'
                         : 'text-fg hover:bg-surface-2'
                     }`}
-                  >
-                    {item.label}
-                  </Link>
+                  />
                 </li>
               ))}
             </ul>

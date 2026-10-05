@@ -137,26 +137,32 @@ describe('@devhouse/content', () => {
       expect(defaultSettings.socialLinks).toEqual([]);
     });
 
-    it('describes the org chart as a tree with all six leaders in both languages', () => {
+    it('is about the company and does not introduce the leadership', () => {
       for (const locale of ['vi', 'en']) {
-        const { nodes } = resolveDefaultPage('about', locale).sections.leadership;
-        const people = nodes.flatMap(n => n.members.map(m => m.name));
-        expect(people).toEqual([
+        const about = resolveDefaultPage('about', locale);
+        expect(about.sections.leadership).toBeUndefined();
+        const text = JSON.stringify(about);
+        for (const name of [
           'Dương Minh Vương',
           'Nguyễn Thành Lâm',
           'Lưu Công Hải',
           'Nguyễn Hữu Trọng Anh',
           'Nguyễn Đức Việt',
           'Lê Trương Nguyễn Hoàng',
-        ]);
-        const ids = new Set(nodes.map(n => n.id));
-        const roots = nodes.filter(n => n.parent === '');
-        expect(roots).toHaveLength(1);
-        for (const node of nodes) {
-          if (node.parent !== '') expect(ids.has(node.parent)).toBe(true);
-          for (const m of node.members) expect(m.role.length).toBeGreaterThan(0);
+        ]) {
+          expect(text).not.toContain(name);
         }
+        // The story is several paragraphs, and the four values and four services are there
+        expect(about.sections.company.paragraphs.length).toBeGreaterThanOrEqual(3);
+        expect(about.sections.values.items).toHaveLength(4);
+        expect(about.sections.offerings.items).toHaveLength(4);
       }
+    });
+
+    it('has a picture slider that starts empty, because no pictures are made up', () => {
+      const gallery = resolveDefaultPage('about', 'vi').sections.gallery;
+      expect(gallery.images).toEqual([]);
+      expect(gallery.display.layout).toBe('slide');
     });
 
     it('has service terms in both languages', () => {

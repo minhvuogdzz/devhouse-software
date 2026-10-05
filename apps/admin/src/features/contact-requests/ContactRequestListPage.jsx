@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
+import { Button } from '../../components/ui/Button.jsx';
 import { Eye, Trash2 } from 'lucide-react';
 
 export default function ContactRequestListPage() {
@@ -59,10 +60,13 @@ export default function ContactRequestListPage() {
       ),
     },
     {
-      header: 'Dịch vụ quan tâm',
-      key: 'service',
+      header: 'Quan tâm đến',
+      key: 'subject',
       render: row => (
-        <span className="text-xs text-fg-muted font-medium">{row.service || 'Tư vấn chung'}</span>
+        <div>
+          <span className="block text-xs text-fg font-medium">{row.subject || 'Tư vấn chung'}</span>
+          {row.service && <span className="block text-[11px] text-fg-subtle">{row.service}</span>}
+        </div>
       ),
     },
     {

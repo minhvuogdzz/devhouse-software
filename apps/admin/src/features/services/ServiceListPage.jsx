@@ -3,23 +3,34 @@ import { Link } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import { Plus, Edit, Trash2, RotateCcw } from 'lucide-react';
+import { Select } from '../../components/ui/Input.jsx';
+import { Plus, Edit, Trash2, RotateCcw, FileText } from 'lucide-react';
 
 export default function ServiceListPage() {
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [groupFilter, setGroupFilter] = useState('');
+  const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadServices();
-  }, [pagination.page, statusFilter]);
+    apiClient('/admin/services?parent=none&limit=100')
+      .then(res => setGroups(res.data || []))
+      .catch(() => setGroups([]));
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(loadServices, search ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [pagination.page, statusFilter, groupFilter, search]);
 
   const loadServices = async () => {
     try {
       setIsLoading(true);
       let query = `/admin/services?page=${pagination.page}&limit=10`;
+      if (groupFilter) query += `&parent=${groupFilter}`;
       if (search) query += `&search=${encodeURIComponent(search)}`;
       if (statusFilter !== 'all') query += `&status=${statusFilter}`;
 
@@ -71,6 +82,18 @@ export default function ServiceListPage() {
       ),
     },
     {
+      header: 'Nhóm',
+      key: 'parent',
+      render: row => {
+        const group = groups.find(item => item._id === (row.parent?._id || row.parent));
+        return (
+          <span className="text-xs text-fg-muted">
+            {group ? group.name?.vi || group.name?.en : 'Là một nhóm'}
+          </span>
+        );
+      },
+    },
+    {
       header: 'Trạng thái',
       key: 'status',
       render: row => <StatusBadge status={row.status} />,
@@ -119,18 +142,23 @@ export default function ServiceListPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
-          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">
-            Quản lý Dịch vụ (Services)
-          </h1>
+          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Dịch vụ</h1>
           <p className="text-xs text-fg-muted mt-1">
-            Danh mục các dịch vụ kỹ thuật số và gói giải pháp phát triển phần mềm cốt lõi.
+            Bốn nhóm dịch vụ công ty cung cấp và các dạng dịch vụ nằm trong từng nhóm. Mỗi dịch vụ
+            có trang riêng giải thích cách triển khai.
           </p>
         </div>
 
-        <Button as={Link} to="/services/new" variant="primary" size="md">
-          <Plus className="w-4 h-4 mr-1.5" />
-          Thêm dịch vụ mới
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button as={Link} to="/pages/services-index" variant="outline" size="md">
+            <FileText className="w-4 h-4 mr-1.5" />
+            Sửa tiêu đề & giới thiệu trang
+          </Button>
+          <Button as={Link} to="/services/new" variant="primary" size="md">
+            <Plus className="w-4 h-4 mr-1.5" />
+            Thêm dịch vụ mới
+          </Button>
+        </div>
       </div>
 
       <DataTable
@@ -138,11 +166,37 @@ export default function ServiceListPage() {
         data={data}
         isLoading={isLoading}
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={value => {
+          setSearch(value);
+          setPagination(prev => ({ ...prev, page: 1 }));
+        }}
         pagination={pagination}
         onPageChange={page => setPagination(prev => ({ ...prev, page }))}
         statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
+        onStatusFilterChange={value => {
+          setStatusFilter(value);
+          setPagination(prev => ({ ...prev, page: 1 }));
+        }}
+        extraFilters={
+          <div className="w-56">
+            <Select
+              aria-label="Lọc theo nhóm"
+              value={groupFilter}
+              onChange={e => {
+                setGroupFilter(e.target.value);
+                setPagination(prev => ({ ...prev, page: 1 }));
+              }}
+            >
+              <option value="">Mọi nhóm</option>
+              <option value="none">Chỉ các nhóm</option>
+              {groups.map(group => (
+                <option key={group._id} value={group._id}>
+                  Trong: {group.name?.vi || group.name?.en}
+                </option>
+              ))}
+            </Select>
+          </div>
+        }
         statusOptions={[
           { label: 'Tất cả', value: 'all' },
           { label: 'Bản nháp', value: 'draft' },

@@ -8,8 +8,8 @@ export const defaultSettings = {
     en: 'Dev House Software, a member of Dev House Group',
   },
   tagline: {
-    vi: 'Đồng hành xây dựng phần mềm và giải pháp chuyển đổi số bền vững',
-    en: 'Building sustainable enterprise software and digital transformation solutions',
+    vi: 'Website, máy chủ, tên miền và bảo mật trọn gói, để bạn chỉ cần lo việc kinh doanh.',
+    en: 'Website, hosting, domain and security in one package, so you can focus on your business.',
   },
   contactEmail: 'devhousesoftware.inc@gmail.com',
   hotline: '0869 528 304',
@@ -25,16 +25,16 @@ export const defaultSettings = {
   socialLinks: [],
   seo: {
     title: {
-      vi: 'Dev House Software — Giải pháp Phần mềm & AI Doanh nghiệp',
-      en: 'Dev House Software — Enterprise Software & AI Solutions',
+      vi: 'Dev House Software — Website trọn gói, an toàn và ổn định',
+      en: 'Dev House Software — Complete, safe and stable websites',
     },
     description: {
-      vi: 'Công ty công nghệ chuyên tư vấn, thiết kế và phát triển phần mềm, ứng dụng di động và giải pháp AI cho doanh nghiệp.',
-      en: 'Specialized technology firm providing enterprise software, mobile applications, and AI automation engineering.',
+      vi: 'Dev House dựng website từ mẫu chuẩn, lo máy chủ, tên miền, bảo mật và xử lý sự cố cho cửa hàng và doanh nghiệp nhỏ.',
+      en: 'Dev House builds websites from proven templates and takes care of hosting, domain, security and fixes for shops and small businesses.',
     },
     keywords: {
-      vi: 'phát triển phần mềm, lập trình web, ứng dụng di động, giải pháp ai, dev house',
-      en: 'software development, web applications, mobile apps, ai solutions, dev house',
+      vi: 'thiết kế website, máy chủ đám mây, tên miền, bảo mật website, dev house',
+      en: 'website design, cloud hosting, domain name, website security, dev house',
     },
   },
 };

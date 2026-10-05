@@ -3,11 +3,18 @@ import { createRepository } from '../../core/db/base-repository.js';
 import { cache } from '../../core/cache/index.js';
 import { audit } from '../../core/audit/index.js';
 import { redirectService } from '../redirects/redirect.service.js';
-import { NotFoundError, ConflictError, BadRequestError } from '../../core/errors/index.js';
+import {
+  NotFoundError,
+  ConflictError,
+  BadRequestError,
+  ForbiddenError,
+} from '../../core/errors/index.js';
 import { parseListQuery } from '../../core/query/index.js';
 import { sendSuccess, sendPaginated } from '../../core/http/index.js';
 import { localize } from '@devhouse/content';
 import { ERROR_CODES } from '@devhouse/shared';
+
+const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export function buildAlternates(basePath, slug) {
   if (!slug) return { vi: basePath, en: `/en${basePath}` };
@@ -33,6 +40,12 @@ export function createCatalogModule({
   populatePublic = [],
   transformPublic = doc => doc,
   validateInUse = async () => {},
+  // Query-string names that filter by a reference field (for example ?segment=...).
+  filterFields = ['category'],
+  // Turns a query value (an id, or a slug) into the stored value; return undefined to ignore it.
+  resolveFilterValue = async (_field, value) => value,
+  // Only list items that are complete in the requested language (see ADR-016).
+  filterByLocale = false,
 }) {
   const repo = createRepository(Model, {
     searchFields,
@@ -59,13 +72,19 @@ export function createCatalogModule({
         filter.isFeatured = true;
       }
 
-      if (rawQuery.category) {
-        filter.category = rawQuery.category;
+      if (filterByLocale && rawQuery.locale) {
+        filter.locales = rawQuery.locale;
+      }
+
+      for (const field of filterFields) {
+        if (!rawQuery[field]) continue;
+        const resolved = await resolveFilterValue(field, rawQuery[field]);
+        if (resolved !== undefined) filter[field] = resolved;
       }
 
       if (parsed.search) {
         filter.$or = searchFields.map(f => ({
-          [f]: { $regex: parsed.search, $options: 'i' },
+          [f]: { $regex: escapeRegex(parsed.search), $options: 'i' },
         }));
       }
 
@@ -139,13 +158,15 @@ export function createCatalogModule({
         filter.status = rawQuery.status;
       }
 
-      if (rawQuery.category) {
-        filter.category = rawQuery.category;
+      for (const field of filterFields) {
+        if (!rawQuery[field]) continue;
+        const resolved = await resolveFilterValue(field, rawQuery[field]);
+        if (resolved !== undefined) filter[field] = resolved;
       }
 
       if (parsed.search) {
         filter.$or = searchFields.map(f => ({
-          [f]: { $regex: parsed.search, $options: 'i' },
+          [f]: { $regex: escapeRegex(parsed.search), $options: 'i' },
         }));
       }
 
@@ -387,6 +408,21 @@ export function createCatalogModule({
 
     async adminUpdate(req, res) {
       const callerId = req.auth?.user?._id || req.auth?.user?.id;
+      // Publishing has its own permission, even when the change arrives through a normal update.
+      const hasPublish =
+        req.auth?.permissions?.includes('*') || req.auth?.permissions?.includes(`${name}:publish`);
+      if (!hasPublish && (req.body.status !== undefined || req.body.publishedAt !== undefined)) {
+        const current = await Model.findById(req.params.id).select('status publishedAt').lean();
+        const sameStatus = req.body.status === undefined || req.body.status === current?.status;
+        const samePublishedAt =
+          req.body.publishedAt === undefined ||
+          String(req.body.publishedAt ?? '') === String(current?.publishedAt ?? '');
+        if (!sameStatus || !samePublishedAt) {
+          throw new ForbiddenError(`Publishing requires the ${name}:publish permission`);
+        }
+        delete req.body.status;
+        delete req.body.publishedAt;
+      }
       const result = await service.updateAdmin(req.params.id, req.body, callerId);
       return sendSuccess(res, result);
     },

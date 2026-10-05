@@ -9,6 +9,8 @@ import {
   LayoutDashboard,
   FileText,
   Layers,
+  Package as PackageIcon,
+  LayoutTemplate,
   Cpu,
   Briefcase,
   Boxes,
@@ -30,7 +32,20 @@ import {
   LogOut,
   ChevronDown,
   X,
+  Building2,
+  Phone,
 } from 'lucide-react';
+
+/**
+ * Whether a sidebar entry is the screen being shown. Some entries start with the same path
+ * (/pages and /pages/about, /blog and /blog/tags), so an entry can list the paths that belong to
+ * another entry (`except`) or say which part of the address it covers (`activeFor`).
+ */
+export function isCurrentNavItem(item, pathname) {
+  const inside = path => pathname === path || pathname.startsWith(`${path}/`);
+  if (!inside(item.activeFor || item.to)) return false;
+  return !(item.except || []).some(inside);
+}
 
 export function AdminShell() {
   const { user, permissions, logout } = useAuth();
@@ -55,25 +70,55 @@ export function AdminShell() {
       ],
     },
     {
-      title: locale === 'en' ? 'Content & Catalog' : 'Nội dung & Danh mục',
+      title: locale === 'en' ? 'Website Menu Tabs' : 'Các Tab trên Website',
       items: [
-        { to: '/content/pages', label: t('nav.pages'), icon: FileText, permission: 'pages:read' },
         { to: '/services', label: t('nav.services'), icon: Layers, permission: 'services:read' },
-        { to: '/solutions', label: t('nav.solutions'), icon: Boxes, permission: 'solutions:read' },
-        { to: '/projects', label: t('nav.projects'), icon: Briefcase, permission: 'projects:read' },
         {
-          to: '/technologies',
-          label: t('nav.technologies'),
-          icon: Cpu,
-          permission: 'technologies:read',
+          to: '/products',
+          label: t('nav.products'),
+          icon: LayoutTemplate,
+          permission: 'products:read',
         },
         {
-          to: '/categories/service',
+          to: '/packages',
+          label: t('nav.packages'),
+          icon: PackageIcon,
+          permission: 'packages:read',
+        },
+        { to: '/projects', label: t('nav.projects'), icon: Briefcase, permission: 'projects:read' },
+        { to: '/pages/about', label: t('nav.about'), icon: Building2, permission: 'pages:read' },
+        {
+          to: '/pages/contact',
+          label: t('nav.contactPage'),
+          icon: Phone,
+          permission: 'pages:read',
+        },
+        {
+          to: '/pages',
+          label: t('nav.pages'),
+          icon: FileText,
+          permission: 'pages:read',
+          except: ['/pages/about', '/pages/contact'],
+        },
+      ],
+    },
+    {
+      title: locale === 'en' ? 'Data & Content' : 'Dữ liệu & Bài viết',
+      items: [
+        {
+          to: '/categories/product-segment',
+          activeFor: '/categories',
           label: t('nav.categories'),
           icon: FolderTree,
           permission: 'categories:read',
         },
-        { to: '/blog/posts', label: t('nav.blog'), icon: BookOpen, permission: 'blog:read' },
+        {
+          to: '/blog',
+          label: t('nav.blog'),
+          icon: BookOpen,
+          permission: 'blog:read',
+          except: ['/blog/tags', '/blog/authors'],
+        },
         { to: '/blog/tags', label: t('nav.tags'), icon: Tag, permission: 'tags:read' },
         {
           to: '/blog/authors',
@@ -82,6 +127,13 @@ export function AdminShell() {
           permission: 'authors:read',
         },
         { to: '/media', label: t('nav.media'), icon: ImageIcon, permission: 'media:read' },
+        { to: '/solutions', label: t('nav.solutions'), icon: Boxes, permission: 'solutions:read' },
+        {
+          to: '/technologies',
+          label: t('nav.technologies'),
+          icon: Cpu,
+          permission: 'technologies:read',
+        },
       ],
     },
     {
@@ -94,13 +146,13 @@ export function AdminShell() {
           permission: 'navigation:read',
         },
         {
-          to: '/settings/company',
+          to: '/settings',
           label: t('nav.settings'),
           icon: SettingsIcon,
           permission: 'settings:read',
         },
         {
-          to: '/seo/redirects',
+          to: '/redirects',
           label: t('nav.redirects'),
           icon: Compass,
           permission: 'redirects:read',
@@ -144,23 +196,22 @@ export function AdminShell() {
             <div className="space-y-0.5">
               {visibleItems.map(item => {
                 const Icon = item.icon;
+                const active = isCurrentNavItem(item, location.pathname);
                 return (
-                  <NavLink
+                  <Link
                     key={item.to}
                     to={item.to}
-                    end={item.end}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                        isActive
-                          ? 'bg-primary text-primary-fg shadow-xs'
-                          : 'text-fg-muted hover:text-fg hover:bg-surface-sunken'
-                      }`
-                    }
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                      active
+                        ? 'bg-primary text-primary-fg shadow-xs'
+                        : 'text-fg-muted hover:text-fg hover:bg-surface-sunken'
+                    }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                     <span>{item.label}</span>
-                  </NavLink>
+                  </Link>
                 );
               })}
             </div>

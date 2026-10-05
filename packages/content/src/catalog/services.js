@@ -1,201 +1,406 @@
-export const defaultServices = [
+/**
+ * The service groups Dev House sells (see the company direction document).
+ * Prices live in packages, not here. Everything is plain language, in Vietnamese and English.
+ */
+const PUBLISHED_AT = new Date('2026-01-01T00:00:00.000Z');
+
+const serviceGroups = [
   {
-    name: {
-      vi: 'Phát triển Web Doanh nghiệp',
-      en: 'Enterprise Web Application Engineering',
-    },
-    slug: {
-      vi: 'phat-trien-web-doanh-nghiep',
-      en: 'enterprise-web-applications',
-    },
+    name: { vi: 'Thiết kế website', en: 'Website design' },
+    slug: { vi: 'thiet-ke-website', en: 'website-design' },
     shortDescription: {
-      vi: 'Thiết kế và phát triển các hệ thống web quy mô lớn, bảo mật cao và vận hành ổn định cho tổ chức.',
-      en: 'Architecting secure, high-availability web applications built for critical enterprise workflows.',
+      vi: 'Website giới thiệu, landing page và web bán hàng nhỏ, dựng từ mẫu chuẩn để nhanh và tiết kiệm.',
+      en: 'Business sites, landing pages and small online shops, built from proven templates so they are quick and affordable.',
     },
     description: {
-      vi: 'Chúng tôi xây dựng các ứng dụng web chuyên sâu phục vụ nhu cầu điều hành và kinh doanh. Toàn bộ kiến trúc được chú trọng từ khâu thiết kế dữ liệu, phân quyền bảo mật đến trải nghiệm mượt mà trên mọi thiết bị.',
-      en: 'We craft bespoke web platforms engineered to handle complex business logic and sustained operational workloads, backed by rigorous security reviews and responsive interfaces.',
+      vi: 'Chúng tôi dựng website cho bạn từ những mẫu đã được kiểm chứng, nên thời gian làm ngắn và chi phí hợp lý. Có thể là website giới thiệu doanh nghiệp, landing page, web bán hàng nhỏ (kể cả trên Shopify) hoặc web cho đồ án sinh viên.',
+      en: 'We build your website from templates that have already been proven, so it is ready sooner and costs less. It can be a business website, a landing page, a small online shop (including on Shopify) or a website for a student project.',
     },
-    icon: 'globe',
+    icon: 'layout',
+    billing: 'one_time',
     order: 1,
     status: 'published',
-    publishedAt: new Date('2026-01-01T00:00:00.000Z'),
+    publishedAt: PUBLISHED_AT,
     features: [
       {
-        title: { vi: 'Kiến trúc Phân tầng Chuẩn mực', en: 'Layered Enterprise Architecture' },
+        title: { vi: 'Dựng từ mẫu chuẩn', en: 'Built from proven templates' },
         description: {
-          vi: 'Phân tách rõ ràng giữa giao diện, nghiệp vụ và lưu trữ dữ liệu giúp dễ dàng bảo trì và mở rộng.',
-          en: 'Clean separation between UI, business rules, and persistence layers ensures long-term agility.',
+          vi: 'Chọn một mẫu bạn thích, chúng tôi chỉnh theo thương hiệu của bạn.',
+          en: 'Pick a template you like and we adapt it to your brand.',
         },
       },
       {
-        title: { vi: 'Bảo mật Đa lớp', en: 'Multi-Tiered Security' },
+        title: { vi: 'Web bán hàng nhỏ và Shopify', en: 'Small shops and Shopify' },
         description: {
-          vi: 'Kiểm soát truy cập theo vai trò (RBAC), mã hóa dữ liệu nhạy cảm và phòng chống các nguy cơ tấn công mạng.',
-          en: 'Role-based access controls, session hardening, and comprehensive protection against web vulnerabilities.',
+          vi: 'Bán sản phẩm trực tuyến với trang thanh toán và quản lý đơn hàng.',
+          en: 'Sell products online with checkout and order management.',
         },
       },
       {
-        title: { vi: 'Tối ưu Trải nghiệm & Tốc độ', en: 'Responsive Performance' },
+        title: { vi: 'Website giới thiệu và landing page', en: 'Business sites and landing pages' },
         description: {
-          vi: 'Tải trang nhanh chóng, tương thích mượt mà trên cả máy tính để bàn và thiết bị di động.',
-          en: 'Fast server-rendered interfaces optimized for speed across all desktop and mobile browsers.',
+          vi: 'Giới thiệu doanh nghiệp, dịch vụ hoặc một chiến dịch trên một trang gọn gàng.',
+          en: 'Present your business, services or a campaign on a clean page.',
+        },
+      },
+      {
+        title: { vi: 'Xem thử trước khi đưa lên chính thức', en: 'Review before it goes live' },
+        description: {
+          vi: 'Bạn duyệt trên bản thử, hài lòng rồi mới đưa lên chính thức.',
+          en: 'You review a test version and we only go live once you are happy.',
+        },
+      },
+    ],
+    faqs: [
+      {
+        question: { vi: 'Tôi có cần biết kỹ thuật không?', en: 'Do I need technical knowledge?' },
+        answer: {
+          vi: 'Không. Chúng tôi lo phần kỹ thuật, bạn chỉ cần cho biết nội dung và mong muốn.',
+          en: 'No. We take care of the technical side. You only tell us what you need.',
+        },
+      },
+      {
+        question: { vi: 'Thanh toán như thế nào?', en: 'How do I pay?' },
+        answer: {
+          vi: 'Khi ký hợp đồng, bạn trả trước tối thiểu 50% phí cài đặt. Phần còn lại trả khi bàn giao.',
+          en: 'When the contract is signed you pay at least 50% of the setup fee. The rest is paid on delivery.',
         },
       },
     ],
     seo: {
       title: {
-        vi: 'Phát triển Web Doanh nghiệp Chuyên sâu — Dev House Software',
-        en: 'Enterprise Web Application Engineering — Dev House Software',
+        vi: 'Thiết kế website từ mẫu chuẩn — Dev House Software',
+        en: 'Website design from proven templates — Dev House Software',
       },
       description: {
-        vi: 'Dịch vụ lập trình web doanh nghiệp, cổng thông tin nội bộ và phần mềm quản lý chất lượng cao.',
-        en: 'Custom enterprise web platforms, secure management portals, and scalable cloud applications.',
+        vi: 'Website giới thiệu, landing page và web bán hàng nhỏ, dựng nhanh và giá hợp lý.',
+        en: 'Business sites, landing pages and small online shops, built quickly at a fair price.',
       },
     },
   },
   {
-    name: {
-      vi: 'Phát triển Ứng dụng Di động',
-      en: 'Mobile Application Development',
-    },
-    slug: {
-      vi: 'phat-trien-ung-dung-di-dong',
-      en: 'mobile-application-development',
-    },
+    name: { vi: 'Máy chủ và hạ tầng đám mây', en: 'Cloud hosting' },
+    slug: { vi: 'may-chu-va-ha-tang-dam-may', en: 'cloud-hosting' },
     shortDescription: {
-      vi: 'Xây dựng ứng dụng di động iOS và Android mượt mà, kết nối thông suốt với hệ sinh thái doanh nghiệp.',
-      en: 'Building high-performance iOS and Android applications connected seamlessly to your backend.',
+      vi: 'Website chạy trên máy chủ đám mây an toàn, được giám sát, sao lưu và cập nhật thường xuyên.',
+      en: 'Your website runs on secure cloud servers that are monitored, backed up and kept up to date.',
     },
     description: {
-      vi: 'Đội ngũ của chúng tôi phát triển các ứng dụng di động đáp ứng tiêu chuẩn khắt khe về tính ổn định, tốc độ phản hồi và tính bảo mật thông tin người dùng.',
-      en: 'Our engineering collective delivers resilient mobile apps that meet strict criteria for device performance, biometric security, and offline resilience.',
+      vi: 'Website của bạn chạy trên máy chủ đám mây, không đặt trên máy tính văn phòng nên không bị chậm hay ngừng khi mạng văn phòng có vấn đề. Chúng tôi lo kết nối an toàn, giám sát, sao lưu và cập nhật bảo mật.',
+      en: 'Your website runs on cloud servers instead of an office computer, so it does not slow down or stop when the office network has problems. We handle the secure connection, monitoring, backups and security updates.',
     },
-    icon: 'smartphone',
+    icon: 'server',
+    billing: 'recurring',
     order: 2,
     status: 'published',
-    publishedAt: new Date('2026-01-01T00:00:00.000Z'),
+    publishedAt: PUBLISHED_AT,
     features: [
       {
-        title: { vi: 'Trải nghiệm Tự nhiên', en: 'Native User Experience' },
+        title: { vi: 'Kết nối an toàn (HTTPS)', en: 'Secure connection (HTTPS)' },
         description: {
-          vi: 'Giao diện thân thiện, tận dụng tối đa năng lực phần cứng của các hệ điều hành phổ biến.',
-          en: 'Polished microinteractions and smooth touch gestures adhering to platform design conventions.',
+          vi: 'Mọi website đều dùng kết nối mã hoá, hiện ổ khoá an toàn trên trình duyệt.',
+          en: 'Every website uses an encrypted connection and shows the secure padlock.',
         },
       },
       {
-        title: { vi: 'Đồng bộ Dữ liệu Thời gian Thực', en: 'Real-Time Synchronization' },
+        title: { vi: 'Giám sát và cảnh báo', en: 'Monitoring and alerts' },
         description: {
-          vi: 'Thông báo đẩy chính xác và khả năng đồng bộ dữ liệu liên tục ngay cả trong điều kiện mạng yếu.',
-          en: 'Instant notifications and reliable offline data synchronization with central business records.',
+          vi: 'Hệ thống tự theo dõi website và báo ngay khi có sự cố.',
+          en: 'The system watches your website and raises an alert as soon as something goes wrong.',
+        },
+      },
+      {
+        title: { vi: 'Sao lưu tự động', en: 'Automatic backups' },
+        description: {
+          vi: 'Dữ liệu được sao lưu theo lịch để khôi phục khi cần.',
+          en: 'Your data is backed up on a schedule so it can be restored when needed.',
+        },
+      },
+      {
+        title: { vi: 'Cập nhật bảo mật định kỳ', en: 'Regular security updates' },
+        description: {
+          vi: 'Chúng tôi cập nhật phần mềm nền để vá các lỗ hổng bảo mật đã biết.',
+          en: 'We keep the underlying software up to date to close known security holes.',
+        },
+      },
+    ],
+    faqs: [
+      {
+        question: { vi: 'Dữ liệu có được sao lưu không?', en: 'Is my data backed up?' },
+        answer: {
+          vi: 'Có. Tần suất sao lưu và số ngày giữ bản sao được ghi rõ trong hợp đồng của từng gói.',
+          en: 'Yes. How often backups run and how long they are kept is written into the contract of each package.',
         },
       },
     ],
     seo: {
       title: {
-        vi: 'Dịch vụ Lập trình Ứng dụng Di động — Dev House Software',
-        en: 'Mobile Application Development Services — Dev House Software',
+        vi: 'Máy chủ và hạ tầng đám mây cho website — Dev House Software',
+        en: 'Cloud hosting for your website — Dev House Software',
       },
       description: {
-        vi: 'Thiết kế và phát triển ứng dụng di động doanh nghiệp chuyên nghiệp trên iOS và Android.',
-        en: 'Professional cross-platform mobile engineering for enterprise clients and digital innovators.',
+        vi: 'Máy chủ đám mây an toàn, có giám sát, sao lưu và cập nhật bảo mật định kỳ.',
+        en: 'Secure cloud servers with monitoring, backups and regular security updates.',
       },
     },
   },
   {
-    name: {
-      vi: 'Hạ tầng Đám mây & Vận hành Kỹ thuật (DevOps)',
-      en: 'Cloud Infrastructure & DevOps',
-    },
-    slug: {
-      vi: 'ha-tang-dam-may-va-devops',
-      en: 'cloud-infrastructure-devops',
-    },
+    name: { vi: 'Tên miền và DNS', en: 'Domain and DNS' },
+    slug: { vi: 'ten-mien-va-dns', en: 'domain-and-dns' },
     shortDescription: {
-      vi: 'Thiết lập hạ tầng máy chủ ổn định, tự động hóa quy trình phát hành và giám sát 24/7.',
-      en: 'Establishing resilient cloud environments with automated deployment pipelines and observability.',
+      vi: 'Đăng ký, gia hạn tên miền và cấu hình để website, email của bạn hoạt động đúng. Tên miền luôn đứng tên bạn.',
+      en: 'We register and renew your domain and set it up so your website and email work properly. The domain always stays in your name.',
     },
     description: {
-      vi: 'Giúp doanh nghiệp chuẩn hóa quy trình triển khai phần mềm, giảm thiểu sự cố gián đoạn và đảm bảo khả năng mở rộng tài nguyên linh hoạt khi lưu lượng tăng cao.',
-      en: 'We help engineering teams standardize deployment lifecycles, eliminate configuration drift, and guarantee infrastructure cost predictability.',
+      vi: 'Chúng tôi đăng ký và gia hạn tên miền, cấu hình DNS qua Cloudflare và tạo email theo tên miền của bạn. Tên miền đứng tên bạn, nên bạn luôn toàn quyền khi cần chuyển đi nơi khác.',
+      en: 'We register and renew your domain, set up DNS through Cloudflare and create email addresses on your domain. The domain is registered in your name, so you keep full control if you ever want to move.',
     },
-    icon: 'cloud',
+    icon: 'link',
+    billing: 'yearly',
     order: 3,
     status: 'published',
-    publishedAt: new Date('2026-01-01T00:00:00.000Z'),
+    publishedAt: PUBLISHED_AT,
     features: [
       {
-        title: { vi: 'Triển khai Tự động (CI/CD)', en: 'Automated CI/CD Pipelines' },
+        title: { vi: 'Đăng ký và gia hạn', en: 'Registration and renewal' },
         description: {
-          vi: 'Mọi thay đổi mã nguồn được kiểm thử tự động và đóng gói phát hành nhanh chóng, chính xác.',
-          en: 'Automated test gates and deterministic container builds for predictable zero-downtime releases.',
+          vi: 'Chúng tôi nhắc và gia hạn trước ngày hết hạn để website không bị gián đoạn.',
+          en: 'We renew before the expiry date so your website never goes offline.',
         },
       },
       {
-        title: { vi: 'Giám sát & Cảnh báo Sớm', en: 'Proactive Health Monitoring' },
+        title: { vi: 'Cấu hình DNS qua Cloudflare', en: 'DNS through Cloudflare' },
         description: {
-          vi: 'Hệ thống đo lường hiệu năng và gửi cảnh báo tức thì khi xuất hiện nguy cơ quá tải.',
-          en: 'Continuous metric tracking and intelligent alerts that detect anomalies before users are impacted.',
+          vi: 'Trỏ tên miền về đúng website và thêm lớp bảo vệ cơ bản.',
+          en: 'We point the domain to your website and add a basic layer of protection.',
+        },
+      },
+      {
+        title: { vi: 'Email theo tên miền', en: 'Email on your domain' },
+        description: {
+          vi: 'Địa chỉ email mang tên doanh nghiệp, ví dụ ten@congty.com.',
+          en: 'Email addresses with your own business name, such as name@yourcompany.com.',
+        },
+      },
+      {
+        title: { vi: 'Tên miền đứng tên bạn', en: 'The domain is yours' },
+        description: {
+          vi: 'Chủ sở hữu là bạn, không phải chúng tôi.',
+          en: 'You are the owner, not us.',
+        },
+      },
+    ],
+    faqs: [
+      {
+        question: { vi: 'Phí tên miền thu khi nào?', en: 'When is the domain fee charged?' },
+        answer: {
+          vi: 'Thu mỗi năm, trước ngày tên miền hết hạn.',
+          en: 'Once a year, before the domain expires.',
         },
       },
     ],
     seo: {
       title: {
-        vi: 'Dịch vụ Hạ tầng Đám mây & DevOps — Dev House Software',
-        en: 'Cloud & DevOps Engineering Services — Dev House Software',
+        vi: 'Tên miền và DNS — Dev House Software',
+        en: 'Domain and DNS — Dev House Software',
       },
       description: {
-        vi: 'Tư vấn kiến trúc đám mây an toàn, thiết lập pipeline CI/CD và giải pháp vận hành hệ thống tin cậy.',
-        en: 'Scalable cloud infrastructure provisioning, container delivery pipelines, and operational excellence.',
+        vi: 'Đăng ký, gia hạn tên miền, cấu hình DNS và email theo tên miền.',
+        en: 'Domain registration and renewal, DNS setup and email on your own domain.',
       },
     },
   },
   {
-    name: {
-      vi: 'Tích hợp Trí tuệ Nhân tạo & Tự động hóa',
-      en: 'AI Integration & Workflow Automation',
-    },
-    slug: {
-      vi: 'tri-tue-nhan-tao-va-tu-dong-hoa',
-      en: 'ai-integration-workflow-automation',
-    },
+    name: { vi: 'Bảo mật và hỗ trợ', en: 'Security and support' },
+    slug: { vi: 'bao-mat-va-ho-tro', en: 'security-and-support' },
     shortDescription: {
-      vi: 'Ứng dụng các mô hình AI vào quy trình nội bộ giúp tiết kiệm thời gian và nâng cao năng suất.',
-      en: 'Incorporating purpose-driven AI capabilities to accelerate workflows and eliminate manual effort.',
+      vi: 'Bảo vệ website khỏi tấn công cơ bản, xử lý sự cố và chỉnh sửa nhỏ trong số giờ hỗ trợ của gói.',
+      en: 'Protection against common attacks, fixing problems and small edits within the support hours of your package.',
     },
     description: {
-      vi: 'Chúng tôi tập trung vào những ứng dụng AI mang lại giá trị thực tiễn: xử lý văn bản tự động, trợ lý ảo chăm sóc khách hàng và trích xuất dữ liệu thông minh, tránh xa các thuật ngữ hào nhoáng.',
-      en: 'We deploy practical AI enhancements focused on operational utility: automated document synthesis, contextual assistants, and high-accuracy structured data extraction.',
+      vi: 'Chúng tôi bật tường lửa cho website, chống các đợt tấn công làm quá tải ở mức cơ bản, vá bảo mật mỗi tháng và có người xử lý khi web gặp sự cố. Mọi yêu cầu hỗ trợ đi qua một kênh duy nhất và được ghi lại để tính giờ minh bạch.',
+      en: 'We put a firewall in front of your website, protect it against common overload attacks, apply security patches every month and have someone ready when something breaks. Every support request goes through a single channel and is logged so hours are counted fairly.',
     },
-    icon: 'cpu',
+    icon: 'shield',
+    billing: 'recurring',
     order: 4,
     status: 'published',
-    publishedAt: new Date('2026-01-01T00:00:00.000Z'),
+    publishedAt: PUBLISHED_AT,
     features: [
       {
-        title: { vi: 'Trợ lý Nghiệp vụ Thông minh', en: 'Contextual Workflow Assistants' },
+        title: {
+          vi: 'Tường lửa và chống quá tải cơ bản',
+          en: 'Firewall and basic overload protection',
+        },
         description: {
-          vi: 'Tích hợp trợ lý giải đáp dựa trên dữ liệu nội bộ bảo mật, hỗ trợ nhân viên tra cứu nhanh chóng.',
-          en: 'Domain-specific assistants grounded on private organizational data with strict permission boundaries.',
+          vi: 'Chặn các truy cập độc hại và giảm thiểu tấn công làm web ngừng hoạt động.',
+          en: 'Blocks malicious traffic and reduces attacks that take a website offline.',
         },
       },
       {
-        title: { vi: 'Tự động hóa Xử lý Dữ liệu', en: 'Intelligent Document Processing' },
+        title: { vi: 'Xử lý sự cố', en: 'Fixing problems' },
         description: {
-          vi: 'Rút ngắn 80% thời gian phân loại và xử lý hồ sơ chứng từ giấy tờ bằng công nghệ nhận dạng hiện đại.',
-          en: 'Automate repetitive document categorization and data entry with verifiable audit trails.',
+          vi: 'Khi web gặp sự cố, có người nhận việc và xử lý.',
+          en: 'When your website has a problem, someone picks it up and fixes it.',
+        },
+      },
+      {
+        title: { vi: 'Chỉnh sửa nhỏ trong giờ hỗ trợ', en: 'Small edits within support hours' },
+        description: {
+          vi: 'Sửa nội dung, thay ảnh hoặc chỉnh nhỏ theo số giờ hỗ trợ của gói.',
+          en: 'Content changes, new images and small tweaks, within the support hours of your package.',
+        },
+      },
+      {
+        title: { vi: 'Vá bảo mật hằng tháng', en: 'Monthly security patches' },
+        description: {
+          vi: 'Cập nhật đều đặn để website luôn được bảo vệ.',
+          en: 'Regular updates keep your website protected.',
+        },
+      },
+    ],
+    faqs: [
+      {
+        question: {
+          vi: 'Việc ngoài phạm vi gói thì sao?',
+          en: 'What about work outside my package?',
+        },
+        answer: {
+          vi: 'Khi vượt số giờ hỗ trợ của gói, chúng tôi báo giá riêng và chỉ làm khi bạn đồng ý.',
+          en: 'When the work goes beyond the support hours of your package, we quote it separately and only start once you agree.',
         },
       },
     ],
     seo: {
       title: {
-        vi: 'Giải pháp Tích hợp AI Doanh nghiệp — Dev House Software',
-        en: 'Enterprise AI Integration Services — Dev House Software',
+        vi: 'Bảo mật và hỗ trợ website — Dev House Software',
+        en: 'Website security and support — Dev House Software',
       },
       description: {
-        vi: 'Tư vấn và triển khai giải pháp AI thiết thực, tự động hóa quy trình vận hành cho doanh nghiệp.',
-        en: 'Practical enterprise AI solutions designed to streamline workflows and augment team capabilities.',
+        vi: 'Tường lửa, chống tấn công cơ bản, xử lý sự cố và vá bảo mật hằng tháng.',
+        en: 'Firewall, basic attack protection, fixing problems and monthly security patches.',
       },
     },
   },
 ];
+
+const step = (titleVi, titleEn, textVi, textEn) => ({
+  title: { vi: titleVi, en: titleEn },
+  description: { vi: textVi, en: textEn },
+});
+
+/**
+ * How each group is set up, from the working process in the company direction document.
+ * (The kinds of service inside a group have their own steps, see service-types.js.)
+ */
+const groupProcess = {
+  'thiet-ke-website': [
+    step(
+      'Chọn mẫu và chốt gói',
+      'Choose a template and a package',
+      'Bạn chọn mẫu website và gói phù hợp. Hợp đồng ghi rõ phạm vi, giờ hỗ trợ, chủ sở hữu tên miền và dữ liệu; bạn trả trước tối thiểu 50% phí cài đặt.',
+      'You pick a website template and a package. The contract spells out the scope, support hours and who owns the domain and data; you pay at least 50% of the setup fee up front.',
+    ),
+    step(
+      'Dựng website từ mẫu chuẩn',
+      'Build the website from a proven template',
+      'Chúng tôi tạo website từ mẫu đã kiểm chứng, đưa nội dung và thương hiệu của bạn vào.',
+      'We create the website from a proven template and add your content and brand.',
+    ),
+    step(
+      'Duyệt trên bản thử',
+      'Review the test version',
+      'Bạn xem thử, góp ý và chúng tôi chỉnh cho đến khi bạn hài lòng.',
+      'You look it over, give feedback and we adjust until you are happy.',
+    ),
+    step(
+      'Đưa lên chính thức và bàn giao',
+      'Go live and hand over',
+      'Chúng tôi đưa website lên chính thức, giao tài khoản quản trị nội dung và hướng dẫn ngắn.',
+      'We put the website live and give you a content account and a short guide.',
+    ),
+  ],
+  'may-chu-va-ha-tang-dam-may': [
+    step(
+      'Dựng hạ tầng từ mẫu chuẩn',
+      'Set up the hosting from a standard template',
+      'Website, cơ sở dữ liệu, kết nối an toàn, giám sát và sao lưu được dựng bằng công cụ tự động theo một mẫu chuẩn.',
+      'The website, its database, the secure connection, monitoring and backups are built with automated tools from a standard template.',
+    ),
+    step(
+      'Trỏ tên miền',
+      'Point the domain',
+      'Tên miền được trỏ về website qua Cloudflare.',
+      'The domain is pointed to the website through Cloudflare.',
+    ),
+    step(
+      'Kiểm tra và đưa lên chính thức',
+      'Check and go live',
+      'Bạn duyệt trên bản thử, sau đó website được đưa lên chính thức.',
+      'You review a test version, then the website goes live.',
+    ),
+    step(
+      'Vận hành hằng ngày',
+      'Day-to-day running',
+      'Hệ thống tự theo dõi và cảnh báo, sao lưu theo lịch và vá bảo mật mỗi tháng.',
+      'The system watches and alerts by itself, backs up on a schedule and applies security patches every month.',
+    ),
+  ],
+  'ten-mien-va-dns': [
+    step(
+      'Chọn tên miền',
+      'Choose the domain',
+      'Bạn chọn tên miền mong muốn, chúng tôi kiểm tra tên còn trống.',
+      'You pick the domain you want and we check that it is available.',
+    ),
+    step(
+      'Đăng ký đứng tên bạn',
+      'Register it in your name',
+      'Tên miền được đăng ký bằng thông tin của bạn.',
+      'The domain is registered with your details.',
+    ),
+    step(
+      'Cấu hình DNS và email',
+      'Set up DNS and email',
+      'Trỏ tên miền về website qua Cloudflare và tạo email theo tên miền nếu gói có.',
+      'We point the domain to the website through Cloudflare and create email on the domain if your package includes it.',
+    ),
+    step(
+      'Gia hạn mỗi năm',
+      'Renew every year',
+      'Phí thu mỗi năm, trước ngày hết hạn, để tên miền không bị gián đoạn.',
+      'The fee is charged yearly, before it expires, so the domain is never interrupted.',
+    ),
+  ],
+  'bao-mat-va-ho-tro': [
+    step(
+      'Bật bảo vệ cho website',
+      'Turn on protection for the website',
+      'Tường lửa và chống quá tải cơ bản được bật ngay khi dựng website.',
+      'The firewall and basic overload protection are turned on when the website is built.',
+    ),
+    step(
+      'Bạn gửi yêu cầu qua một kênh duy nhất',
+      'You send requests through one channel',
+      'Mọi yêu cầu hỗ trợ đi qua cùng một kênh và được ghi lại.',
+      'Every support request goes through the same channel and is logged.',
+    ),
+    step(
+      'Chúng tôi xử lý và ghi lại thời gian',
+      'We handle it and log the time',
+      'Thời gian xử lý được ghi lại để tính vào giờ hỗ trợ của gói.',
+      'The time spent is logged against the support hours of your package.',
+    ),
+    step(
+      'Báo giá riêng khi vượt giờ',
+      'Quote separately beyond the hours',
+      'Việc ngoài phạm vi được báo giá riêng và chỉ làm khi bạn đồng ý.',
+      'Work outside the package is quoted separately and only done once you agree.',
+    ),
+  ],
+};
+
+export const defaultServices = serviceGroups.map(group => ({
+  ...group,
+  process: groupProcess[group.slug.vi] || [],
+}));

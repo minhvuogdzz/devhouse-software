@@ -2,6 +2,7 @@ import { CategoryModel } from './category.model.js';
 import { ServiceModel } from '../services/service.model.js';
 import { ProjectModel } from '../projects/project.model.js';
 import { TechnologyModel } from '../technologies/technology.model.js';
+import { ProductModel } from '../products/product.model.js';
 import { sendSuccess } from '../../core/http/index.js';
 import { cache } from '../../core/cache/index.js';
 import { audit } from '../../core/audit/index.js';
@@ -32,8 +33,14 @@ export const categoryController = {
         let count = 0;
         if (cat.type === 'service') {
           count = await ServiceModel.countDocuments({ category: cat._id, isDeleted: false });
+        } else if (cat.type === 'product') {
+          count = await ProductModel.countDocuments({ category: cat._id, isDeleted: false });
+        } else if (cat.type === 'product-segment') {
+          count = await ProductModel.countDocuments({ segment: cat._id, isDeleted: false });
         } else if (cat.type === 'project') {
           count = await ProjectModel.countDocuments({ category: cat._id, isDeleted: false });
+        } else if (cat.type === 'project-segment') {
+          count = await ProjectModel.countDocuments({ segment: cat._id, isDeleted: false });
         } else if (cat.type === 'technology') {
           count = await TechnologyModel.countDocuments({
             $or: [{ category: cat._id }, { categorySlug: cat.slug?.vi }],
@@ -110,16 +117,23 @@ export const categoryController = {
     }
 
     // In-use check
-    const [serviceCount, projectCount, techCount] = await Promise.all([
+    const [serviceCount, projectCount, techCount, productCount] = await Promise.all([
       ServiceModel.countDocuments({ category: id, isDeleted: false }),
-      ProjectModel.countDocuments({ category: id, isDeleted: false }),
+      ProjectModel.countDocuments({
+        $or: [{ category: id }, { segment: id }],
+        isDeleted: false,
+      }),
       TechnologyModel.countDocuments({
         $or: [{ category: id }, { categorySlug: existing.slug?.vi }],
         isDeleted: false,
       }),
+      ProductModel.countDocuments({
+        $or: [{ category: id }, { segment: id }],
+        isDeleted: false,
+      }),
     ]);
 
-    const totalUsage = serviceCount + projectCount + techCount;
+    const totalUsage = serviceCount + projectCount + techCount + productCount;
     if (totalUsage > 0) {
       throw new ConflictError(
         `Category is in use by ${totalUsage} items and cannot be deleted`,

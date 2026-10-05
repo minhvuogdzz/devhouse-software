@@ -10,7 +10,7 @@ export interface SiteConfig {
 const DEFAULT_CONFIG: SiteConfig = {
   phone: "0869528304",
   phoneFormatted: "0869 528 304",
-  benchmarkTitle: "Hiệu Năng Thực Tế: MVD Photo Picker Pro vs Adobe Lightroom Classic",
+  benchmarkTitle: "Hiệu Năng Thực Tế: DH Studio Pro vs Adobe Lightroom Classic",
   benchmarkNotes: "Thử nghiệm thực địa với 2,000 file RAW Sony 33MP (ILCE-7M4) trên máy MacBook Pro Apple Silicon (M-Series) và máy tính Windows 11 PC.",
 };
 

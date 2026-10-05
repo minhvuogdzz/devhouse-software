@@ -1,4 +1,6 @@
 import { ServiceModel } from '../services/service.model.js';
+import { ProductModel } from '../products/product.model.js';
+import { PackageModel } from '../packages/package.model.js';
 import { SolutionModel } from '../solutions/solution.model.js';
 import { ProjectModel } from '../projects/project.model.js';
 import { TechnologyModel } from '../technologies/technology.model.js';
@@ -41,6 +43,10 @@ export const dashboardService = {
       recentServicesDrafts,
       scheduledPosts,
       recentActivity,
+      productsTotal,
+      productsPublished,
+      packagesTotal,
+      packagesPublished,
     ] = await Promise.all([
       ServiceModel.countDocuments({ isDeleted: false }),
       ServiceModel.countDocuments({ isDeleted: false, status: 'published' }),
@@ -87,6 +93,10 @@ export const dashboardService = {
         .select('title slug publishedAt')
         .lean(),
       AuditLogModel.find().sort({ createdAt: -1 }).limit(10).lean(),
+      ProductModel.countDocuments({ isDeleted: false }),
+      ProductModel.countDocuments({ isDeleted: false, status: 'published' }),
+      PackageModel.countDocuments({ isDeleted: false }),
+      PackageModel.countDocuments({ isDeleted: false, status: 'published' }),
     ]);
 
     const drafts = [
@@ -115,6 +125,16 @@ export const dashboardService = {
           total: servicesTotal,
           published: servicesPublished,
           draft: servicesTotal - servicesPublished,
+        },
+        products: {
+          total: productsTotal,
+          published: productsPublished,
+          draft: productsTotal - productsPublished,
+        },
+        packages: {
+          total: packagesTotal,
+          published: packagesPublished,
+          draft: packagesTotal - packagesPublished,
         },
         solutions: {
           total: solutionsTotal,

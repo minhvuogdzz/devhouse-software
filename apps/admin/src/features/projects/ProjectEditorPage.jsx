@@ -1,134 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
+import { Plus, Trash2 } from 'lucide-react';
+import { isEmbeddableDemoUrl } from '@devhouse/shared';
 import { apiClient } from '../../lib/api-client.js';
 import { ResourceForm } from '../../components/form/ResourceForm.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
+import { ThumbnailsField } from '../../components/form/ThumbnailsField.jsx';
+import { CategorySelect, MultiSelect } from '../../components/form/ReferenceSelect.jsx';
+import { Toggle } from '../../components/form/Toggle.jsx';
+import { RatingStars } from '../../components/form/RatingStars.jsx';
+import { DemoUrlField, isDemoUrlValid } from '../../components/form/DemoUrlField.jsx';
 import { Input } from '../../components/ui/Input.jsx';
 import { Card } from '../../components/ui/Card.jsx';
-import { ShieldCheck, Plus, Trash2 } from 'lucide-react';
+import { Button } from '../../components/ui/Button.jsx';
+
+const EMPTY_TEXT = { vi: '', en: '' };
+
+/** Text in both languages. Older records may hold plain text or another shape, so tolerate them. */
+function bilingual(value) {
+  if (value && typeof value === 'object' && ('vi' in value || 'en' in value)) {
+    return { vi: value.vi || '', en: value.en || '' };
+  }
+  return { vi: typeof value === 'string' ? value : '', en: '' };
+}
+
+const EMPTY = {
+  title: EMPTY_TEXT,
+  shortDescription: EMPTY_TEXT,
+  description: EMPTY_TEXT,
+  thumbnails: [],
+  segment: null,
+  category: null,
+  rating: 0,
+  views: 0,
+  demoUrl: '',
+  isFeatured: false,
+  order: 0,
+  client: { name: '', industry: EMPTY_TEXT, country: '', isConfidential: false },
+  challenge: EMPTY_TEXT,
+  solution: EMPTY_TEXT,
+  results: [],
+  services: [],
+  technologies: [],
+  status: 'draft',
+  seo: { title: EMPTY_TEXT, description: EMPTY_TEXT },
+};
 
 export default function ProjectEditorPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const isNew = !id || id === 'new';
 
-  const [form, setForm] = useState({
-    title: { vi: '', en: '' },
-    shortDescription: { vi: '', en: '' },
-    client: {
-      name: '',
-      industry: { vi: '', en: '' },
-      country: '',
-      isConfidential: false,
-    },
-    challenge: { vi: '', en: '' },
-    solution: { vi: '', en: '' },
-    results: [],
-    projectUrl: '',
-    order: 0,
-    status: 'draft',
-    coverImage: null,
-    seo: { title: { vi: '', en: '' }, description: { vi: '', en: '' } },
-  });
-
+  const [form, setForm] = useState(EMPTY);
+  const [updatedAt, setUpdatedAt] = useState(null);
   const [isLoading, setIsLoading] = useState(!isNew);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
-    if (!isNew) {
-      loadProject();
-    }
+    if (isNew) return;
+    (async () => {
+      try {
+        const res = await apiClient(`/admin/projects/${id}`);
+        const d = res.data;
+        setForm({
+          ...EMPTY,
+          ...d,
+          title: bilingual(d.title),
+          shortDescription: bilingual(d.shortDescription),
+          description: bilingual(d.description),
+          // Projects made before card pictures existed only have a cover image
+          thumbnails: d.thumbnails?.length ? d.thumbnails : d.coverImage?.url ? [d.coverImage] : [],
+          segment: d.segment || null,
+          category: d.category || null,
+          rating: d.rating ?? 0,
+          views: d.views ?? 0,
+          // The old "project link" becomes the demo link when it can be shown in a frame
+          demoUrl: d.demoUrl || (isEmbeddableDemoUrl(d.projectUrl || '') ? d.projectUrl : ''),
+          client: {
+            name: d.client?.name || '',
+            industry: bilingual(d.client?.industry),
+            country: d.client?.country || '',
+            isConfidential: !!d.client?.isConfidential,
+          },
+          challenge: bilingual(d.challenge),
+          solution: bilingual(d.solution),
+          results: (d.results || []).map(item => ({
+            label: bilingual(item.label),
+            value: bilingual(item.value),
+            description: bilingual(item.description),
+          })),
+          services: (d.services || []).map(String),
+          technologies: (d.technologies || []).map(String),
+          seo: {
+            title: bilingual(d.seo?.title),
+            description: bilingual(d.seo?.description),
+          },
+        });
+        setUpdatedAt(d.updatedAt);
+      } catch (err) {
+        alert(err.message || 'Không thể tải thông tin dự án');
+        navigate('/projects');
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, [id]);
 
-  const loadProject = async () => {
-    try {
-      setIsLoading(true);
-      const res = await apiClient(`/admin/projects/${id}`);
-      const d = res.data;
-      setForm({
-        title: d.title || { vi: '', en: '' },
-        shortDescription: d.shortDescription || { vi: '', en: '' },
-        client: {
-          name: d.client?.name || '',
-          industry: d.client?.industry || { vi: '', en: '' },
-          country: d.client?.country || '',
-          isConfidential: !!d.client?.isConfidential,
-        },
-        challenge:
-          typeof d.challenge === 'object' && d.challenge !== null
-            ? d.challenge
-            : { vi: '', en: '' },
-        solution:
-          typeof d.solution === 'object' && d.solution !== null ? d.solution : { vi: '', en: '' },
-        results: Array.isArray(d.results) ? d.results : [],
-        projectUrl: d.projectUrl || '',
-        order: d.order ?? 0,
-        status: d.status || 'draft',
-        coverImage: d.coverImage || null,
-        seo: d.seo || { title: { vi: '', en: '' }, description: { vi: '', en: '' } },
-      });
-    } catch (err) {
-      alert(err.message || 'Không thể tải thông tin dự án');
-      navigate('/projects');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const set = patch => setForm(prev => ({ ...prev, ...patch }));
+  const setClient = patch => setForm(prev => ({ ...prev, client: { ...prev.client, ...patch } }));
+  const demoOk = isDemoUrlValid(form.demoUrl);
 
-  const addResultMetric = () => {
-    setForm({
-      ...form,
-      results: [
-        ...form.results,
-        {
-          value: { vi: '', en: '' },
-          label: { vi: '', en: '' },
-          description: { vi: '', en: '' },
-        },
-      ],
+  const updateResult = (index, patch) =>
+    set({
+      results: form.results.map((item, i) => (i === index ? { ...item, ...patch } : item)),
     });
-  };
-
-  const removeResultMetric = index => {
-    setForm({
-      ...form,
-      results: form.results.filter((_, idx) => idx !== index),
-    });
-  };
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (!demoOk) {
+      setErrorMsg('Link demo phải bắt đầu bằng https://');
+      return;
+    }
     setIsSubmitting(true);
+    setErrorMsg('');
+    const payload = {
+      title: form.title,
+      shortDescription: form.shortDescription,
+      description: form.description,
+      thumbnails: form.thumbnails.map(image => ({
+        mediaId: image.mediaId,
+        publicId: image.publicId || '',
+        url: image.url,
+        width: image.width,
+        height: image.height,
+        alt: image.alt || EMPTY_TEXT,
+      })),
+      segment: form.segment || null,
+      category: form.category || null,
+      rating: Number(form.rating) || 0,
+      views: Math.max(0, parseInt(form.views, 10) || 0),
+      demoUrl: form.demoUrl.trim(),
+      isFeatured: form.isFeatured,
+      order: parseInt(form.order, 10) || 0,
+      client: form.client,
+      challenge: form.challenge,
+      solution: form.solution,
+      results: form.results,
+      services: form.services,
+      technologies: form.technologies,
+      status: form.status,
+      seo: form.seo,
+    };
 
     try {
       if (isNew) {
-        await apiClient('/admin/projects', {
-          method: 'POST',
-          body: JSON.stringify(form),
-        });
+        await apiClient('/admin/projects', { method: 'POST', body: JSON.stringify(payload) });
       } else {
         await apiClient(`/admin/projects/${id}`, {
           method: 'PATCH',
-          body: JSON.stringify(form),
+          body: JSON.stringify({ ...payload, updatedAt }),
         });
       }
       navigate('/projects');
     } catch (err) {
-      alert(err.message || 'Lỗi khi lưu dự án');
+      const detail = Array.isArray(err.details) ? err.details.map(d => d.message).join('; ') : '';
+      setErrorMsg([err.message, detail].filter(Boolean).join(': ') || 'Lỗi khi lưu dự án');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
+    if (!window.confirm('Xoá dự án này? Bạn có thể khôi phục lại sau.')) return;
     setIsDeleting(true);
     try {
       await apiClient(`/admin/projects/${id}`, { method: 'DELETE' });
       navigate('/projects');
     } catch (err) {
-      alert(err.message || 'Lỗi khi xóa dự án');
+      setErrorMsg(err.message || 'Lỗi khi xoá dự án');
     } finally {
       setIsDeleting(false);
     }
@@ -136,8 +187,8 @@ export default function ProjectEditorPage() {
 
   if (isLoading) {
     return (
-      <div className="text-center py-20 text-fg-muted">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+      <div className="py-20 text-center text-fg-muted">
+        <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         <p className="text-xs">Đang tải thông tin dự án...</p>
       </div>
     );
@@ -146,227 +197,267 @@ export default function ProjectEditorPage() {
   return (
     <ResourceForm
       title={isNew ? 'Thêm dự án mới' : 'Chỉnh sửa dự án'}
-      subtitle="Thiết lập nội dung case study, thách thức, giải pháp và kết quả định lượng."
+      subtitle="Thông tin này hiện trên thẻ dự án ở trang Dự án. Dự án chỉ hiện ở tiếng Anh khi bạn điền đủ tên và mô tả tiếng Anh."
       backUrl="/projects"
       onSubmit={handleSubmit}
       onDelete={!isNew ? handleDelete : null}
       isSubmitting={isSubmitting}
       isDeleting={isDeleting}
       status={form.status}
-      onStatusChange={status => setForm({ ...form, status })}
+      onStatusChange={status => set({ status })}
     >
-      {/* Basic information */}
-      <Card className="p-6 space-y-6">
+      {errorMsg && (
+        <div
+          role="alert"
+          className="rounded-lg bg-danger-subtle p-4 text-sm font-medium text-danger"
+        >
+          {errorMsg}
+        </div>
+      )}
+
+      <Card className="space-y-6 p-6">
+        <h3 className="border-b border-border pb-3 text-sm font-bold text-fg">Thông tin dự án</h3>
         <LocalizedField
           label="Tên dự án"
           required
           value={form.title}
-          onChange={title => setForm({ ...form, title })}
+          onChange={title => set({ title })}
         />
-
         <LocalizedField
-          label="Tóm tắt ngắn (Short description)"
+          label="Mô tả ngắn"
           type="textarea"
-          rows={3}
+          rows={2}
           value={form.shortDescription}
-          onChange={shortDescription => setForm({ ...form, shortDescription })}
+          onChange={shortDescription => set({ shortDescription })}
         />
+        <LocalizedField
+          label="Mô tả chi tiết (tuỳ chọn)"
+          type="textarea"
+          rows={5}
+          value={form.description}
+          onChange={description => set({ description })}
+        />
+      </Card>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <Input
-            label="Thứ tự hiển thị"
-            type="number"
-            value={form.order}
-            onChange={e => setForm({ ...form, order: parseInt(e.target.value, 10) || 0 })}
+      <Card className="space-y-6 p-6">
+        <h3 className="border-b border-border pb-3 text-sm font-bold text-fg">Phân loại</h3>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <CategorySelect
+            label="Mảng (ví dụ: Website, Game, Ứng dụng)"
+            type="project-segment"
+            value={form.segment}
+            onChange={segment => set({ segment })}
           />
-
-          <Input
-            label="URL liên kết trực tiếp (nếu có)"
-            type="url"
-            placeholder="https://client-product.com"
-            value={form.projectUrl}
-            onChange={e => setForm({ ...form, projectUrl: e.target.value })}
+          <CategorySelect
+            label="Thể loại (ví dụ: Website bán hàng, Landing page)"
+            type="project"
+            value={form.category}
+            onChange={category => set({ category })}
           />
         </div>
       </Card>
 
-      {/* Client & Confidentiality */}
-      <Card className="p-6 space-y-6">
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          <div>
-            <h3 className="text-sm font-bold text-fg">Thông tin Khách hàng & Tính Bảo mật</h3>
-            <p className="text-xs text-fg-muted">
-              Quy định cách thông tin đối tác được hiển thị ra công chúng.
-            </p>
-          </div>
+      <Card className="space-y-6 p-6">
+        <h3 className="border-b border-border pb-3 text-sm font-bold text-fg">Hình ảnh trên thẻ</h3>
+        <ThumbnailsField
+          label="Ảnh đại diện của thẻ (tỉ lệ 4:6)"
+          value={form.thumbnails}
+          onChange={thumbnails => set({ thumbnails })}
+        />
+      </Card>
 
-          <label className="flex items-center gap-2 p-2 rounded-lg bg-surface-raised border border-border cursor-pointer text-xs font-semibold">
-            <input
-              type="checkbox"
-              checked={form.client.isConfidential}
-              onChange={e =>
-                setForm({
-                  ...form,
-                  client: { ...form.client, isConfidential: e.target.checked },
-                })
-              }
-              className="rounded border-border text-primary focus:ring-primary"
+      <Card className="space-y-6 p-6">
+        <h3 className="border-b border-border pb-3 text-sm font-bold text-fg">
+          Thông tin hiện khi rê chuột vào thẻ
+        </h3>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+          <div className="space-y-2">
+            <Input
+              label="Đánh giá (0 đến 5 sao)"
+              type="number"
+              min="0"
+              max="5"
+              step="0.1"
+              value={form.rating}
+              onChange={e => set({ rating: e.target.value })}
             />
-            <ShieldCheck className="w-4 h-4 text-fg-muted" />
-            <span>Khách hàng bảo mật (Ẩn danh)</span>
-          </label>
+            <RatingStars value={Number(form.rating) || 0} />
+          </div>
+          <Input
+            label="Lượt xem"
+            type="number"
+            min="0"
+            step="1"
+            value={form.views}
+            onChange={e => set({ views: e.target.value })}
+          />
+          <Input
+            label="Thứ tự hiển thị (nhỏ hiện trước)"
+            type="number"
+            value={form.order}
+            onChange={e => set({ order: e.target.value })}
+          />
         </div>
 
-        {form.client.isConfidential ? (
-          <div className="p-4 rounded-xl bg-surface-sunken text-xs text-fg-muted leading-relaxed">
-            <p className="font-semibold text-fg">Chế độ Bảo mật đang BẬT:</p>
-            <p>
-              Tên doanh nghiệp và logo sẽ hoàn toàn bị ẩn khỏi trang chi tiết và danh mục công khai.
-              Giao diện người dùng sẽ hiển thị nhãn chuẩn <strong>"Khách hàng bảo mật"</strong>.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <DemoUrlField value={form.demoUrl} onChange={demoUrl => set({ demoUrl })} />
+
+        <Toggle
+          label="Dự án nổi bật"
+          hint="Dự án nổi bật được ưu tiên hiện ở trang chủ."
+          checked={form.isFeatured}
+          onChange={isFeatured => set({ isFeatured })}
+        />
+      </Card>
+
+      <Card className="space-y-6 p-6">
+        <div className="border-b border-border pb-3">
+          <h3 className="text-sm font-bold text-fg">Chi tiết dự án (không bắt buộc)</h3>
+          <p className="text-xs text-fg-muted">
+            Khách hàng, vấn đề và cách giải quyết. Chỉ hiện ở trang riêng của dự án khi có nội dung.
+          </p>
+        </div>
+
+        <Toggle
+          label="Ẩn tên khách hàng"
+          hint="Tên và logo khách hàng không hiện ra ngoài; website ghi “Khách hàng giấu tên”."
+          checked={form.client.isConfidential}
+          onChange={isConfidential => setClient({ isConfidential })}
+        />
+
+        {!form.client.isConfidential && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Input
               label="Tên khách hàng"
               value={form.client.name}
-              onChange={e =>
-                setForm({
-                  ...form,
-                  client: { ...form.client, name: e.target.value },
-                })
-              }
-              placeholder="Ví dụ: Tech Global Logistics"
+              onChange={e => setClient({ name: e.target.value })}
             />
             <Input
               label="Quốc gia"
               value={form.client.country}
-              onChange={e =>
-                setForm({
-                  ...form,
-                  client: { ...form.client, country: e.target.value },
-                })
-              }
-              placeholder="Vietnam, Singapore, USA..."
+              onChange={e => setClient({ country: e.target.value })}
             />
           </div>
         )}
 
         <LocalizedField
-          label="Lĩnh vực hoạt động (Industry)"
+          label="Lĩnh vực của khách hàng"
           value={form.client.industry}
-          onChange={industry =>
-            setForm({
-              ...form,
-              client: { ...form.client, industry },
-            })
-          }
+          onChange={industry => setClient({ industry })}
         />
-      </Card>
 
-      {/* Challenge and Solution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6 space-y-4">
-          <h3 className="text-sm font-bold text-fg">Bài toán & Thách thức (Challenge)</h3>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <LocalizedField
-            label="Mô tả thách thức"
+            label="Vấn đề cần giải quyết"
             type="textarea"
             rows={5}
             value={form.challenge}
-            onChange={challenge => setForm({ ...form, challenge })}
+            onChange={challenge => set({ challenge })}
           />
-        </Card>
-
-        <Card className="p-6 space-y-4">
-          <h3 className="text-sm font-bold text-fg">Giải pháp Kỹ thuật (Solution)</h3>
           <LocalizedField
-            label="Mô tả giải pháp"
+            label="Cách chúng tôi giải quyết"
             type="textarea"
             rows={5}
             value={form.solution}
-            onChange={solution => setForm({ ...form, solution })}
+            onChange={solution => set({ solution })}
           />
-        </Card>
-      </div>
-
-      {/* Measurable Results */}
-      <Card className="p-6 space-y-6">
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          <div>
-            <h3 className="text-sm font-bold text-fg">Kết quả & Đo lường Hiệu quả (Results)</h3>
-            <p className="text-xs text-fg-muted">
-              Các chỉ số định lượng (ví dụ: +99.99% Uptime, 3.5x Throughput).
-            </p>
-          </div>
-          <Button type="button" variant="outline" size="sm" onClick={addResultMetric}>
-            <Plus className="w-3.5 h-3.5 mr-1" />
-            Thêm chỉ số
-          </Button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <h4 className="text-xs font-semibold text-fg">Kết quả đạt được</h4>
+              <p className="text-[11px] text-fg-subtle">
+                Chỉ ghi số liệu có thật, ví dụ “2 tuần” với nhãn “Thời gian hoàn thành”.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={form.results.length >= 12}
+              onClick={() =>
+                set({
+                  results: [
+                    ...form.results,
+                    { label: EMPTY_TEXT, value: EMPTY_TEXT, description: EMPTY_TEXT },
+                  ],
+                })
+              }
+            >
+              <Plus className="mr-1 h-3.5 w-3.5" />
+              Thêm kết quả
+            </Button>
+          </div>
+
           {form.results.length === 0 ? (
-            <p className="text-xs text-fg-muted text-center py-4 border border-dashed border-border rounded-lg">
-              Chưa có chỉ số đo lường nào.
+            <p className="rounded-lg border border-dashed border-border py-4 text-center text-xs text-fg-muted">
+              Chưa có kết quả nào.
             </p>
           ) : (
-            form.results.map((resItem, idx) => (
+            form.results.map((item, index) => (
               <div
-                key={idx}
-                className="p-4 rounded-xl border border-border bg-surface-sunken space-y-3 relative"
+                key={index}
+                className="space-y-3 rounded-xl border border-border bg-surface-sunken p-4"
               >
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-fg">Chỉ số #{idx + 1}</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-fg">Kết quả {index + 1}</span>
                   <button
                     type="button"
-                    onClick={() => removeResultMetric(idx)}
-                    className="text-danger hover:text-danger/80 p-1 cursor-pointer"
+                    onClick={() => set({ results: form.results.filter((_, i) => i !== index) })}
+                    className="cursor-pointer p-1 text-danger hover:text-danger/80"
+                    aria-label="Xoá kết quả này"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <LocalizedField
-                    label="Giá trị (Value, e.g. 99.99% / 3.5x)"
-                    value={resItem.value}
-                    onChange={val => {
-                      const updated = [...form.results];
-                      updated[idx].value = val;
-                      setForm({ ...form, results: updated });
-                    }}
+                    label="Con số"
+                    value={item.value}
+                    onChange={value => updateResult(index, { value })}
                   />
                   <LocalizedField
-                    label="Nhãn (Label, e.g. Uptime / Năng lực xử lý)"
-                    value={resItem.label}
-                    onChange={val => {
-                      const updated = [...form.results];
-                      updated[idx].label = val;
-                      setForm({ ...form, results: updated });
-                    }}
+                    label="Nhãn"
+                    value={item.label}
+                    onChange={label => updateResult(index, { label })}
                   />
                 </div>
               </div>
             ))
           )}
         </div>
+
+        <MultiSelect
+          label="Dịch vụ liên quan"
+          endpoint="/admin/services"
+          value={form.services}
+          onChange={services => set({ services })}
+          getLabel={option => option.name?.vi || option.name?.en}
+        />
+        <MultiSelect
+          label="Công nghệ sử dụng"
+          endpoint="/admin/technologies"
+          value={form.technologies}
+          onChange={technologies => set({ technologies })}
+          getLabel={option => option.name?.vi || option.name?.en || option.name}
+        />
       </Card>
 
-      {/* SEO */}
-      <Card className="p-6 space-y-6">
-        <h3 className="text-sm font-bold text-fg border-b border-border pb-3">
-          Tối ưu hóa Tìm kiếm (SEO Meta)
+      <Card className="space-y-6 p-6">
+        <h3 className="border-b border-border pb-3 text-sm font-bold text-fg">
+          Tối ưu tìm kiếm (SEO)
         </h3>
         <LocalizedField
-          label="Tiêu đề SEO (Title)"
-          value={form.seo?.title || { vi: '', en: '' }}
-          onChange={title => setForm({ ...form, seo: { ...form.seo, title } })}
+          label="Tiêu đề SEO"
+          value={form.seo.title}
+          onChange={title => set({ seo: { ...form.seo, title } })}
         />
         <LocalizedField
-          label="Mô tả SEO (Description)"
+          label="Mô tả SEO"
           type="textarea"
           rows={2}
-          value={form.seo?.description || { vi: '', en: '' }}
-          onChange={description => setForm({ ...form, seo: { ...form.seo, description } })}
+          value={form.seo.description}
+          onChange={description => set({ seo: { ...form.seo, description } })}
         />
       </Card>
     </ResourceForm>

@@ -4,10 +4,14 @@ const translations = {
   vi: {
     nav: {
       dashboard: 'Bảng điều khiển',
-      pages: 'Trang tĩnh',
+      pages: 'Tất cả các trang',
       services: 'Dịch vụ',
-      solutions: 'Giải pháp',
+      products: 'Mẫu website',
+      packages: 'Bảng Giá & Gói Cước',
       projects: 'Dự án',
+      about: 'Về Dev House',
+      contactPage: 'Trang Liên hệ',
+      solutions: 'Giải pháp',
       technologies: 'Công nghệ',
       categories: 'Danh mục',
       blog: 'Bài viết Blog',
@@ -74,10 +78,14 @@ const translations = {
   en: {
     nav: {
       dashboard: 'Dashboard',
-      pages: 'Static Pages',
+      pages: 'All Pages',
       services: 'Services',
-      solutions: 'Solutions',
+      products: 'Templates',
+      packages: 'Pricing & Packages',
       projects: 'Projects',
+      about: 'About Dev House',
+      contactPage: 'Contact Page',
+      solutions: 'Solutions',
       technologies: 'Technologies',
       categories: 'Categories',
       blog: 'Blog Posts',

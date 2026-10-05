@@ -19,16 +19,15 @@ export function getTranslation(locale = 'vi') {
 export function getLocaleFromUrl(urlStr) {
   try {
     const url = new URL(urlStr);
-    return url.pathname.startsWith('/en') ? 'en' : 'vi';
+    return /^\/en(\/|$)/.test(url.pathname) ? 'en' : 'vi';
   } catch {
-    return urlStr?.startsWith('/en') ? 'en' : 'vi';
+    return /^\/en(\/|$)/.test(urlStr || '') ? 'en' : 'vi';
   }
 }
 
 export function getAlternateLocalePath(pathname) {
-  if (pathname.startsWith('/en')) {
-    const withoutEn = pathname.slice(3) || '/';
-    return withoutEn;
+  if (/^\/en(\/|$)/.test(pathname)) {
+    return pathname.slice(3) || '/';
   }
   return pathname === '/' ? '/en' : `/en${pathname}`;
 }

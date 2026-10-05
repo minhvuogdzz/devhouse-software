@@ -136,7 +136,8 @@ export const contentService = {
       defaults,
       overrides,
       resolved,
-      seo: pageDoc?.seo || pageDef.seo,
+      seo: pageDoc?.seo?.title?.vi ? pageDoc.seo : pageDef.seo,
+      defaultSeo: pageDef.seo,
       updatedAt: pageDoc?.updatedAt || null,
     };
   },

@@ -10,16 +10,16 @@ export const contactHero = defineSection({
   },
   defaults: {
     eyebrow: {
-      vi: 'Kết nối cùng Đội ngũ Chuyên gia',
-      en: 'Connect with Our Team',
+      vi: 'Liên hệ tư vấn',
+      en: 'Talk to us',
     },
     heading: {
-      vi: 'Thảo luận về bài toán và lộ trình công nghệ của doanh nghiệp bạn',
-      en: 'Let’s discuss your upcoming software goals and challenges',
+      vi: 'Cho chúng tôi biết bạn cần gì',
+      en: 'Tell us what you need',
     },
     subheading: {
-      vi: 'Chúng tôi sẵn sàng lắng nghe, tư vấn phương án kỹ thuật phù hợp và hỗ trợ bạn dự toán chi phí triển khai tối ưu.',
-      en: 'Share your business context or project scope with us. We will respond promptly within one working day.',
+      vi: 'Chia sẻ ngắn gọn về cửa hàng hoặc doanh nghiệp của bạn. Chúng tôi sẽ gợi ý gói dịch vụ phù hợp.',
+      en: 'Tell us briefly about your shop or business. We will suggest the package that fits.',
     },
   },
 });
@@ -30,12 +30,12 @@ export const contactPage = {
   sections: [contactHero],
   seo: {
     title: {
-      vi: 'Liên hệ Tư vấn Phần mềm — Dev House Software',
-      en: 'Contact Us — Dev House Software',
+      vi: 'Liên hệ tư vấn — Dev House Software',
+      en: 'Talk to us — Dev House Software',
     },
     description: {
-      vi: 'Liên hệ với Dev House Software để nhận tư vấn kỹ thuật chuyên sâu và dự toán kinh phí cho dự án phần mềm của bạn.',
-      en: 'Get in touch with Dev House Software for dedicated software consulting and project estimates.',
+      vi: 'Cho Dev House Software biết nhu cầu website của bạn để được gợi ý gói dịch vụ phù hợp.',
+      en: 'Tell Dev House Software what kind of website you need and get a suggestion for the right package.',
     },
   },
 };

@@ -7,6 +7,7 @@ import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
+import { Collection } from '../components/ui/Collection.jsx';
 import { Cpu, ArrowRight, ExternalLink, Layers } from 'lucide-react';
 
 export async function loader({ request }) {
@@ -67,14 +68,20 @@ export async function loader({ request }) {
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-    const title = isEn
-        ? 'Technology Stack & Engineering Standards — Dev House Software'
-        : 'Nền tảng Công nghệ & Tiêu chuẩn Kỹ thuật — Dev House Software';
+  const title = isEn
+    ? 'Technology Stack & Engineering Standards — Dev House Software'
+    : 'Nền tảng Công nghệ & Tiêu chuẩn Kỹ thuật — Dev House Software';
   const description = isEn
-        ? 'Discover the mature, reliable technologies and engineering practices we use to build durable business systems.'
-        : 'Tìm hiểu các công nghệ và tiêu chuẩn kỹ thuật được Dev House áp dụng để phát triển hệ thống bền vững.';
+    ? 'Discover the mature, reliable technologies and engineering practices we use to build durable business systems.'
+    : 'Tìm hiểu các công nghệ và tiêu chuẩn kỹ thuật được Dev House áp dụng để phát triển hệ thống bền vững.';
 
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
+  return generateSeoMeta({
+    title,
+    description,
+    url: data?.url,
+    locale: data?.locale,
+    type: 'website',
+  });
 }
 
 export default function TechnologiesPage() {
@@ -158,9 +165,13 @@ export default function TechnologiesPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {group.items.map(tech => (
-                    <Card key={tech._id || tech.slug} className="flex flex-col justify-between">
+                <Collection
+                  items={group.items}
+                  display={pageData.sections?.list?.display}
+                  label={group.title}
+                  getKey={tech => tech._id || tech.slug}
+                  renderItem={tech => (
+                    <Card className="flex h-full flex-col justify-between">
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="w-10 h-10 rounded-lg bg-primary-subtle text-primary flex items-center justify-center">
@@ -182,8 +193,8 @@ export default function TechnologiesPage() {
                         <p className="text-sm text-fg-muted leading-relaxed">{tech.description}</p>
                       </div>
                     </Card>
-                  ))}
-                </div>
+                  )}
+                />
               </div>
             ))}
           </div>

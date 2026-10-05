@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const solutionsHero = defineSection({
@@ -24,10 +25,23 @@ export const solutionsHero = defineSection({
   },
 });
 
+export const solutionsList = defineSection({
+  key: 'list',
+  label: 'Danh sách giải pháp (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({
+      layout: 'slide',
+      columns: { mobile: 1, tablet: 2, desktop: 3 },
+      slide: { motion: 'smooth', interval: 6, dots: 'none' },
+    }),
+  },
+});
+
 export const solutionsIndexPage = {
   key: 'solutions-index',
   title: { vi: 'Giải pháp', en: 'Solutions' },
-  sections: [solutionsHero],
+  sections: [solutionsHero, solutionsList],
   seo: {
     title: {
       vi: 'Giải pháp & Phần mềm doanh nghiệp — Dev House Software',

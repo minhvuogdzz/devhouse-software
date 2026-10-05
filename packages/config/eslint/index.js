@@ -56,7 +56,8 @@ export const noRawPalettePlugin = {
             if (filename && filename.includes('RichTextRenderer.jsx')) return;
             context.report({
               node,
-              message: 'Forbidden utility "font-mono". Rule P5 forbids monospace anywhere except a real code block inside a blog article. Use tabular-nums where alignment is needed.',
+              message:
+                'Forbidden utility "font-mono". Rule P5 forbids monospace anywhere except a real code block inside a blog article. Use tabular-nums where alignment is needed.',
             });
           }
         }
@@ -101,6 +102,8 @@ export const createEslintConfig = () => [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^(_|React)' }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'react/jsx-uses-vars': 'error',
+      // A component that is used but never imported only fails when it is drawn, so catch it here
+      'react/jsx-no-undef': 'error',
     },
   },
   // Feature code in apps/web and apps/admin: disallow raw palette colors
@@ -166,6 +169,7 @@ export const createEslintConfig = () => [
       '**/coverage/**',
       '**/.hallmark/**',
       'legacy/**',
+      'mvd-ecosystem/**',
     ],
   },
 ];

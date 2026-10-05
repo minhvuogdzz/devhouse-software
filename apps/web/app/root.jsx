@@ -8,7 +8,7 @@ import {
   isRouteErrorResponse,
   useLocation,
 } from 'react-router';
-import { defaultSettings, localize } from '@devhouse/content';
+import { defaultSettings, defaultNavigation, localize } from '@devhouse/content';
 import { apiClient } from './lib/api-client.js';
 import { themeInitScript } from './lib/theme.js';
 import { getLocaleFromUrl, getTranslation } from './lib/i18n.js';
@@ -18,7 +18,10 @@ import stylesHref from './app.css?url';
 export const links = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
-  { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap' },
+  {
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap',
+  },
   { rel: 'stylesheet', href: stylesHref },
   { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
   { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
@@ -31,11 +34,21 @@ export async function loader({ request }) {
   const locale = getLocaleFromUrl(url.pathname);
   try {
     const res = await apiClient(`/site?locale=${locale}`);
-    if (res.data?.settings) return { settings: res.data.settings, locale };
+    if (res.data?.settings) {
+      return {
+        settings: res.data.settings,
+        navigation: res.data.navigation || localize(defaultNavigation, locale),
+        locale,
+      };
+    }
   } catch {
-    // fall through to code defaults so the site never renders without contact details
+    // fall through to code defaults so the site never renders without contact details or menus
   }
-  return { settings: localize(defaultSettings, locale), locale };
+  return {
+    settings: localize(defaultSettings, locale),
+    navigation: localize(defaultNavigation, locale),
+    locale,
+  };
 }
 
 export function Layout({ children }) {
@@ -70,19 +83,17 @@ export function ErrorBoundary({ error }) {
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
 
-  let title = '500 - Lỗi máy chủ';
-  let message = 'Đã xảy ra sự cố ngoài ý muốn. Vui lòng tải lại trang sau giây lát.';
+  let title = t('error.title');
+  let message = t('error.desc');
 
   if (isRouteErrorResponse(error)) {
     if (error.status === 404) {
       title = t('notFound.title');
       message = t('notFound.desc');
     } else {
-      title = `${error.status} - ${error.statusText || 'Lỗi yêu cầu'}`;
-      message = error.data?.message || 'Không thể xử lý yêu cầu vào lúc này.';
+      title = `${error.status} - ${error.statusText || t('error.title')}`;
+      message = error.data?.message || t('error.requestFailed');
     }
-  } else if (error instanceof Error) {
-    message = error.message;
   }
 
   return (

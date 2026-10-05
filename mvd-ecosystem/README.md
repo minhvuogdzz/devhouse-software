@@ -1,6 +1,6 @@
-# MVD Photo Picker Suite - Deployment Guide (DevOps)
+# DH Studio Pro Suite - Deployment Guide (DevOps)
 
-Tài liệu hướng dẫn triển khai bộ giải pháp **MVD Photo Picker Suite** (Web Showcase, Admin Dashboard, Backend API) cho đội ngũ DevOps.
+Tài liệu hướng dẫn triển khai bộ giải pháp **DH Studio Pro Suite** (Web Showcase, Admin Dashboard, Backend API) trực thuộc **DevHouse Software** cho đội ngũ DevOps.
 
 ---
 

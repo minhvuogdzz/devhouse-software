@@ -21,7 +21,7 @@ export function DownloadMatrix({ release }: DownloadMatrixProps) {
   const { t, isVi } = useLanguage();
 
   const handleCopyCmd = () => {
-    navigator.clipboard.writeText("xattr -cr /Applications/MVD.T.D.app");
+    navigator.clipboard.writeText('xattr -cr "/Applications/DH Studio Pro.app"');
     setCopiedCmd(true);
     setTimeout(() => setCopiedCmd(false), 2000);
   };
@@ -225,7 +225,7 @@ export function DownloadMatrix({ release }: DownloadMatrixProps) {
                   {t("download.gatekeeper.macDesc")}
                 </p>
                 <div className="mt-2 p-2.5 rounded-xl bg-slate-50 dark:bg-[#070A12] border border-slate-200 dark:border-white/[0.06] flex items-center justify-between font-mono text-xs text-emerald-700 dark:text-emerald-400">
-                  <code>xattr -cr /Applications/MVD.T.D.app</code>
+                  <code>xattr -cr "/Applications/DH Studio Pro.app"</code>
                   <button
                     onClick={handleCopyCmd}
                     className="p-1.5 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-transparent cursor-pointer transition-colors shadow-sm"

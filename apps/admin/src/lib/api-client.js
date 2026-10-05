@@ -37,9 +37,27 @@ export async function apiClient(endpoint, options = {}) {
       );
     }
 
+    // Lists carry their paging details in `meta.pagination`; pages read `response.pagination`
+    if (data?.meta?.pagination && data.pagination === undefined) {
+      data.pagination = data.meta.pagination;
+    }
+
     return data;
   } catch (err) {
     if (err instanceof ApiError) throw err;
     throw new ApiError(err.message || 'Network error', 503, 'NETWORK_ERROR');
   }
+}
+
+// Convenience helpers used across the admin: apiClient.get('/x'), apiClient.put('/x', body) ...
+apiClient.get = (endpoint, options = {}) => apiClient(endpoint, { ...options, method: 'GET' });
+apiClient.delete = (endpoint, options = {}) =>
+  apiClient(endpoint, { ...options, method: 'DELETE' });
+for (const method of ['post', 'put', 'patch']) {
+  apiClient[method] = (endpoint, body, options = {}) =>
+    apiClient(endpoint, {
+      ...options,
+      method: method.toUpperCase(),
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
 }

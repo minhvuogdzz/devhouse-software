@@ -10,6 +10,11 @@ solutionAdminRoutes.post(
   requirePermission('solutions:create'),
   solutionController.adminCreate,
 );
+solutionAdminRoutes.patch(
+  '/reorder',
+  requirePermission('solutions:update'),
+  solutionController.adminReorder,
+);
 solutionAdminRoutes.get(
   '/:id',
   requirePermission('solutions:read'),
@@ -24,11 +29,6 @@ solutionAdminRoutes.patch(
   '/:id/status',
   requirePermission('solutions:publish'),
   solutionController.adminUpdateStatus,
-);
-solutionAdminRoutes.patch(
-  '/reorder',
-  requirePermission('solutions:update'),
-  solutionController.adminReorder,
 );
 solutionAdminRoutes.delete(
   '/:id',

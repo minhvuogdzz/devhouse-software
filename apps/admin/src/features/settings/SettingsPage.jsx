@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../lib/api-client.js';
+import { diffAgainstDefaults } from '../../lib/content-diff.js';
 import { useI18n } from '../../lib/i18n.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Card } from '../../components/ui/Card.jsx';
@@ -41,20 +42,21 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (settingsData) {
+      const r = settingsData.resolved || settingsData;
       setFormData({
-        companyName: settingsData.companyName || { vi: '', en: '' },
-        legalName: settingsData.legalName || { vi: '', en: '' },
-        tagline: settingsData.tagline || { vi: '', en: '' },
-        contactEmail: settingsData.contactEmail || '',
-        hotline: settingsData.hotline || '',
-        taxCode: settingsData.taxCode || '',
-        address: settingsData.address || { vi: '', en: '' },
-        workingHours: settingsData.workingHours || { vi: '', en: '' },
-        socialLinks: settingsData.socialLinks || [],
+        companyName: r.companyName || { vi: '', en: '' },
+        legalName: r.legalName || { vi: '', en: '' },
+        tagline: r.tagline || { vi: '', en: '' },
+        contactEmail: r.contactEmail || '',
+        hotline: r.hotline || '',
+        taxCode: r.taxCode || '',
+        address: r.address || { vi: '', en: '' },
+        workingHours: r.workingHours || { vi: '', en: '' },
+        socialLinks: r.socialLinks || [],
         seo: {
-          title: settingsData.seo?.title || { vi: '', en: '' },
-          description: settingsData.seo?.description || { vi: '', en: '' },
-          keywords: settingsData.seo?.keywords || { vi: '', en: '' },
+          title: r.seo?.title || { vi: '', en: '' },
+          description: r.seo?.description || { vi: '', en: '' },
+          keywords: r.seo?.keywords || { vi: '', en: '' },
         },
       });
     }
@@ -72,7 +74,9 @@ export default function SettingsPage() {
   });
 
   const handleSave = () => {
-    saveMutation.mutate(formData);
+    // Only what differs from the built-in defaults is stored.
+    const defaults = settingsData?.defaults || {};
+    saveMutation.mutate(diffAgainstDefaults(formData, defaults) || {});
   };
 
   const addSocialLink = () => {

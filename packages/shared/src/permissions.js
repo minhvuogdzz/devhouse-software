@@ -11,6 +11,16 @@ export const PERMISSIONS = [
   'services:update',
   'services:delete',
   'services:publish',
+  'products:read',
+  'products:create',
+  'products:update',
+  'products:delete',
+  'products:publish',
+  'packages:read',
+  'packages:create',
+  'packages:update',
+  'packages:delete',
+  'packages:publish',
   'solutions:read',
   'solutions:create',
   'solutions:update',
@@ -57,6 +67,12 @@ export const PERMISSIONS = [
   'audit:read',
 ];
 
+/**
+ * Bump when SEEDED_ROLES gains permissions. Roles seeded by an earlier release get the missing
+ * permissions added exactly once (see seeds/index.js); nothing is ever removed.
+ */
+export const SEEDED_ROLES_REVISION = 2;
+
 export const SEEDED_ROLES = {
   super_admin: {
     key: 'super_admin',
@@ -95,6 +111,16 @@ export const SEEDED_ROLES = {
       'services:update',
       'services:delete',
       'services:publish',
+      'products:read',
+      'products:create',
+      'products:update',
+      'products:delete',
+      'products:publish',
+      'packages:read',
+      'packages:create',
+      'packages:update',
+      'packages:delete',
+      'packages:publish',
       'solutions:read',
       'solutions:create',
       'solutions:update',

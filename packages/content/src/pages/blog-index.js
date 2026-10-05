@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const blogHero = defineSection({
@@ -24,10 +25,19 @@ export const blogHero = defineSection({
   },
 });
 
+export const blogList = defineSection({
+  key: 'list',
+  label: 'Danh sách bài viết (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+  },
+});
+
 export const blogIndexPage = {
   key: 'blog-index',
   title: { vi: 'Bài viết', en: 'Blog' },
-  sections: [blogHero],
+  sections: [blogHero, blogList],
   seo: {
     title: {
       vi: 'Bài viết & Chia sẻ kinh nghiệm — Dev House Software',

@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { getTranslation, getLocaleFromUrl, getAlternateLocalePath } from '../app/lib/i18n.js';
+import vi from '../app/locales/vi.js';
+import en from '../app/locales/en.js';
+
+const flatten = (object, prefix = '') =>
+  Object.entries(object).flatMap(([key, value]) =>
+    value && typeof value === 'object'
+      ? flatten(value, `${prefix}${key}.`)
+      : [[`${prefix}${key}`, value]],
+  );
 
 describe('Web i18n utility', () => {
   it('detects locale from URL pathname accurately', () => {
@@ -36,5 +45,31 @@ describe('Web i18n utility', () => {
 
     // Fallback key if missing
     expect(tVi('unknown.key.name')).toBe('unknown.key.name');
+  });
+
+  it('has exactly the same keys in Vietnamese and English', () => {
+    const viKeys = flatten(vi)
+      .map(([key]) => key)
+      .sort();
+    const enKeys = flatten(en)
+      .map(([key]) => key)
+      .sort();
+    expect(enKeys).toEqual(viKeys);
+  });
+
+  it('never leaves a text empty, and keeps the same {placeholders} in both languages', () => {
+    const placeholders = text => (text.match(/\{[a-zA-Z]+\}/g) || []).sort();
+    const enByKey = Object.fromEntries(flatten(en));
+    for (const [key, text] of flatten(vi)) {
+      expect(text.trim(), key).not.toBe('');
+      expect(enByKey[key].trim(), key).not.toBe('');
+      expect(placeholders(enByKey[key]), key).toEqual(placeholders(text));
+    }
+  });
+
+  it('does not mistake a path that merely starts with "en" for English', () => {
+    expect(getLocaleFromUrl('/enterprise')).toBe('vi');
+    expect(getLocaleFromUrl('/en/enterprise')).toBe('en');
+    expect(getAlternateLocalePath('/enterprise')).toBe('/en/enterprise');
   });
 });

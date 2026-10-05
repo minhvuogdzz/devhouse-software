@@ -87,14 +87,19 @@ export function Navbar({ version }: NavbarProps) {
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2.5 group">
             <img
-              src="/brand/mvd_app_icon_minimal_dark_squircle.png"
-              alt="MVD App Icon"
-              className="w-7 h-7 rounded-lg border border-slate-300 dark:border-white/10 group-hover:border-blue-500 transition-colors"
+              src="/brand/dh_app_icon_dark_squircle.png"
+              alt="DH Studio Pro"
+              className="w-7 h-7 rounded-lg border border-slate-300 dark:border-white/10 group-hover:border-blue-500 transition-colors object-contain"
             />
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-xs sm:text-sm tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                MVD Tech & Design
-              </span>
+              <div className="flex flex-col justify-center leading-tight">
+                <span className="font-bold text-xs sm:text-sm tracking-tight text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                  DH Studio Pro
+                </span>
+                <span className="text-[9px] text-slate-500 dark:text-slate-400 font-medium tracking-wider leading-none">
+                  DevHouse Software
+                </span>
+              </div>
               <span className="hidden sm:inline-flex px-1.5 py-0.5 text-[9px] font-mono font-medium rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 tabular-nums">
                 v{version}
               </span>

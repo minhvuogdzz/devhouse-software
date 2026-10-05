@@ -1,5 +1,5 @@
 import { contactService } from './contact.service.js';
-import { sendSuccess } from '../../core/http/index.js';
+import { sendSuccess, sendPaginated } from '../../core/http/index.js';
 
 export const contactController = {
   async submitContact(req, res) {
@@ -16,7 +16,8 @@ export const contactController = {
 
   async adminList(req, res) {
     const result = await contactService.listContactRequests(req.query);
-    return sendSuccess(res, result);
+    // The list itself is `data`; the cursor details travel with it as `meta.pagination`
+    return sendPaginated(res, result.data, result.pagination);
   },
 
   async adminGetById(req, res) {

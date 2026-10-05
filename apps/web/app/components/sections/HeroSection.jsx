@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from '../ui/Button.jsx';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
+import { CtaLink } from '../ui/CtaLink.jsx';
+import { getTranslation } from '../../lib/i18n.js';
 import { GlobeBackground } from './GlobeBackground.jsx';
 import { ScrollReveal } from '../ui/ScrollReveal.jsx';
 import { WeatherHeroEffect } from './WeatherHeroEffect.jsx';
@@ -12,21 +13,11 @@ export function HeroSection({
   subheading,
   primaryCta,
   secondaryCta,
+  highlights = [],
   locale = 'vi',
 }) {
   const [weatherCondition, setWeatherCondition] = useState('cloudy');
-  const prefix = locale === 'en' ? '/en' : '';
-  const primaryUrl = primaryCta?.url?.startsWith('/')
-    ? `${prefix}${primaryCta.url}`.replace(/\/+/g, '/')
-    : primaryCta?.url || `${prefix}/contact`;
-  const secondaryUrl = secondaryCta?.url?.startsWith('/')
-    ? `${prefix}${secondaryCta.url}`.replace(/\/+/g, '/')
-    : secondaryCta?.url || `${prefix}/services`;
-
-  const highlights =
-    locale === 'en'
-      ? ['Enterprise Architecture', 'Predictable Milestones', 'Dedicated Support']
-      : ['Kiến trúc Chuẩn mực', 'Tiến độ Đảm bảo', 'Đồng hành Lâu dài'];
+  const t = getTranslation(locale);
 
   return (
     <section className="relative isolate pt-24 pb-24 lg:pt-32 lg:pb-32 min-h-[85vh] flex flex-col justify-center bg-transparent overflow-hidden">
@@ -62,29 +53,38 @@ export function HeroSection({
           )}
 
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-            {primaryCta && (
-              <Button to={primaryUrl} size="md" variant="primary" className="w-full sm:w-auto">
-                {primaryCta.label ||
-                  (locale === 'en' ? 'Schedule a Consultation' : 'Tư vấn giải pháp')}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            )}
-            {secondaryCta && (
-              <Button to={secondaryUrl} size="md" variant="outline" className="w-full sm:w-auto">
-                {secondaryCta.label || (locale === 'en' ? 'Explore Services' : 'Khám phá dịch vụ')}
-              </Button>
-            )}
+            <CtaLink
+              link={primaryCta}
+              locale={locale}
+              fallbackUrl="/contact"
+              size="md"
+              variant="primary"
+              className="w-full sm:w-auto"
+            >
+              {primaryCta?.label || t('common.contactUs')}
+              <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+            </CtaLink>
+            <CtaLink
+              link={secondaryCta}
+              locale={locale}
+              fallbackUrl="/services"
+              size="md"
+              variant="outline"
+              className="w-full sm:w-auto"
+            />
           </div>
 
           {/* Value highlights */}
-          <div className="pt-6 flex flex-wrap items-center justify-center gap-5 text-xs text-fg-muted">
-            {highlights.map((item, idx) => (
-              <div key={idx} className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </div>
+          {highlights.length > 0 && (
+            <ul className="pt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-fg-muted">
+              {highlights.map((item, idx) => (
+                <li key={idx} className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary shrink-0" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </ScrollReveal>
       </div>
     </section>

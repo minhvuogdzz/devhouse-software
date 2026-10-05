@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const projectsHero = defineSection({
@@ -9,17 +10,58 @@ export const projectsHero = defineSection({
     subheading: field.textarea({ max: 400 }),
   },
   defaults: {
-    eyebrow: {
-      vi: 'Hồ sơ Năng lực Thực tế',
-      en: 'Proven Project Portfolio',
-    },
+    eyebrow: { vi: 'Dự án', en: 'Projects' },
     heading: {
-      vi: 'Các dự án công nghệ tiêu biểu cùng đối tác',
-      en: 'Selected client initiatives and successful software deliveries',
+      vi: 'Các dự án website của Dev House',
+      en: 'Website projects by Dev House',
     },
     subheading: {
-      vi: 'Khám phá cách chúng tôi đồng hành cùng khách hàng giải quyết bài toán kỹ thuật và nâng cao hiệu quả vận hành kinh doanh.',
-      en: 'Explore how we collaborate with business partners to engineer reliable, scalable software products.',
+      vi: 'Rê chuột vào dự án để xem thông tin, bấm Xem demo để dùng thử ngay trên trang này.',
+      en: 'Hover over a project for its details and press View demo to try it on this page.',
+    },
+  },
+});
+
+export const projectsList = defineSection({
+  key: 'list',
+  label: 'Danh sách dự án (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 2, tablet: 3, desktop: 5 } }),
+  },
+});
+
+export const projectsEmpty = defineSection({
+  key: 'empty',
+  label: 'Khi chưa có dự án nào',
+  fields: { heading: field.text({ max: 120 }), text: field.textarea({ max: 300 }) },
+  defaults: {
+    heading: { vi: 'Đang cập nhật dự án', en: 'Projects are on the way' },
+    text: {
+      vi: 'Chúng tôi sẽ sớm đăng các dự án đã thực hiện. Bạn có thể liên hệ để được tư vấn trực tiếp.',
+      en: 'We will soon share the projects we have built. Contact us to talk it through directly.',
+    },
+  },
+});
+
+export const projectsCta = defineSection({
+  key: 'cta',
+  label: 'Kêu gọi hành động',
+  fields: {
+    heading: field.text({ max: 150 }),
+    subheading: field.textarea({ max: 300 }),
+    button: field.link(),
+  },
+  defaults: {
+    heading: { vi: 'Muốn có một website như vậy?', en: 'Want a website like these?' },
+    subheading: {
+      vi: 'Cho chúng tôi biết nhu cầu, chúng tôi sẽ gợi ý gói phù hợp.',
+      en: 'Tell us what you need and we will suggest the right package.',
+    },
+    button: {
+      label: { vi: 'Liên hệ tư vấn', en: 'Talk to us' },
+      url: '/contact',
+      target: '_self',
     },
   },
 });
@@ -27,15 +69,15 @@ export const projectsHero = defineSection({
 export const projectsIndexPage = {
   key: 'projects-index',
   title: { vi: 'Dự án', en: 'Projects' },
-  sections: [projectsHero],
+  sections: [projectsHero, projectsList, projectsEmpty, projectsCta],
   seo: {
     title: {
-      vi: 'Dự án Tiêu biểu — Dev House Software',
-      en: 'Case Studies & Projects — Dev House Software',
+      vi: 'Dự án — Dev House Software',
+      en: 'Projects — Dev House Software',
     },
     description: {
-      vi: 'Tổng hợp các dự án phần mềm doanh nghiệp, ứng dụng web và di động đã bàn giao thành công.',
-      en: 'Showcase of successfully delivered software systems, web platforms, and mobile products.',
+      vi: 'Các dự án website của Dev House Software. Xem thử từng dự án ngay trên trang.',
+      en: 'Website projects by Dev House Software. Try each project right on the page.',
     },
   },
 };

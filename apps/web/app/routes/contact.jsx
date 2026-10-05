@@ -7,57 +7,31 @@ import {
   useRouteLoaderData,
   Form,
 } from 'react-router';
-import { defaultPages, defaultCatalog, localize } from '@devhouse/content';
+import { defaultCatalog, localize } from '@devhouse/content';
 import { apiClient } from '../lib/api-client.js';
-import { getTranslation } from '../lib/i18n.js';
+import { loadPage, loadList, isShown } from '../lib/page-data.js';
+import { getLocaleFromUrl, getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
 
 export async function loader({ request }) {
-  const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
+  const page = await loadPage('contact', request);
+  const { locale } = page;
+  const interest = (new URL(request.url).searchParams.get('interest') || '').slice(0, 150);
 
-  let pageData = null;
-  let services = [];
-  let siteSettings = null;
+  const services = await loadList(
+    `/services?limit=50&locale=${locale}`,
+    defaultCatalog.services.map(item => localize(item, locale)),
+  );
 
-  try {
-    const res = await apiClient(`/pages/contact?locale=${locale}`);
-    pageData = res.data?.resolved || res.data;
-  } catch {
-    pageData = defaultPages['contact'] || {};
-  }
-
-  try {
-    const sRes = await apiClient(`/services?limit=50&locale=${locale}`);
-    services = sRes.data || [];
-  } catch {
-    services = defaultCatalog.services ? defaultCatalog.services.map(s => localize(s, locale)) : [];
-  }
-
-  try {
-    const siteRes = await apiClient(`/site?locale=${locale}`);
-    siteSettings = siteRes.data || null;
-  } catch {
-    siteSettings = null;
-  }
-
-  return {
-    pageData: localize(pageData, locale),
-    services,
-    siteSettings,
-    url: request.url,
-    locale,
-    mountTime: Date.now(),
-  };
+  return { ...page, services, interest, mountTime: Date.now() };
 }
 
 export async function action({ request }) {
   const formData = await request.formData();
-  const url = new URL(request.url);
-  const locale = url.pathname.startsWith('/en') ? 'en' : 'vi';
+  const locale = getLocaleFromUrl(request.url);
 
   const payload = {
     name: formData.get('name')?.toString().trim() || '',
@@ -65,7 +39,7 @@ export async function action({ request }) {
     phone: formData.get('phone')?.toString().trim() || '',
     company: formData.get('company')?.toString().trim() || '',
     service: formData.get('service')?.toString().trim() || '',
-    budget: formData.get('budget')?.toString().trim() || '',
+    subject: formData.get('interest')?.toString().trim().slice(0, 150) || '',
     timeline: formData.get('timeline')?.toString().trim() || '',
     message: formData.get('message')?.toString().trim() || '',
     locale,
@@ -82,32 +56,30 @@ export async function action({ request }) {
   } catch (err) {
     return {
       success: false,
-      error: err.message || (locale === 'en' ? 'Submission failed' : 'Gửi yêu cầu thất bại'),
+      error: err.message,
       details: err.details || null,
     };
   }
 }
 
 export function meta({ data }) {
-  const isEn = data?.locale === 'en';
-    const title = isEn
-        ? 'Contact Our Technical Team — Dev House Software'
-        : 'Liên hệ Tư vấn Phần mềm Doanh nghiệp — Dev House Software';
-  const description = isEn
-        ? 'Connect with Dev House Software to evaluate project feasibility, architecture, and timeline.'
-        : 'Liên hệ đội ngũ Dev House để được phân tích yêu cầu, tư vấn kiến trúc và dự toán kinh phí triển khai.';
-
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
+  return generateSeoMeta({
+    title: data?.seo?.title || 'Dev House Software',
+    description: data?.seo?.description || '',
+    url: data?.url,
+    locale: data?.locale,
+  });
 }
 
 export default function ContactPage() {
-  const { pageData, services, locale, mountTime } = useLoaderData();
+  const { sections, services, interest, locale, mountTime } = useLoaderData();
   const site = useRouteLoaderData('root');
   const settings = site?.settings || {};
   const phoneHref = (settings.hotline || '').replace(/[^+\d]/g, '');
   const actionData = useActionData();
   const navigation = useNavigation();
   const t = getTranslation(locale);
+  const hero = sections.hero;
 
   const [clientTimestamp, setClientTimestamp] = useState(mountTime);
   useEffect(() => {
@@ -117,68 +89,36 @@ export default function ContactPage() {
   const isSubmitting = navigation.state === 'submitting';
   const isSuccess = actionData?.success;
 
-  const hero = pageData.sections?.hero ||
-    defaultPages['contact']?.defaults?.hero || {
-      heading:
-        locale === 'en'
-          ? 'Let’s discuss your upcoming software goals and challenges'
-          : 'Thảo luận về bài toán và lộ trình công nghệ của doanh nghiệp bạn',
-      subheading:
-        locale === 'en'
-          ? 'Share your business context or project scope with us. We will respond promptly within one working day.'
-          : 'Chúng tôi sẵn sàng lắng nghe, tư vấn phương án kỹ thuật phù hợp và hỗ trợ bạn dự toán chi phí triển khai tối ưu.',
-    };
+  const timelineOptions = ['urgent', 'oneMonth', 'threeMonths', 'exploring'].map(key => ({
+    value: key,
+    label: t(`contact.timelineOptions.${key}`),
+  }));
 
-  const budgetOptions =
-    locale === 'en'
-      ? [
-          { value: 'under-10k', label: 'Under $10,000 USD' },
-          { value: '10k-25k', label: '$10,000 – $25,000 USD' },
-          { value: '25k-50k', label: '$25,000 – $50,000 USD' },
-          { value: 'over-50k', label: 'Over $50,000 USD' },
-        ]
-      : [
-          { value: 'under-200m', label: 'Dưới 200 triệu VNĐ' },
-          { value: '200m-500m', label: '200 triệu – 500 triệu VNĐ' },
-          { value: '500m-1b', label: '500 triệu – 1 tỷ VNĐ' },
-          { value: 'over-1b', label: 'Trên 1 tỷ VNĐ' },
-        ];
-
-  const timelineOptions =
-    locale === 'en'
-      ? [
-          { value: 'urgent', label: 'Urgent (Within 1 month)' },
-          { value: '1-3-months', label: '1 to 3 months' },
-          { value: '3-6-months', label: '3 to 6 months' },
-          { value: 'planning', label: 'Long-term planning' },
-        ]
-      : [
-          { value: 'urgent', label: 'Khẩn cấp (Trong vòng 1 tháng)' },
-          { value: '1-3-months', label: '1 đến 3 tháng' },
-          { value: '3-6-months', label: '3 đến 6 tháng' },
-          { value: 'planning', label: 'Giai đoạn lập kế hoạch' },
-        ];
+  const inputClass =
+    'w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors';
 
   return (
     <div className="py-12 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         {/* Header */}
-        <div className="max-w-3xl space-y-4">
-          <Badge variant="default">{t('header.nav.contact')}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
-            {hero.heading}
-          </h1>
-          <p className="text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
-        </div>
+        {isShown(hero) && (
+          <div className="max-w-3xl space-y-4">
+            <Badge variant="default">{hero.eyebrow || t('header.nav.contact')}</Badge>
+            <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
+              {hero.heading}
+            </h1>
+            <p className="text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Form Column */}
           <div className="lg:col-span-7">
-            <Card className="p-6 sm:p-8">
+            <Card hover={false} className="p-6 sm:p-8">
               {isSuccess ? (
-                <div className="py-12 text-center space-y-4">
+                <div className="py-12 text-center space-y-4" role="status">
                   <div className="w-16 h-16 rounded-full bg-success-subtle text-success flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
+                    <CheckCircle2 className="w-8 h-8" aria-hidden="true" />
                   </div>
                   <h2 className="text-2xl font-bold font-display text-fg">
                     {t('contact.successTitle')}
@@ -197,8 +137,11 @@ export default function ContactPage() {
                   </div>
 
                   {actionData?.error && (
-                    <div className="p-4 rounded-xl bg-danger-subtle text-danger border border-danger/20 flex items-start gap-3 text-sm">
-                      <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                    <div
+                      role="alert"
+                      className="p-4 rounded-xl bg-danger-subtle text-danger border border-danger/20 flex items-start gap-3 text-sm"
+                    >
+                      <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
                       <div>
                         <p className="font-semibold">{t('contact.errorDesc')}</p>
                         <p className="text-xs mt-1">{actionData.error}</p>
@@ -216,8 +159,9 @@ export default function ContactPage() {
                         id="name"
                         name="name"
                         required
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                        placeholder={locale === 'en' ? 'e.g. Jane Doe' : 'Ví dụ: Nguyễn Văn A'}
+                        autoComplete="name"
+                        className={inputClass}
+                        placeholder={t('contact.placeholders.name')}
                       />
                     </div>
 
@@ -230,26 +174,14 @@ export default function ContactPage() {
                         id="email"
                         name="email"
                         required
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                        placeholder={locale === 'en' ? 'jane@company.com' : 'nguyen@congty.com'}
+                        autoComplete="email"
+                        className={inputClass}
+                        placeholder={t('contact.placeholders.email')}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label htmlFor="company" className="block text-sm font-semibold text-fg">
-                        {t('contact.company')}
-                      </label>
-                      <input
-                        type="text"
-                        id="company"
-                        name="company"
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                        placeholder={locale === 'en' ? 'e.g. Acme Corp' : 'Tên công ty'}
-                      />
-                    </div>
-
                     <div className="space-y-2">
                       <label htmlFor="phone" className="block text-sm font-semibold text-fg">
                         {t('contact.phone')}
@@ -258,65 +190,67 @@ export default function ContactPage() {
                         type="tel"
                         id="phone"
                         name="phone"
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                        placeholder={locale === 'en' ? '+1 (555) 000-0000' : '0912 345 678'}
+                        autoComplete="tel"
+                        className={inputClass}
+                        placeholder={t('contact.placeholders.phone')}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <label htmlFor="company" className="block text-sm font-semibold text-fg">
+                        {t('contact.company')}
+                      </label>
+                      <input
+                        type="text"
+                        id="company"
+                        name="company"
+                        autoComplete="organization"
+                        className={inputClass}
+                        placeholder={t('contact.placeholders.company')}
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="space-y-2 sm:col-span-1">
+                  <div className="space-y-2">
+                    <label htmlFor="interest" className="block text-sm font-semibold text-fg">
+                      {t('contact.interest')}
+                    </label>
+                    <input
+                      type="text"
+                      id="interest"
+                      name="interest"
+                      maxLength={150}
+                      defaultValue={interest}
+                      className={inputClass}
+                      placeholder={t('contact.placeholders.interest')}
+                    />
+                    <p className="text-xs text-fg-subtle">{t('contact.interestHint')}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
                       <label htmlFor="service" className="block text-sm font-semibold text-fg">
                         {t('contact.service')}
                       </label>
-                      <select
-                        id="service"
-                        name="service"
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                      >
+                      <select id="service" name="service" className={inputClass}>
                         <option value="">{t('contact.selectService')}</option>
-                        {services.map(s => {
-                          const title = s.name || s.title;
-                          return (
-                            <option key={s._id || s.slug} value={s.slug}>
-                              {title}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-
-                    <div className="space-y-2 sm:col-span-1">
-                      <label htmlFor="budget" className="block text-sm font-semibold text-fg">
-                        {t('contact.budget')}
-                      </label>
-                      <select
-                        id="budget"
-                        name="budget"
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                      >
-                        <option value="">{t('contact.selectBudget')}</option>
-                        {budgetOptions.map(b => (
-                          <option key={b.value} value={b.value}>
-                            {b.label}
+                        {services.map(s => (
+                          <option key={s._id || s.slug} value={s.slug}>
+                            {s.name}
                           </option>
                         ))}
                       </select>
                     </div>
 
-                    <div className="space-y-2 sm:col-span-1">
+                    <div className="space-y-2">
                       <label htmlFor="timeline" className="block text-sm font-semibold text-fg">
                         {t('contact.timeline')}
                       </label>
-                      <select
-                        id="timeline"
-                        name="timeline"
-                        className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                      >
+                      <select id="timeline" name="timeline" className={inputClass}>
                         <option value="">{t('contact.selectTimeline')}</option>
-                        {timelineOptions.map(tl => (
-                          <option key={tl.value} value={tl.value}>
-                            {tl.label}
+                        {timelineOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
                           </option>
                         ))}
                       </select>
@@ -333,13 +267,10 @@ export default function ContactPage() {
                       rows={5}
                       required
                       minLength={10}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface text-fg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-colors"
-                      placeholder={
-                        locale === 'en'
-                          ? 'Please provide an overview of your requirements, current pain points, and target launch window...'
-                          : 'Vui lòng mô tả tổng quan về nhu cầu dự án, bài toán vận hành hiện tại hoặc tiến độ mong muốn...'
-                      }
+                      className={inputClass}
+                      placeholder={t('contact.placeholders.message')}
                     />
+                    <p className="text-xs text-fg-subtle">{t('contact.messageHint')}</p>
                   </div>
 
                   <Button
@@ -353,7 +284,7 @@ export default function ContactPage() {
                       t('contact.submitting')
                     ) : (
                       <>
-                        <Send className="w-4 h-4 mr-2" />
+                        <Send className="w-4 h-4 mr-2" aria-hidden="true" />
                         {t('contact.submit')}
                       </>
                     )}
@@ -363,83 +294,76 @@ export default function ContactPage() {
             </Card>
           </div>
 
-          {/* Contact Information Column */}
+          {/* Contact information column: details come from Admin → Settings */}
           <div className="lg:col-span-5 space-y-6">
-            <Card className="space-y-6 p-6 sm:p-8">
-              <h2 className="text-xl font-bold font-display text-fg">
-                {locale === 'en' ? 'Direct Communication' : 'Kênh Liên hệ Trực tiếp'}
-              </h2>
+            <Card hover={false} className="space-y-6 p-6 sm:p-8">
+              <h2 className="text-xl font-bold font-display text-fg">{t('contact.directTitle')}</h2>
 
-              <div className="space-y-4 text-sm text-fg-muted">
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <Mail className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-fg">Email</span>
-                    <a
-                      href={`mailto:${settings.contactEmail}`}
-                      className="hover:text-primary transition-colors"
-                    >
-                      {settings.contactEmail}
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <Phone className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-fg">
-                      {locale === 'en' ? 'Hotline' : 'Đường dây nóng'}
+              <ul className="space-y-4 text-sm text-fg-muted">
+                {settings.contactEmail && (
+                  <li className="flex items-start gap-3">
+                    <span className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <Mail className="w-4 h-4" aria-hidden="true" />
                     </span>
-                    <a href={`tel:${phoneHref}`} className="hover:text-primary transition-colors">
-                      {settings.hotline}
-                    </a>
-                  </div>
-                </div>
+                    <div>
+                      <span className="block font-semibold text-fg">{t('contact.emailLabel')}</span>
+                      <a
+                        href={`mailto:${settings.contactEmail}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {settings.contactEmail}
+                      </a>
+                    </div>
+                  </li>
+                )}
 
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-fg">
-                      {locale === 'en' ? 'Headquarters' : 'Văn phòng làm việc'}
+                {settings.hotline && (
+                  <li className="flex items-start gap-3">
+                    <span className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <Phone className="w-4 h-4" aria-hidden="true" />
                     </span>
-                    <p className="leading-relaxed">Dev House Software, {settings.address}</p>
-                  </div>
-                </div>
+                    <div>
+                      <span className="block font-semibold text-fg">
+                        {t('contact.hotlineLabel')}
+                      </span>
+                      <a href={`tel:${phoneHref}`} className="hover:text-primary transition-colors">
+                        {settings.hotline}
+                      </a>
+                    </div>
+                  </li>
+                )}
 
-                <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <span className="block font-semibold text-fg">
-                      {locale === 'en' ? 'Working Hours' : 'Thời gian làm việc'}
+                {settings.address && (
+                  <li className="flex items-start gap-3">
+                    <span className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <MapPin className="w-4 h-4" aria-hidden="true" />
                     </span>
-                    <p className="leading-relaxed">
-                      {locale === 'en'
-                        ? 'Monday – Friday: 08:30 – 18:00 (GMT+7)'
-                        : 'Thứ Hai – Thứ Sáu: 08:30 – 18:00 (GMT+7)'}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                    <div>
+                      <span className="block font-semibold text-fg">
+                        {t('contact.addressLabel')}
+                      </span>
+                      <p className="leading-relaxed">{settings.address}</p>
+                    </div>
+                  </li>
+                )}
+
+                {settings.workingHours && (
+                  <li className="flex items-start gap-3">
+                    <span className="w-9 h-9 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <Clock className="w-4 h-4" aria-hidden="true" />
+                    </span>
+                    <div>
+                      <span className="block font-semibold text-fg">{t('contact.hoursLabel')}</span>
+                      <p className="leading-relaxed">{settings.workingHours}</p>
+                    </div>
+                  </li>
+                )}
+              </ul>
             </Card>
 
-            {/* Response Commitment Box */}
             <div className="rounded-2xl bg-surface-raised border border-border p-6 space-y-3">
-              <h3 className="text-base font-bold font-display text-fg">
-                {locale === 'en' ? 'Our Service Commitment' : 'Cam kết Phản hồi'}
-              </h3>
-              <p className="text-sm text-fg-muted leading-relaxed">
-                {locale === 'en'
-                  ? 'All inquiries are reviewed directly by our technical leads. We sign Non-Disclosure Agreements (NDA) upon request before discussing proprietary details.'
-                  : 'Mọi yêu cầu đều được xem xét trực tiếp bởi các kỹ sư phụ trách chính. Chúng tôi sẵn sàng ký thỏa thuận bảo mật thông tin (NDA) trước khi đi sâu vào chi tiết dự án.'}
-              </p>
+              <h3 className="text-base font-bold font-display text-fg">{t('contact.noteTitle')}</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">{t('contact.noteText')}</p>
             </div>
           </div>
         </div>

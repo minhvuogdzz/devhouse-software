@@ -1,20 +1,19 @@
 import React from 'react';
-import { Button } from '../ui/Button.jsx';
 import { ArrowRight } from 'lucide-react';
+import { CtaLink } from '../ui/CtaLink.jsx';
 import { ScrollReveal } from '../ui/ScrollReveal.jsx';
+import { getTranslation } from '../../lib/i18n.js';
 
+/** Closing call to action. The button texts and links are edited in Admin → Pages. */
 export function CtaSection({ heading, subheading, primaryCta, secondaryCta, locale = 'vi' }) {
-  const prefix = locale === 'en' ? '/en' : '';
-  const primaryUrl = primaryCta?.url?.startsWith('/')
-    ? `${prefix}${primaryCta.url}`.replace(/\/+/g, '/')
-    : primaryCta?.url || `${prefix}/contact`;
-  const secondaryUrl = secondaryCta?.url?.startsWith('/')
-    ? `${prefix}${secondaryCta.url}`.replace(/\/+/g, '/')
-    : secondaryCta?.url || `${prefix}/about`;
+  const t = getTranslation(locale);
 
   return (
     <section className="py-16 lg:py-20 bg-transparent border-b border-border">
-      <ScrollReveal direction="up" className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+      <ScrollReveal
+        direction="up"
+        className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6"
+      >
         <h2 className="text-3xl sm:text-4xl font-bold font-display text-fg tracking-tight">
           {heading}
         </h2>
@@ -24,17 +23,25 @@ export function CtaSection({ heading, subheading, primaryCta, secondaryCta, loca
           </p>
         )}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-          {primaryCta && (
-            <Button to={primaryUrl} size="lg" variant="primary" className="w-full sm:w-auto">
-              {primaryCta.label || (locale === 'en' ? 'Contact Us' : 'Tư vấn dự án')}
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          )}
-          {secondaryCta && (
-            <Button to={secondaryUrl} size="lg" variant="outline" className="w-full sm:w-auto">
-              {secondaryCta.label || (locale === 'en' ? 'About Us' : 'Xem năng lực')}
-            </Button>
-          )}
+          <CtaLink
+            link={primaryCta}
+            locale={locale}
+            fallbackUrl="/contact"
+            size="lg"
+            variant="primary"
+            className="w-full sm:w-auto"
+          >
+            {primaryCta?.label || t('common.contactUs')}
+            <ArrowRight className="w-4 h-4 ml-2" aria-hidden="true" />
+          </CtaLink>
+          <CtaLink
+            link={secondaryCta}
+            locale={locale}
+            fallbackUrl="/about"
+            size="lg"
+            variant="outline"
+            className="w-full sm:w-auto"
+          />
         </div>
       </ScrollReveal>
     </section>

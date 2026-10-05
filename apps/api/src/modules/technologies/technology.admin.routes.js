@@ -14,6 +14,11 @@ technologyAdminRoutes.post(
   requirePermission('technologies:create'),
   technologyController.adminCreate,
 );
+technologyAdminRoutes.patch(
+  '/reorder',
+  requirePermission('technologies:update'),
+  technologyController.adminReorder,
+);
 technologyAdminRoutes.get(
   '/:id',
   requirePermission('technologies:read'),
@@ -28,11 +33,6 @@ technologyAdminRoutes.patch(
   '/:id/status',
   requirePermission('technologies:publish'),
   technologyController.adminUpdateStatus,
-);
-technologyAdminRoutes.patch(
-  '/reorder',
-  requirePermission('technologies:update'),
-  technologyController.adminReorder,
 );
 technologyAdminRoutes.delete(
   '/:id',

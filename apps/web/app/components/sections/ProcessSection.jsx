@@ -1,38 +1,45 @@
 import React from 'react';
-import { ScrollReveal } from '../ui/ScrollReveal.jsx';
-import { Marquee } from '../ui/Marquee.jsx';
+import { SectionHeading } from '../ui/SectionHeading.jsx';
+import { Collection } from '../ui/Collection.jsx';
 
-export function ProcessSection({ heading, subheading, steps = [] }) {
+/** A numbered step. In a list the number sits beside the text. */
+export function StepCard({ step, index, layout }) {
+  const row = layout === 'list';
   return (
-    <section className="py-12 lg:py-16 bg-transparent">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <ScrollReveal direction="up">
-          <div className="text-center max-w-3xl mx-auto mb-10 space-y-3">
-            <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg tracking-tight">
-              {heading}
-            </h2>
-            {subheading && (
-              <p className="text-sm sm:text-base text-fg-muted leading-relaxed">{subheading}</p>
-            )}
-          </div>
-        </ScrollReveal>
+    <div
+      className={`flex w-full gap-3 rounded-xl border border-border bg-surface p-5 ${
+        row ? 'flex-row items-start gap-4' : 'h-full flex-col'
+      }`}
+    >
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle font-display text-sm font-bold text-primary">
+        {step.stepNumber || String(index + 1).padStart(2, '0')}
+      </span>
+      <div className="space-y-2">
+        <h3 className="font-display text-base font-bold text-fg">{step.title}</h3>
+        {step.description && (
+          <p className="text-sm leading-relaxed text-fg-muted">{step.description}</p>
+        )}
+      </div>
+    </div>
+  );
+}
 
-        <ScrollReveal direction="right" delay={0.2}>
-          <Marquee speed={45} direction="right">
-            {steps.map((step, index) => (
-              <div
-                key={index}
-                className="relative p-6 rounded-xl border border-border bg-surface flex flex-col min-w-[300px] max-w-[320px]"
-              >
-                <div className="text-2xl font-black font-display text-primary/30 mb-3">
-                  {step.stepNumber || `0${index + 1}`}
-                </div>
-                <h3 className="text-base font-bold font-display text-fg mb-2">{step.title}</h3>
-                <p className="text-sm text-fg-muted leading-relaxed flex-1">{step.description}</p>
-              </div>
-            ))}
-          </Marquee>
-        </ScrollReveal>
+/** The working process as numbered steps. The id lets the menu link straight to it (/#process). */
+export function ProcessSection({ heading, subheading, steps = [], display }) {
+  if (!steps.length) return null;
+  return (
+    <section id="process" className="scroll-mt-24 py-12 lg:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SectionHeading heading={heading} subheading={subheading} align="center" />
+        <Collection
+          items={steps}
+          display={display}
+          label={heading}
+          getKey={(step, index) => `${step.title}-${index}`}
+          renderItem={(step, index, { layout }) => (
+            <StepCard step={step} index={index} layout={layout} />
+          )}
+        />
       </div>
     </section>
   );

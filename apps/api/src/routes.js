@@ -11,6 +11,10 @@ import { authenticate } from './core/middleware/authenticate.js';
 
 import { servicePublicRoutes } from './modules/services/service.public.routes.js';
 import { serviceAdminRoutes } from './modules/services/service.admin.routes.js';
+import { productPublicRoutes } from './modules/products/product.public.routes.js';
+import { productAdminRoutes } from './modules/products/product.admin.routes.js';
+import { packagePublicRoutes } from './modules/packages/package.public.routes.js';
+import { packageAdminRoutes } from './modules/packages/package.admin.routes.js';
 import { solutionPublicRoutes } from './modules/solutions/solution.public.routes.js';
 import { solutionAdminRoutes } from './modules/solutions/solution.admin.routes.js';
 import { projectPublicRoutes } from './modules/projects/project.public.routes.js';
@@ -44,6 +48,8 @@ apiRouter.use('/', contentPublicRoutes);
 
 // Public catalog routes
 apiRouter.use('/services', servicePublicRoutes);
+apiRouter.use('/products', productPublicRoutes);
+apiRouter.use('/packages', packagePublicRoutes);
 apiRouter.use('/solutions', solutionPublicRoutes);
 apiRouter.use('/projects', projectPublicRoutes);
 apiRouter.use('/technologies', technologyPublicRoutes);
@@ -62,6 +68,8 @@ adminRouter.use('/pages', pageAdminRoutes);
 adminRouter.use('/settings', settingsAdminRoutes);
 adminRouter.use('/navigation', navigationAdminRoutes);
 adminRouter.use('/services', serviceAdminRoutes);
+adminRouter.use('/products', productAdminRoutes);
+adminRouter.use('/packages', packageAdminRoutes);
 adminRouter.use('/solutions', solutionAdminRoutes);
 adminRouter.use('/projects', projectAdminRoutes);
 adminRouter.use('/technologies', technologyAdminRoutes);

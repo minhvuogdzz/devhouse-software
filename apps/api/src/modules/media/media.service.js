@@ -3,10 +3,12 @@ import { cloudinary } from '../../integrations/cloudinary/index.js';
 import { audit } from '../../core/audit/index.js';
 import { parseListQuery } from '../../core/query/index.js';
 import { NotFoundError, ConflictError } from '../../core/errors/index.js';
-import { ERROR_CODES } from '@devhouse/shared';
+import { ERROR_CODES, MEDIA_IMAGE_FORMAT, MEDIA_MAX_BYTES } from '@devhouse/shared';
+import { AppError } from '../../core/errors/index.js';
 
 // Models for media usage check
 import { ServiceModel } from '../services/service.model.js';
+import { ProductModel } from '../products/product.model.js';
 import { SolutionModel } from '../solutions/solution.model.js';
 import { ProjectModel } from '../projects/project.model.js';
 import { TechnologyModel } from '../technologies/technology.model.js';
@@ -29,8 +31,42 @@ export const mediaService = {
       throw new ConflictError('Media asset already registered', ERROR_CODES.CONFLICT);
     }
 
+    // Never trust the browser's numbers: read the real asset from Cloudinary and enforce the
+    // image rules (WebP only, at most MEDIA_MAX_BYTES) before anything is stored.
+    cloudinary.ensureConfigured();
+    const resource = await cloudinary.fetchResource(data.publicId, {
+      resourceType: data.resourceType || 'image',
+    });
+    if (!resource) {
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        'The uploaded file was not found on the media service',
+      );
+    }
+    if (resource.format !== MEDIA_IMAGE_FORMAT) {
+      await cloudinary.destroy(data.publicId, { resourceType: data.resourceType || 'image' });
+      throw new AppError(ERROR_CODES.VALIDATION_ERROR, 'Only WebP images are accepted', {
+        format: resource.format,
+      });
+    }
+    if (resource.bytes > MEDIA_MAX_BYTES) {
+      await cloudinary.destroy(data.publicId, { resourceType: data.resourceType || 'image' });
+      throw new AppError(
+        ERROR_CODES.VALIDATION_ERROR,
+        `Each image must be at most ${Math.round(MEDIA_MAX_BYTES / 1000)} KB`,
+        { bytes: resource.bytes, maxBytes: MEDIA_MAX_BYTES },
+      );
+    }
+
     const media = await MediaModel.create({
       ...data,
+      url: resource.secure_url || data.url,
+      format: resource.format,
+      mimeType: `image/${resource.format}`,
+      bytes: resource.bytes,
+      width: resource.width,
+      height: resource.height,
+      version: resource.version,
       uploadedBy: callerId,
     });
 
@@ -156,6 +192,8 @@ export const mediaService = {
       $or: [
         { 'coverImage.mediaId': mediaIdStr },
         { 'coverImage.publicId': publicId },
+        { 'image.mediaId': mediaIdStr },
+        { 'image.publicId': publicId },
         { 'gallery.mediaId': mediaIdStr },
         { 'gallery.publicId': publicId },
       ],
@@ -164,8 +202,22 @@ export const mediaService = {
       usages.push({
         resourceType: 'service',
         id: s._id.toString(),
-        label: s.title?.vi || s.title?.en || s.slug?.vi,
+        label: s.name?.vi || s.name?.en || s.slug?.vi,
         path: `/services/${s.slug?.vi}`,
+      });
+    }
+
+    // 1b. Products (card thumbnails)
+    const products = await ProductModel.find({
+      isDeleted: false,
+      $or: [{ 'thumbnails.mediaId': mediaIdStr }, { 'thumbnails.publicId': publicId }],
+    }).lean();
+    for (const product of products) {
+      usages.push({
+        resourceType: 'product',
+        id: product._id.toString(),
+        label: product.name?.vi || product.name?.en || product.slug?.vi,
+        path: `/products`,
       });
     }
 
@@ -192,6 +244,8 @@ export const mediaService = {
     const projects = await ProjectModel.find({
       isDeleted: false,
       $or: [
+        { 'thumbnails.mediaId': mediaIdStr },
+        { 'thumbnails.publicId': publicId },
         { 'coverImage.mediaId': mediaIdStr },
         { 'coverImage.publicId': publicId },
         { 'gallery.mediaId': mediaIdStr },

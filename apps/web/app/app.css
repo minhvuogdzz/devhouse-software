@@ -29,293 +29,252 @@ h6 {
   display: inline-block;
 }
 
-/* ───────────────────────── Org chart ─────────────────────────
-   A branching tree. Connector lines are gradients, and a pulse of light travels
-   parent → branch → child, like data flowing through a circuit. Colours come from theme tokens. */
-.org {
-  --org-gap: 2.25rem;
-  --org-line: color-mix(in oklch, var(--color-primary) 38%, var(--color-border));
-  --org-pulse: var(--color-accent);
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
-}
-.org ul {
-  display: flex;
-  justify-content: center;
+/* ───────────────────────── Item collections ─────────────────────────
+   Every list on the website (services, packages, templates, steps, pictures...) is drawn by the
+   Collection component as a grid, a list or a slide. How many items show at once on a phone,
+   a tablet and a computer comes from the admin, passed in as --cols-m, --cols-t and --cols-d. */
+.collection {
+  --gap: 1rem;
+  --per-view: var(--cols-m, 1);
   position: relative;
+  min-width: 0;
+}
+.collection--gap-sm {
+  --gap: 0.5rem;
+}
+.collection--gap-lg {
+  --gap: 1.5rem;
+}
+@media (min-width: 640px) {
+  .collection {
+    --per-view: var(--cols-t, 2);
+  }
+  .collection--gap-sm {
+    --gap: 0.75rem;
+  }
+}
+@media (min-width: 1024px) {
+  .collection {
+    --per-view: var(--cols-d, 3);
+  }
+}
+
+.collection-grid {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(var(--per-view), minmax(0, 1fr));
   margin: 0;
-  padding: var(--org-gap) 0 0;
+  padding: 0;
   list-style: none;
 }
-.org > ul {
-  padding-top: 0;
-  min-width: max-content;
+.collection-grid > li,
+.collection-list > li,
+.collection-track > li {
+  min-width: 0;
+  display: flex;
 }
-.org li {
-  position: relative;
+.collection-grid > li > *,
+.collection-list > li > *,
+.collection-track > li > * {
+  width: 100%;
+}
+
+.collection-list {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: var(--org-gap) 0.75rem 0;
-}
-.org > ul > li {
-  padding-top: 0;
-}
-
-/* Shared line pieces: a base line with a bright pulse in its middle, moved by background-position */
-.org li::before,
-.org li::after,
-.org ul ul::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  pointer-events: none;
-  filter: drop-shadow(0 0 3px color-mix(in oklch, var(--org-pulse) 70%, transparent));
-}
-.org li::before,
-.org li::after {
-  width: 50%;
-  height: var(--org-gap);
-  background-repeat: no-repeat;
-}
-.org li::before {
-  right: 50%;
-}
-.org li::after {
-  left: 50%;
-}
-.org ul ul::before {
-  left: 50%;
-  width: 2px;
-  height: var(--org-gap);
-  margin-left: -1px;
-  background-image: linear-gradient(
-    180deg,
-    var(--org-line) 0 38%,
-    var(--org-pulse) 50%,
-    var(--org-line) 62% 100%
-  );
-  background-size: 2px 300%;
-  background-repeat: no-repeat;
-  animation: org-flow-down-first 5s linear infinite;
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-width: 56rem;
 }
 
-/* Horizontal run (top edge) + vertical drop into the card (left edge of ::after, right edge of the last ::before) */
-.org li::before {
-  background-image: linear-gradient(
-    90deg,
-    var(--org-line) 0 38%,
-    var(--org-pulse) 50%,
-    var(--org-line) 62% 100%
-  );
-  background-size: 300% 2px;
-  background-position: 0% 0;
-  animation: org-flow-left 5s linear infinite;
+/* Slide: one row you can swipe, with items snapping into place */
+.collection-track {
+  display: flex;
+  gap: var(--gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
 }
-.org li::after {
-  background-image:
-    linear-gradient(90deg, var(--org-line) 0 38%, var(--org-pulse) 50%, var(--org-line) 62% 100%),
-    linear-gradient(180deg, var(--org-line) 0 38%, var(--org-pulse) 50%, var(--org-line) 62% 100%);
-  background-size:
-    300% 2px,
-    2px 300%;
-  background-position:
-    100% 0,
-    0 100%;
-  animation: org-flow-right-down 5s linear infinite;
-}
-.org li:only-child::before,
-.org li:only-child::after {
+.collection-track::-webkit-scrollbar {
   display: none;
 }
-.org li:only-child {
-  padding-top: 0;
+.collection-track > li {
+  flex: 0 0 calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
+  scroll-snap-align: start;
 }
-.org li:first-child::before {
-  display: none;
-}
-.org li:last-child::after {
-  display: none;
-}
-/* The last child drops its vertical from the left half instead */
-.org li:last-child::before {
-  background-image:
-    linear-gradient(90deg, var(--org-line) 0 38%, var(--org-pulse) 50%, var(--org-line) 62% 100%),
-    linear-gradient(180deg, var(--org-line) 0 38%, var(--org-pulse) 50%, var(--org-line) 62% 100%);
-  background-size:
-    300% 2px,
-    2px 300%;
-  background-position:
-    0% 0,
-    100% 100%;
-  animation: org-flow-left-down 5s linear infinite;
-}
-/* single child sits straight under its parent: the ul::before line already reaches it */
-.org li:only-child > .org-node {
-  margin-top: 0;
+.collection-track:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
 }
 
-/* Pulses. Phase 1 (0-30%): parent drops to the branch bar. Phase 2 (30-65%): along the bar.
-   Phase 3 (65-100%): down into the child card. Positions are percentages of an oversized gradient. */
-@keyframes org-flow-down-first {
-  0% {
-    background-position: 0 100%;
-  }
-  30%,
-  100% {
-    background-position: 0 0%;
+/* Slide that runs without stopping. It pauses while you point at it or focus inside it. */
+.collection-marquee {
+  container-type: inline-size;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 3%, #000 97%, transparent);
+}
+.collection-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: collection-marquee var(--duration, 40s) linear infinite;
+}
+.collection-marquee:hover .collection-marquee-track,
+.collection-marquee:focus-within .collection-marquee-track {
+  animation-play-state: paused;
+}
+.collection-marquee-group {
+  display: flex;
+  gap: var(--gap);
+  padding-right: var(--gap);
+  margin: 0;
+  list-style: none;
+}
+.collection-marquee-group > li {
+  display: flex;
+  flex: 0 0 18rem;
+  flex-basis: calc((100cqw - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
+  min-width: 0;
+}
+.collection-marquee-group > li > * {
+  width: 100%;
+}
+@keyframes collection-marquee {
+  to {
+    transform: translateX(-50%);
   }
 }
-@keyframes org-flow-left {
-  0%,
-  30% {
-    background-position: 0% 0;
-  }
-  65%,
-  100% {
-    background-position: 100% 0;
-  }
-}
-@keyframes org-flow-right-down {
-  0%,
-  30% {
-    background-position:
-      100% 0,
-      0 100%;
-  }
-  65% {
-    background-position:
-      0% 0,
-      0 100%;
-  }
-  100% {
-    background-position:
-      0% 0,
-      0 0%;
-  }
-}
-@keyframes org-flow-left-down {
-  0%,
-  30% {
-    background-position:
-      0% 0,
-      100% 100%;
-  }
-  65% {
-    background-position:
-      100% 0,
-      100% 100%;
-  }
-  100% {
-    background-position:
-      100% 0,
-      100% 0%;
-  }
-}
-
-/* Cards */
-.org-node {
-  position: relative;
-  z-index: 1;
-  min-width: 15rem;
-  max-width: 24rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  background: var(--color-surface);
-  box-shadow: 0 1px 2px color-mix(in oklch, var(--color-fg) 6%, transparent);
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
-}
-.org-node:hover {
-  border-color: color-mix(in oklch, var(--color-primary) 55%, var(--color-border));
-  box-shadow: 0 8px 24px color-mix(in oklch, var(--color-primary) 18%, transparent);
-  transform: translateY(-2px);
-}
-.org-node.is-group {
-  max-width: 34rem;
-}
-.org-node-root {
-  border-color: color-mix(in oklch, var(--color-primary) 55%, var(--color-border));
-  background:
-    radial-gradient(
-      120% 140% at 50% 0%,
-      color-mix(in oklch, var(--color-primary) 12%, transparent),
-      transparent 70%
-    ),
-    var(--color-surface);
-}
-.org-avatar {
-  background: var(--color-primary-subtle);
-  color: var(--color-primary);
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--color-primary) 30%, transparent);
-}
-
-/* Phones and small tablets: a vertical tree with one spine, no horizontal scrolling */
-@media (max-width: 767px) {
-  .org {
-    overflow-x: visible;
-  }
-  .org > ul {
-    min-width: 0;
-  }
-  .org ul {
-    flex-direction: column;
-    align-items: stretch;
-    padding-top: 1rem;
-  }
-  .org ul ul {
-    margin-left: 1.25rem;
-    padding-left: 1.25rem;
-    border-left: 2px solid var(--org-line);
-  }
-  .org li {
-    align-items: stretch;
-    padding: 1rem 0 0;
-  }
-  .org > ul > li {
-    padding-top: 0;
-  }
-  .org ul ul::before,
-  .org li::after,
-  .org li:first-child::after,
-  .org li:last-child::after {
-    display: none;
-  }
-  .org li::before,
-  .org li:first-child::before,
-  .org li:last-child::before,
-  .org li:only-child::before {
-    display: block;
-    animation: none;
-    background-image: none;
-    background-color: var(--org-line);
-    right: auto;
-    left: -1.25rem;
-    top: 2.1rem;
-    width: 1.25rem;
-    height: 2px;
-  }
-  .org > ul > li::before,
-  .org > ul > li:only-child::before {
-    display: none;
-  }
-  .org-node,
-  .org-node.is-group {
-    min-width: 0;
-    max-width: none;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .org li::before,
-  .org li::after,
-  .org ul ul::before {
+  .collection-marquee {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .collection-marquee-track {
     animation: none;
   }
-  .org-node:hover {
-    transform: none;
+}
+
+/* Previous / next buttons of a slide */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: flex;
+  height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklch, var(--color-surface) 92%, transparent);
+  color: var(--color-fg);
+  box-shadow: 0 1px 4px color-mix(in oklch, var(--color-fg) 15%, transparent);
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    opacity 0.15s;
+}
+.slider-arrow:hover {
+  background: var(--color-surface);
+}
+.slider-arrow--prev {
+  left: 0.25rem;
+}
+.slider-arrow--next {
+  right: 0.25rem;
+}
+@media (max-width: 639px) {
+  .slider-arrow {
+    display: none;
+  }
+}
+
+/* The three kinds of dots under a slide */
+.slider-dots {
+  --dot: 0.5rem;
+  --dot-gap: 0.5rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--dot-gap);
+  margin-top: 1rem;
+}
+.slider-dots button {
+  position: relative;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: var(--color-border);
+  border-radius: 9999px;
+  height: var(--dot);
+  width: var(--dot);
+}
+.slider-dots button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* dot: plain round dots, the current one is solid and a little larger */
+.slider-dots--dot button {
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+}
+.slider-dots--dot button[aria-current='true'] {
+  background: var(--color-primary);
+  transform: scale(1.25);
+}
+
+/* progress: little bars, the current one fills up while the slide waits for the next move */
+.slider-dots--progress {
+  --dot-gap: 0.375rem;
+}
+.slider-dots--progress button {
+  width: 1.75rem;
+  height: 0.25rem;
+  overflow: hidden;
+}
+.slider-dots--progress button > span {
+  position: absolute;
+  inset: 0;
+  background: var(--color-primary);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.12s linear;
+}
+.slider-dots--progress button[data-done='true'] > span {
+  transform: scaleX(1);
+}
+
+/* slide: round dots with one pill that glides to the current one */
+.slider-dots--slide button {
+  background: var(--color-border);
+}
+.slider-dots--slide .slider-dots-thumb {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: var(--dot);
+  width: calc(var(--dot) * 3);
+  border-radius: 9999px;
+  background: var(--color-primary);
+  transform: translate(calc(var(--index, 0) * (var(--dot) + var(--dot-gap))), -50%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .slider-dots--slide .slider-dots-thumb,
+  .slider-dots--dot button {
+    transition: none;
   }
 }
