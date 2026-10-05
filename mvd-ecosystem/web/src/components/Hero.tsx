@@ -69,7 +69,7 @@ export function Hero({ release }: HeroProps) {
         {/* Release Pill with gentle glow */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white dark:bg-[#0E1422] border border-slate-200 dark:border-white/[0.08] text-xs font-mono text-slate-700 dark:text-slate-300 shadow-sm">
           <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0" />
-          <span className="text-blue-600 dark:text-blue-400 font-bold">MVD Studio v{release.version}</span>
+          <span className="text-blue-600 dark:text-blue-400 font-bold">DH Studio Pro v{release.version}</span>
           <span className="text-slate-400 dark:text-slate-600">/</span>
           <span className="text-slate-500 dark:text-slate-400">{t("hero.badge")}</span>
         </div>

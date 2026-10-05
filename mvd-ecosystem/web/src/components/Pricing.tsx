@@ -17,8 +17,8 @@ export function Pricing() {
       badge: isVi ? "MIỄN PHÍ" : "FREE",
       highlight: false,
       desc: isVi
-        ? "Trải nghiệm đầy đủ 100% tính năng của hệ sinh thái MVD Studio trước khi quyết định đầu tư bản quyền."
-        : "Evaluate 100% full features of the MVD Studio ecosystem before deciding on a studio investment.",
+        ? "Trải nghiệm đầy đủ 100% tính năng của hệ sinh thái DH Studio Pro trước khi quyết định đầu tư bản quyền."
+        : "Evaluate 100% full features of the DH Studio Pro ecosystem before deciding on a studio investment.",
       features: isVi
         ? [
             "Đầy đủ 4 ứng dụng trong bộ cài đặt",

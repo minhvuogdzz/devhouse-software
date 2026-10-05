@@ -265,7 +265,7 @@ export function StudioWorkbench() {
             <div className="flex items-center gap-2.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block animate-pulse" />
               <span className="text-[11px] font-mono text-slate-200 font-bold">
-                MVD Studio Pro
+                DH Studio Pro
               </span>
               <span className="text-slate-600">/</span>
               <span className="text-[11px] font-mono text-slate-400 hidden sm:inline-block">
@@ -573,8 +573,8 @@ export function StudioWorkbench() {
                     </h3>
                     <p className="text-xs text-slate-400 leading-relaxed">
                       {isVi
-                        ? "Khách hàng thường copy mã ảnh lộn xộn hoặc gửi link Google Sheets với dải số (ví dụ: 4901..4905). MVD Contact The Sheet tự động nhận diện regex và mở rộng dải số chuẩn 100%."
-                        : "Clients often paste erratic code lists or send Google Sheets with ranges (e.g. 4901..4905). MVD Contact The Sheet automatically parses regex and expands continuous ranges with 100% fidelity."}
+                        ? "Khách hàng thường copy mã ảnh lộn xộn hoặc gửi link Google Sheets với dải số (ví dụ: 4901..4905). Công cụ Contact The Sheet tự động nhận diện regex và mở rộng dải số chuẩn 100%."
+                        : "Clients often paste erratic code lists or send Google Sheets with ranges (e.g. 4901..4905). Contact The Sheet automatically parses regex and expands continuous ranges with 100% fidelity."}
                     </p>
                   </div>
 

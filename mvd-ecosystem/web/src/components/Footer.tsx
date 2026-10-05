@@ -16,12 +16,12 @@ export function Footer() {
           <div className="space-y-3 md:col-span-1">
             <Link to="/" className="flex items-center gap-2">
               <img
-                src="/brand/mvd_app_icon_minimal_dark_squircle.png"
-                alt="MVD Logo"
-                className="w-6 h-6 rounded-md shadow-sm border border-slate-300 dark:border-white/10"
+                src="/brand/dh_app_icon_dark_squircle.png"
+                alt="DH Studio Pro Logo"
+                className="w-6 h-6 rounded-md shadow-sm border border-slate-300 dark:border-white/10 object-contain"
               />
               <span className="font-bold text-xs text-slate-900 dark:text-white">
-                MVD Tech & Design
+                DH Studio Pro
               </span>
             </Link>
             <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -122,12 +122,12 @@ export function Footer() {
 
         {/* Bottom */}
         <div className="pt-6 border-t border-slate-200 dark:border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] text-slate-500 font-mono">
-          <p>&copy; {new Date().getFullYear()} MVD Tech & Design Studio. {t("footer.rights")}</p>
+          <p>&copy; {new Date().getFullYear()} DH Studio Pro. Bản quyền thuộc về DevHouse Software. {t("footer.rights")}</p>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1 font-sans">
               {t("footer.developedBy")}{" "}
               <strong className="text-slate-800 dark:text-slate-200 font-semibold">
-                Vuong Dev - The Dev House Group
+                DevHouse Software
               </strong>
             </span>
           </div>
