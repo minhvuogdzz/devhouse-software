@@ -56,7 +56,10 @@ export default function ProjectsPage() {
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
 
-  const hero = pageData.sections?.hero || defaultPages['projects-index'].defaults.hero;
+  const hero = pageData?.sections?.hero || defaultPages['projects-index']?.defaults?.hero || {
+    heading: locale === 'en' ? 'Selected client initiatives and successful software deliveries' : 'Các dự án công nghệ tiêu biểu cùng đối tác',
+    subheading: locale === 'en' ? 'Explore how we collaborate with business partners to engineer reliable, scalable software products.' : 'Khám phá cách chúng tôi đồng hành cùng khách hàng giải quyết bài toán kỹ thuật.',
+  };
 
   return (
     <div className="py-12 lg:py-20 bg-transparent">

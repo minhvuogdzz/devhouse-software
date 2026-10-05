@@ -56,7 +56,10 @@ export default function SolutionsPage() {
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
 
-  const hero = pageData.sections?.hero || defaultPages['solutions-index'].defaults.hero;
+  const hero = pageData?.sections?.hero || defaultPages['solutions-index']?.defaults?.hero || {
+    heading: locale === 'en' ? 'Enterprise Software & Cloud Engineering Solutions' : 'Giải pháp Phần mềm & Kỹ thuật Đám mây',
+    subheading: locale === 'en' ? 'Engineered for reliability, velocity, and business growth.' : 'Được tối ưu cho sự ổn định, tốc độ và mở rộng kinh doanh.',
+  };
 
   return (
     <div className="py-12 lg:py-20 bg-transparent">
