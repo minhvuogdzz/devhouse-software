@@ -1,7 +1,5 @@
 /**
  * Default menus. The admin can edit both in Navigation; until then these apply.
- * The Solutions, Projects, Technologies, Blog and Careers pages still exist; add them in Navigation
- * once they have real content.
  */
 export const defaultNavigation = {
   header: [
@@ -14,7 +12,7 @@ export const defaultNavigation = {
     },
     {
       id: 'packages',
-      label: { vi: 'Gói dịch vụ', en: 'Packages' },
+      label: { vi: 'Bảng Giá & Gói Cước', en: 'Pricing & Packages' },
       path: '/packages',
       order: 2,
       visible: true,
@@ -35,7 +33,7 @@ export const defaultNavigation = {
     },
     {
       id: 'about',
-      label: { vi: 'Về chúng tôi', en: 'About us' },
+      label: { vi: 'Về Dev House', en: 'About Dev House' },
       path: '/about',
       order: 5,
       visible: true,
@@ -51,40 +49,49 @@ export const defaultNavigation = {
   footer: {
     columns: [
       {
-        title: { vi: 'Dịch vụ', en: 'Services' },
+        title: { vi: 'Dịch vụ trọn gói', en: 'Managed Services' },
         links: [
           {
-            label: { vi: 'Thiết kế website', en: 'Website design' },
-            path: '/services/thiet-ke-website',
+            label: { vi: 'Thiết kế website & Shopify', en: 'Website & Shopify Design' },
+            path: '/services',
           },
           {
-            label: { vi: 'Máy chủ và hạ tầng đám mây', en: 'Cloud hosting' },
-            path: '/services/may-chu-va-ha-tang-dam-may',
+            label: { vi: 'Hạ tầng Cloud & DevSecOps', en: 'Cloud & DevSecOps' },
+            path: '/services',
           },
           {
             label: { vi: 'Tên miền và DNS', en: 'Domain and DNS' },
-            path: '/services/ten-mien-va-dns',
+            path: '/services',
           },
           {
-            label: { vi: 'Bảo mật và hỗ trợ', en: 'Security and support' },
-            path: '/services/bao-mat-va-ho-tro',
+            label: { vi: 'Bảo mật và hỗ trợ định kỳ', en: 'Security & Maintenance' },
+            path: '/services',
           },
         ],
       },
       {
-        title: { vi: 'Công ty', en: 'Company' },
+        title: { vi: 'Mẫu web & Báo giá', en: 'Templates & Pricing' },
         links: [
-          { label: { vi: 'Về chúng tôi', en: 'About us' }, path: '/about' },
-          { label: { vi: 'Gói dịch vụ', en: 'Packages' }, path: '/packages' },
-          { label: { vi: 'Mẫu website', en: 'Templates' }, path: '/products' },
+          { label: { vi: 'Kho mẫu website', en: 'Website Templates' }, path: '/products' },
+          { label: { vi: 'Bảng Giá & Gói Cước', en: 'Pricing & Packages' }, path: '/packages' },
+          { label: { vi: 'Dự án tiêu biểu', en: 'Case Studies' }, path: '/projects' },
+          { label: { vi: 'Năng lực công nghệ', en: 'Technologies' }, path: '/technologies' },
         ],
       },
       {
-        title: { vi: 'Hỗ trợ và pháp lý', en: 'Support and legal' },
+        title: { vi: 'Về Dev House', en: 'Company' },
         links: [
-          { label: { vi: 'Liên hệ tư vấn', en: 'Contact us' }, path: '/contact' },
-          { label: { vi: 'Điều khoản dịch vụ', en: 'Terms of service' }, path: '/terms' },
-          { label: { vi: 'Chính sách bảo mật', en: 'Privacy policy' }, path: '/privacy' },
+          { label: { vi: 'Về chúng tôi', en: 'About Us' }, path: '/about' },
+          { label: { vi: 'Góc nhìn công nghệ', en: 'Tech Blog' }, path: '/blog' },
+          { label: { vi: 'Cơ hội nghề nghiệp', en: 'Careers' }, path: '/careers' },
+          { label: { vi: 'Liên hệ tư vấn', en: 'Contact Us' }, path: '/contact' },
+        ],
+      },
+      {
+        title: { vi: 'Pháp lý', en: 'Legal' },
+        links: [
+          { label: { vi: 'Điều khoản dịch vụ', en: 'Terms of Service' }, path: '/terms' },
+          { label: { vi: 'Chính sách bảo mật', en: 'Privacy Policy' }, path: '/privacy' },
         ],
       },
     ],

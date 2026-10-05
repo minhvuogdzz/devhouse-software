@@ -32,6 +32,8 @@ import {
   LogOut,
   ChevronDown,
   X,
+  Building2,
+  Phone,
 } from 'lucide-react';
 
 export function AdminShell() {
@@ -57,30 +59,30 @@ export function AdminShell() {
       ],
     },
     {
-      title: locale === 'en' ? 'Content & Catalog' : 'Nội dung & Danh mục',
+      title: locale === 'en' ? 'Website Menu Tabs' : 'Các Tab trên Website',
       items: [
-        { to: '/pages', label: t('nav.pages'), icon: FileText, permission: 'pages:read' },
         { to: '/services', label: t('nav.services'), icon: Layers, permission: 'services:read' },
-        {
-          to: '/packages',
-          label: t('nav.packages'),
-          icon: PackageIcon,
-          permission: 'packages:read',
-        },
         {
           to: '/products',
           label: t('nav.products'),
           icon: LayoutTemplate,
           permission: 'products:read',
         },
-        { to: '/solutions', label: t('nav.solutions'), icon: Boxes, permission: 'solutions:read' },
-        { to: '/projects', label: t('nav.projects'), icon: Briefcase, permission: 'projects:read' },
         {
-          to: '/technologies',
-          label: t('nav.technologies'),
-          icon: Cpu,
-          permission: 'technologies:read',
+          to: '/packages',
+          label: t('nav.packages'),
+          icon: PackageIcon,
+          permission: 'packages:read',
         },
+        { to: '/projects', label: t('nav.projects'), icon: Briefcase, permission: 'projects:read' },
+        { to: '/pages/about', label: t('nav.about'), icon: Building2, permission: 'pages:read' },
+        { to: '/pages/contact', label: t('nav.contactPage'), icon: Phone, permission: 'pages:read' },
+        { to: '/pages', label: t('nav.pages'), icon: FileText, permission: 'pages:read' },
+      ],
+    },
+    {
+      title: locale === 'en' ? 'Data & Content' : 'Dữ liệu & Bài viết',
+      items: [
         {
           to: '/categories/product-segment',
           label: t('nav.categories'),
@@ -96,6 +98,13 @@ export function AdminShell() {
           permission: 'authors:read',
         },
         { to: '/media', label: t('nav.media'), icon: ImageIcon, permission: 'media:read' },
+        { to: '/solutions', label: t('nav.solutions'), icon: Boxes, permission: 'solutions:read' },
+        {
+          to: '/technologies',
+          label: t('nav.technologies'),
+          icon: Cpu,
+          permission: 'technologies:read',
+        },
       ],
     },
     {
