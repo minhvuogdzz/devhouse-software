@@ -35,7 +35,7 @@ describe('API Core', () => {
       expect(parsed.page).toBe(2);
       expect(parsed.limit).toBe(25);
       expect(parsed.skip).toBe(25);
-      expect(parsed.sort).toEqual({ title: 1 });
+      expect(parsed.sort).toEqual({ title: 1, _id: 1 });
       expect(parsed.filter.status).toBe('published');
     });
 

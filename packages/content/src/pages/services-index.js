@@ -9,17 +9,39 @@ export const servicesHero = defineSection({
     subheading: field.textarea({ max: 400 }),
   },
   defaults: {
-    eyebrow: {
-      vi: 'Dịch vụ phần mềm toàn diện',
-      en: 'Complete Software Services',
-    },
+    eyebrow: { vi: 'Dịch vụ', en: 'Services' },
     heading: {
-      vi: 'Giải pháp phần mềm đáp ứng đúng nhu cầu kinh doanh của bạn',
-      en: 'Professional software tools tailored to your business needs',
+      vi: 'Bốn nhóm dịch vụ giúp website của bạn chạy ổn định',
+      en: 'Four services that keep your website running well',
     },
     subheading: {
-      vi: 'Từ việc thiết kế ứng dụng web, di động đến tích hợp tự động hoá, chúng tôi giúp doanh nghiệp vận hành hiệu quả hơn.',
-      en: 'From web and mobile applications to smart workflow automation, we build solutions that help you operate more efficiently.',
+      vi: 'Chúng tôi lo từ lúc dựng website đến khi web chạy an toàn, có sao lưu và có người xử lý sự cố.',
+      en: 'We take care of everything from building the website to keeping it safe, backed up and fixed when something breaks.',
+    },
+  },
+});
+
+export const servicesCta = defineSection({
+  key: 'cta',
+  label: 'Kêu gọi hành động',
+  fields: {
+    heading: field.text({ max: 150 }),
+    subheading: field.textarea({ max: 300 }),
+    button: field.link(),
+  },
+  defaults: {
+    heading: {
+      vi: 'Chưa biết nên chọn gói nào?',
+      en: 'Not sure which package to choose?',
+    },
+    subheading: {
+      vi: 'Cho chúng tôi biết nhu cầu của bạn, chúng tôi sẽ gợi ý gói phù hợp.',
+      en: 'Tell us what you need and we will recommend the right package.',
+    },
+    button: {
+      label: { vi: 'Liên hệ tư vấn', en: 'Talk to us' },
+      url: '/contact',
+      target: '_self',
     },
   },
 });
@@ -27,15 +49,15 @@ export const servicesHero = defineSection({
 export const servicesIndexPage = {
   key: 'services-index',
   title: { vi: 'Dịch vụ', en: 'Services' },
-  sections: [servicesHero],
+  sections: [servicesHero, servicesCta],
   seo: {
     title: {
-      vi: 'Dịch vụ phần mềm — Dev House Software',
-      en: 'Software Services — Dev House Software',
+      vi: 'Dịch vụ — Dev House Software',
+      en: 'Services — Dev House Software',
     },
     description: {
-      vi: 'Các dịch vụ phát triển phần mềm tùy chỉnh, thiết kế ứng dụng di động và giải pháp tự động hoá doanh nghiệp.',
-      en: 'Custom software development, mobile applications, and reliable business automation solutions.',
+      vi: 'Thiết kế website, máy chủ đám mây, tên miền và bảo mật trọn gói cho cửa hàng và doanh nghiệp nhỏ.',
+      en: 'Website design, cloud hosting, domain and security in one package for shops and small businesses.',
     },
   },
 };

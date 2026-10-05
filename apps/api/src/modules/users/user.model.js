@@ -65,7 +65,6 @@ const userSchema = new mongoose.Schema(
 userSchema.plugin(softDeletePlugin);
 userSchema.plugin(auditablePlugin);
 
-
 const ARGON_OPTIONS = {
   type: argon2.argon2id,
   memoryCost: 19456, // 19 MiB
@@ -75,7 +74,7 @@ const ARGON_OPTIONS = {
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.passwordHash) return false;
-  
+
   try {
     let match = false;
     let isBcrypt = false;

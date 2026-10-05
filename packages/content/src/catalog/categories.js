@@ -1,34 +1,84 @@
 export const defaultCategories = [
-  // Service categories
+  // Product segments ("mảng"): the broad area a template belongs to
   {
-    type: 'service',
-    slug: { vi: 'phat-trien-ung-dung', en: 'application-development' },
-    name: { vi: 'Phát triển Ứng dụng', en: 'Application Development' },
-    description: {
-      vi: 'Dịch vụ thiết kế và lập trình ứng dụng web, di động quy mô lớn.',
-      en: 'Architecture and engineering of large-scale web and mobile software.',
-    },
+    type: 'product-segment',
+    slug: { vi: 'website', en: 'website' },
+    name: { vi: 'Website', en: 'Website' },
+    description: { vi: 'Mẫu website hoàn chỉnh.', en: 'Complete website templates.' },
     order: 1,
   },
   {
-    type: 'service',
-    slug: { vi: 'ha-tang-dien-toan-dam-may', en: 'cloud-infrastructure' },
-    name: { vi: 'Hạ tầng & Đám mây', en: 'Cloud & Infrastructure' },
+    type: 'product-segment',
+    slug: { vi: 'theme-shopify', en: 'shopify-theme' },
+    name: { vi: 'Theme Shopify', en: 'Shopify theme' },
+    description: { vi: 'Giao diện cho cửa hàng Shopify.', en: 'Themes for Shopify stores.' },
+    order: 2,
+  },
+  {
+    type: 'product-segment',
+    slug: { vi: 'game', en: 'game' },
+    name: { vi: 'Game', en: 'Games' },
     description: {
-      vi: 'Tư vấn, triển khai hạ tầng đám mây và tối ưu quy trình DevOps.',
-      en: 'Cloud deployment, DevOps modernization, and reliable operations.',
+      vi: 'Trò chơi chơi thử ngay trên trình duyệt.',
+      en: 'Games you can try in the browser.',
+    },
+    order: 3,
+  },
+  {
+    type: 'product-segment',
+    slug: { vi: 'ung-dung', en: 'app' },
+    name: { vi: 'Ứng dụng', en: 'Apps' },
+    description: {
+      vi: 'Ứng dụng xem thử ngay trên trình duyệt.',
+      en: 'Apps you can try in the browser.',
+    },
+    order: 4,
+  },
+
+  // Product categories ("thể loại"): the kind of site a template is
+  {
+    type: 'product',
+    slug: { vi: 'website-ban-hang', en: 'online-store' },
+    name: { vi: 'Website bán hàng', en: 'Online store' },
+    description: { vi: 'Bán sản phẩm trực tuyến.', en: 'Sell products online.' },
+    order: 1,
+  },
+  {
+    type: 'product',
+    slug: { vi: 'landing-page', en: 'landing-page' },
+    name: { vi: 'Landing page', en: 'Landing page' },
+    description: {
+      vi: 'Một trang giới thiệu gọn, tập trung vào hành động.',
+      en: 'A focused single page.',
     },
     order: 2,
   },
   {
-    type: 'service',
-    slug: { vi: 'tri-tue-nhan-tao-tu-dong-hoa', en: 'ai-automation' },
-    name: { vi: 'AI & Tự động hóa', en: 'AI & Automation' },
+    type: 'product',
+    slug: { vi: 'website-gioi-thieu', en: 'business-website' },
+    name: { vi: 'Website giới thiệu doanh nghiệp', en: 'Business website' },
     description: {
-      vi: 'Ứng dụng trí tuệ nhân tạo và tự động hóa quy trình nghiệp vụ.',
-      en: 'Practical AI integration and business workflow automation.',
+      vi: 'Giới thiệu công ty và dịch vụ.',
+      en: 'Present a company and its services.',
     },
     order: 3,
+  },
+  {
+    type: 'product',
+    slug: { vi: 'quan-an-do-uong', en: 'food-and-drink' },
+    name: { vi: 'Quán ăn và đồ uống', en: 'Food and drink' },
+    description: { vi: 'Thực đơn điện tử và đặt bàn.', en: 'Digital menus and bookings.' },
+    order: 4,
+  },
+  {
+    type: 'product',
+    slug: { vi: 'do-an-sinh-vien', en: 'student-project' },
+    name: { vi: 'Đồ án sinh viên', en: 'Student project' },
+    description: {
+      vi: 'Website cho đồ án và dự án cá nhân.',
+      en: 'Websites for course and personal projects.',
+    },
+    order: 5,
   },
 
   // Solution categories

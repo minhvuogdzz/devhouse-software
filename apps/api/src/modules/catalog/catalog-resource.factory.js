@@ -9,6 +9,8 @@ import { sendSuccess, sendPaginated } from '../../core/http/index.js';
 import { localize } from '@devhouse/content';
 import { ERROR_CODES } from '@devhouse/shared';
 
+const escapeRegex = value => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 export function buildAlternates(basePath, slug) {
   if (!slug) return { vi: basePath, en: `/en${basePath}` };
   if (typeof slug === 'string') {
@@ -33,6 +35,12 @@ export function createCatalogModule({
   populatePublic = [],
   transformPublic = doc => doc,
   validateInUse = async () => {},
+  // Query-string names that filter by a reference field (for example ?segment=...).
+  filterFields = ['category'],
+  // Turns a query value (an id, or a slug) into the stored value; return undefined to ignore it.
+  resolveFilterValue = async (_field, value) => value,
+  // Only list items that are complete in the requested language (see ADR-016).
+  filterByLocale = false,
 }) {
   const repo = createRepository(Model, {
     searchFields,
@@ -59,13 +67,19 @@ export function createCatalogModule({
         filter.isFeatured = true;
       }
 
-      if (rawQuery.category) {
-        filter.category = rawQuery.category;
+      if (filterByLocale && rawQuery.locale) {
+        filter.locales = rawQuery.locale;
+      }
+
+      for (const field of filterFields) {
+        if (!rawQuery[field]) continue;
+        const resolved = await resolveFilterValue(field, rawQuery[field]);
+        if (resolved !== undefined) filter[field] = resolved;
       }
 
       if (parsed.search) {
         filter.$or = searchFields.map(f => ({
-          [f]: { $regex: parsed.search, $options: 'i' },
+          [f]: { $regex: escapeRegex(parsed.search), $options: 'i' },
         }));
       }
 
@@ -139,13 +153,15 @@ export function createCatalogModule({
         filter.status = rawQuery.status;
       }
 
-      if (rawQuery.category) {
-        filter.category = rawQuery.category;
+      for (const field of filterFields) {
+        if (!rawQuery[field]) continue;
+        const resolved = await resolveFilterValue(field, rawQuery[field]);
+        if (resolved !== undefined) filter[field] = resolved;
       }
 
       if (parsed.search) {
         filter.$or = searchFields.map(f => ({
-          [f]: { $regex: parsed.search, $options: 'i' },
+          [f]: { $regex: escapeRegex(parsed.search), $options: 'i' },
         }));
       }
 

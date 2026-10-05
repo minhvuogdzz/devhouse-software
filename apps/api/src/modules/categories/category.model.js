@@ -4,7 +4,7 @@ const categorySchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ['service', 'solution', 'project', 'technology'],
+      enum: ['service', 'solution', 'project', 'technology', 'product', 'product-segment'],
       required: true,
       index: true,
     },

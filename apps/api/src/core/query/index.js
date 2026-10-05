@@ -14,8 +14,18 @@ export const parseListQuery = (query = {}, options = {}) => {
 
   // Sorting
   const sortField = allowedSortFields.includes(query.sort) ? query.sort : defaultSort;
-  const sortDirection = query.order === 'asc' ? 1 : -1;
-  const sort = { [sortField]: sortDirection };
+  // Manual ordering and names read best ascending; dates and counters newest or highest first.
+  const naturallyAscending = ['order', 'name', 'title'].includes(sortField);
+  const sortDirection =
+    query.order === 'asc' ? 1 : query.order === 'desc' ? -1 : naturallyAscending ? 1 : -1;
+  // _id is a stable tiebreaker so pages never repeat or skip items.
+  const sort = { [sortField]: sortDirection, _id: 1 };
+
+  // Free-text search term (callers turn it into an escaped, anchored-free regex)
+  const search =
+    typeof query.search === 'string' && query.search.trim()
+      ? query.search.trim().slice(0, 100)
+      : '';
 
   const filter = {};
 
@@ -41,6 +51,7 @@ export const parseListQuery = (query = {}, options = {}) => {
 
   return {
     filter,
+    search,
     sort,
     skip,
     limit,

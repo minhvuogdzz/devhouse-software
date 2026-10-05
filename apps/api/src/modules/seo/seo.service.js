@@ -19,6 +19,8 @@ export const seoService = {
     const staticRoutes = [
       { path: '', changefreq: 'daily', priority: 1.0 },
       { path: '/services', changefreq: 'weekly', priority: 0.9 },
+      { path: '/packages', changefreq: 'weekly', priority: 0.9 },
+      { path: '/products', changefreq: 'weekly', priority: 0.8 },
       { path: '/solutions', changefreq: 'weekly', priority: 0.9 },
       { path: '/projects', changefreq: 'weekly', priority: 0.8 },
       { path: '/technologies', changefreq: 'weekly', priority: 0.8 },

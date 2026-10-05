@@ -26,6 +26,11 @@ const roleSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Which release of the seeded role definitions this role has caught up with.
+    seedRevision: {
+      type: Number,
+      default: 1,
+    },
   },
   {
     timestamps: true,

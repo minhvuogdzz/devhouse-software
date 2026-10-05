@@ -1,23 +1,19 @@
 import { connectDB, disconnectDB } from '../src/core/db/connection.js';
 import { logger } from '../src/core/logger/index.js';
-import { SEEDED_ROLES } from '@devhouse/shared';
+import { SEEDED_ROLES, SEEDED_ROLES_REVISION } from '@devhouse/shared';
 import {
   defaultCategories,
   defaultTechnologies,
   defaultServices,
-  defaultSolutions,
-  defaultNavigation,
-  PAGE_REGISTRY,
+  defaultPackages,
 } from '@devhouse/content';
 
 import { RoleModel } from '../src/modules/roles/role.model.js';
 import { CategoryModel } from '../src/modules/categories/category.model.js';
 import { TechnologyModel } from '../src/modules/technologies/technology.model.js';
 import { ServiceModel } from '../src/modules/services/service.model.js';
-import { SolutionModel } from '../src/modules/solutions/solution.model.js';
+import { PackageModel } from '../src/modules/packages/package.model.js';
 import { SettingsModel } from '../src/modules/settings/settings.model.js';
-import { NavigationModel } from '../src/modules/navigation/navigation.model.js';
-import { PageModel } from '../src/modules/content/page.model.js';
 
 export async function runSeeds() {
   logger.info('Starting idempotent database seed...');
@@ -33,9 +29,20 @@ export async function runSeeds() {
           description: role.description,
           isSystem: role.isSystem,
           permissions: role.permissions,
+          seedRevision: SEEDED_ROLES_REVISION,
         },
       },
       { upsert: true },
+    );
+
+    // Roles created by an earlier release gain the permissions added since, exactly once.
+    // Nothing is ever removed, so changes an admin made to a role are kept.
+    await RoleModel.updateOne(
+      { key: role.key, seedRevision: { $lt: SEEDED_ROLES_REVISION } },
+      {
+        $addToSet: { permissions: { $each: role.permissions } },
+        $set: { seedRevision: SEEDED_ROLES_REVISION },
+      },
     );
   }
   logger.info('Seeded system roles.');
@@ -85,7 +92,7 @@ export async function runSeeds() {
   }
   logger.info('Seeded technologies.');
 
-  // 4. Seed Services
+  // 4. Seed Services (the four service groups)
   for (const service of defaultServices) {
     await ServiceModel.updateOne(
       { 'slug.vi': service.slug.vi },
@@ -96,10 +103,12 @@ export async function runSeeds() {
           shortDescription: service.shortDescription,
           description: service.description,
           icon: service.icon,
+          billing: service.billing,
           order: service.order,
           status: service.status,
           publishedAt: service.publishedAt,
           features: service.features,
+          faqs: service.faqs,
           seo: service.seo,
           locales: ['vi', 'en'],
         },
@@ -109,28 +118,34 @@ export async function runSeeds() {
   }
   logger.info('Seeded services.');
 
-  // 5. Seed Solutions
-  for (const solution of defaultSolutions) {
-    await SolutionModel.updateOne(
-      { 'slug.vi': solution.slug.vi },
+  // 5. Seed Packages (prices stay empty until an admin sets them)
+  for (const pack of defaultPackages) {
+    await PackageModel.updateOne(
+      { 'slug.vi': pack.slug.vi },
       {
         $setOnInsert: {
-          name: solution.name,
-          slug: solution.slug,
-          shortDescription: solution.shortDescription,
-          description: solution.description,
-          targetAudience: solution.targetAudience,
-          order: solution.order,
-          status: solution.status,
-          publishedAt: solution.publishedAt,
-          seo: solution.seo,
+          name: pack.name,
+          slug: pack.slug,
+          audience: pack.audience,
+          shortDescription: pack.shortDescription,
+          inclusions: pack.inclusions,
+          supportHours: pack.supportHours,
+          setupFee: pack.setupFee,
+          recurringFee: pack.recurringFee,
+          recurringPeriod: pack.recurringPeriod,
+          currency: pack.currency,
+          priceNote: pack.priceNote,
+          isFeatured: pack.isFeatured,
+          order: pack.order,
+          status: pack.status,
+          publishedAt: pack.publishedAt,
           locales: ['vi', 'en'],
         },
       },
       { upsert: true },
     );
   }
-  logger.info('Seeded solutions.');
+  logger.info('Seeded packages.');
 
   // 6. Seed Site Settings
   await SettingsModel.updateOne(
@@ -145,38 +160,8 @@ export async function runSeeds() {
   );
   logger.info('Seeded settings.');
 
-  // 7. Seed Navigation
-  await NavigationModel.updateOne(
-    { key: 'main' },
-    {
-      $setOnInsert: {
-        key: 'main',
-        header: defaultNavigation.header,
-        footer: defaultNavigation.footer,
-      },
-    },
-    { upsert: true },
-  );
-  logger.info('Seeded navigation.');
-
-  // 8. Seed Page Records
-  for (const pageKey of Object.keys(PAGE_REGISTRY)) {
-    await PageModel.updateOne(
-      { key: pageKey },
-      {
-        $setOnInsert: {
-          key: pageKey,
-          sections: {}, // Sparse overrides; code defaults take precedence
-          seo: {
-            title: PAGE_REGISTRY[pageKey].seo?.title || { vi: '', en: '' },
-            description: PAGE_REGISTRY[pageKey].seo?.description || { vi: '', en: '' },
-          },
-        },
-      },
-      { upsert: true },
-    );
-  }
-  logger.info('Seeded pages.');
+  // Navigation and pages are NOT copied into the database. Code defaults apply until an admin
+  // edits them, so improving a default in a release reaches every site that has not customized it.
 
   logger.info('Database seeding completed successfully.');
 }

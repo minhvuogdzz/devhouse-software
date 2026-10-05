@@ -9,19 +9,19 @@ export const aboutHero = defineSection({
   },
   defaults: {
     heading: {
-      vi: 'Chúng tôi xây dựng phần mềm phục vụ sự phát triển bền vững của doanh nghiệp',
-      en: 'We build dependable software that fuels long-term enterprise growth',
+      vi: 'Chúng tôi lo phần kỹ thuật để bạn tập trung kinh doanh',
+      en: 'We take care of the technology so you can focus on your business',
     },
     subheading: {
-      vi: 'Dev House Software tập hợp những kỹ sư tâm huyết, am hiểu sâu sắc bài toán kinh doanh thực tế để tạo ra những giải pháp công nghệ chuẩn mực và hiệu quả.',
-      en: 'Dev House Software unites dedicated engineers with a deep understanding of business strategy to craft resilient, high-impact digital systems.',
+      vi: 'Dev House Software dựng website, vận hành máy chủ, lo tên miền và bảo mật cho cửa hàng và doanh nghiệp nhỏ, từ Việt Nam.',
+      en: 'Dev House Software builds websites, runs servers and looks after domains and security for shops and small businesses, starting in Vietnam.',
     },
   },
 });
 
 export const aboutMission = defineSection({
   key: 'mission',
-  label: 'Sứ mệnh & Giá trị cốt lõi',
+  label: 'Giá trị cam kết',
   fields: {
     heading: field.text({ max: 120 }),
     values: field.list({
@@ -35,29 +35,36 @@ export const aboutMission = defineSection({
   },
   defaults: {
     heading: {
-      vi: 'Cách chúng tôi làm việc',
-      en: 'How we work',
+      vi: 'Bốn giá trị chúng tôi cam kết với khách hàng',
+      en: 'The four values we promise our customers',
     },
     values: [
       {
-        title: { vi: 'Rõ ràng & Cởi mở', en: 'Clear & Honest' },
+        title: { vi: 'An toàn', en: 'Safe' },
         description: {
-          vi: 'Luôn trao đổi thẳng thắn về thời gian, chi phí và cách làm để bạn có thể yên tâm hợp tác.',
-          en: 'We communicate openly about timelines, costs, and the work involved so you always know where things stand.',
+          vi: 'Kết nối HTTPS bắt buộc, tường lửa, chống tấn công quá tải cơ bản và vá bảo mật định kỳ.',
+          en: 'HTTPS on every site, a firewall, basic protection against overload attacks and regular security patches.',
         },
       },
       {
-        title: { vi: 'Làm việc cẩn thận', en: 'Careful Work' },
+        title: { vi: 'Ổn định', en: 'Stable' },
         description: {
-          vi: 'Chúng tôi kiểm tra kỹ lưỡng phần mềm để đảm bảo hệ thống an toàn, dễ dùng và không có lỗi.',
-          en: 'We thoroughly test the software to ensure it is secure, easy to use, and bug-free.',
+          vi: 'Giám sát liên tục, sao lưu tự động và có người xử lý khi web gặp sự cố.',
+          en: 'Constant monitoring, automatic backups and someone to fix problems when they happen.',
         },
       },
       {
-        title: { vi: 'Tạo ra giá trị thực', en: 'Real Results' },
+        title: { vi: 'Đơn giản', en: 'Simple' },
         description: {
-          vi: 'Phần mềm làm ra phải giúp bạn tiết kiệm thời gian hoặc kiếm thêm doanh thu, chứ không chỉ để cho có.',
-          en: 'The software we build must actually save you time or help your business grow.',
+          vi: 'Một đầu mối cho website, máy chủ và tên miền. Bạn không cần hiểu kỹ thuật.',
+          en: 'One contact for your website, hosting and domain. You do not need to understand the technology.',
+        },
+      },
+      {
+        title: { vi: 'Minh bạch', en: 'Transparent' },
+        description: {
+          vi: 'Giá và phạm vi hỗ trợ ghi rõ trước khi ký hợp đồng. Tên miền đứng tên bạn.',
+          en: 'Prices and the scope of support are written down before you sign. Your domain stays in your name.',
         },
       },
     ],
@@ -84,34 +91,41 @@ export const aboutCompany = defineSection({
   defaults: {
     heading: { vi: 'Về Dev House Software', en: 'About Dev House Software' },
     intro: {
-      vi: 'Dev House Software là công ty công nghệ thuộc Dev House Group, có trụ sở tại Hà Nội. Chúng tôi thiết kế và xây dựng website, ứng dụng, phần mềm quản lý, giải pháp AI và tự động hoá, giúp doanh nghiệp làm việc nhanh hơn và bán hàng tốt hơn.',
-      en: 'Dev House Software is a technology company within Dev House Group, based in Hanoi. We design and build websites, apps, business software, AI and automation that help companies work faster and sell better.',
+      vi: 'Dev House Software là công ty công nghệ thuộc Dev House Group, có trụ sở tại Hà Nội. Chúng tôi bán trọn gói website, máy chủ, tên miền và bảo mật, rồi đồng hành vận hành lâu dài để bạn không phải lo phần kỹ thuật.',
+      en: 'Dev House Software is a technology company within Dev House Group, based in Hanoi. We offer websites, hosting, domains and security as one package, and keep running them for you so you never have to deal with the technical side.',
     },
     groupNote: {
-      vi: 'Dev House Group là tổ chức mẹ, do ông Dương Minh Vương sáng lập. Dev House Software phụ trách mảng phát triển phần mềm và giải pháp công nghệ cho khách hàng.',
-      en: 'Dev House Group is the parent organization, founded by Dương Minh Vương. Dev House Software handles software development and technology solutions for clients.',
+      vi: 'Dev House Group là tổ chức mẹ, do ông Dương Minh Vương sáng lập. Dev House Software phụ trách mảng website và hạ tầng cho khách hàng.',
+      en: 'Dev House Group is the parent organization, founded by Dương Minh Vương. Dev House Software looks after websites and hosting for clients.',
     },
-    offeringsHeading: { vi: 'Chúng tôi giúp bạn việc gì', en: 'What we help you with' },
+    offeringsHeading: { vi: 'Bốn nhóm dịch vụ của chúng tôi', en: 'Our four services' },
     offerings: [
       {
-        title: { vi: 'Website và ứng dụng', en: 'Websites and apps' },
+        title: { vi: 'Thiết kế website', en: 'Website design' },
         description: {
-          vi: 'Website, ứng dụng web, ứng dụng di động và phần mềm máy tính được làm đúng theo nhu cầu của bạn.',
-          en: 'Websites, web apps, mobile apps and desktop software built around what you actually need.',
+          vi: 'Website giới thiệu, landing page và web bán hàng nhỏ, dựng từ mẫu chuẩn.',
+          en: 'Business sites, landing pages and small online shops, built from proven templates.',
         },
       },
       {
-        title: { vi: 'Phần mềm quản lý', en: 'Business software' },
+        title: { vi: 'Máy chủ và hạ tầng đám mây', en: 'Cloud hosting' },
         description: {
-          vi: 'Hệ thống nội bộ giúp quản lý bán hàng, vận hành và chăm sóc khách hàng gọn gàng hơn.',
-          en: 'Internal systems that keep sales, operations and customer care organized.',
+          vi: 'Website chạy trên máy chủ an toàn, có giám sát, sao lưu và cập nhật bảo mật.',
+          en: 'Your site runs on secure servers with monitoring, backups and security updates.',
         },
       },
       {
-        title: { vi: 'AI và tự động hoá', en: 'AI and automation' },
+        title: { vi: 'Tên miền và DNS', en: 'Domain and DNS' },
         description: {
-          vi: 'Trợ lý AI và các quy trình tự động giúp giảm việc lặp đi lặp lại và tiết kiệm thời gian.',
-          en: 'AI assistants and automated workflows that cut repetitive work and save time.',
+          vi: 'Đăng ký, gia hạn và cấu hình tên miền, email theo tên miền. Tên miền đứng tên bạn.',
+          en: 'We register, renew and configure your domain and email. The domain stays in your name.',
+        },
+      },
+      {
+        title: { vi: 'Bảo mật và hỗ trợ', en: 'Security and support' },
+        description: {
+          vi: 'Tường lửa, xử lý sự cố và chỉnh sửa nhỏ trong số giờ hỗ trợ của gói.',
+          en: 'A firewall, fixing problems and small edits within the support hours of your package.',
         },
       },
     ],
@@ -232,50 +246,50 @@ export const aboutServiceTerms = defineSection({
   defaults: {
     heading: { vi: 'Điều khoản dịch vụ', en: 'Service terms' },
     intro: {
-      vi: 'Tóm tắt cách chúng tôi làm việc với khách hàng. Nội dung đầy đủ có tại trang Điều khoản sử dụng.',
+      vi: 'Tóm tắt cách chúng tôi làm việc với khách hàng. Nội dung đầy đủ có tại trang Điều khoản dịch vụ.',
       en: 'A short summary of how we work with clients. The full text is on the Terms of Service page.',
     },
     items: [
       {
-        title: { vi: 'Báo giá rõ ràng', en: 'Clear quotes' },
+        title: { vi: 'Hợp đồng ghi rõ phạm vi', en: 'A contract that spells out the scope' },
         description: {
-          vi: 'Mỗi dự án có phạm vi công việc và báo giá bằng văn bản trước khi bắt đầu.',
-          en: 'Every project has a written scope and quote before work begins.',
+          vi: 'Phạm vi công việc, giờ hỗ trợ, chủ sở hữu tên miền và dữ liệu đều được ghi rõ trước khi bắt đầu.',
+          en: 'The scope of work, support hours and who owns the domain and data are written down before we start.',
         },
       },
       {
         title: { vi: 'Thanh toán theo giai đoạn', en: 'Staged payments' },
         description: {
-          vi: 'Chi phí được chia theo các mốc bàn giao đã thống nhất với bạn.',
-          en: 'Costs are split across delivery milestones agreed with you.',
+          vi: 'Trả trước tối thiểu 50% phí cài đặt khi ký hợp đồng, phần còn lại khi bàn giao.',
+          en: 'At least 50% of the setup fee is paid when the contract is signed and the rest on delivery.',
         },
       },
       {
-        title: { vi: 'Thay đổi yêu cầu', en: 'Changes to requirements' },
+        title: { vi: 'Phí duy trì theo quý hoặc năm', en: 'Recurring fees per quarter or year' },
         description: {
-          vi: 'Phần phát sinh ngoài phạm vi sẽ được báo trước về thời gian và chi phí, chỉ thực hiện khi bạn đồng ý.',
-          en: 'Extra work outside the scope is quoted for time and cost first, and only done once you agree.',
+          vi: 'Không thu theo tháng, để bạn đỡ phải theo dõi thanh toán.',
+          en: 'We never bill monthly, so there is less to keep track of.',
         },
       },
       {
-        title: { vi: 'Bảo mật thông tin', en: 'Confidentiality' },
+        title: { vi: 'Tên miền đứng tên bạn', en: 'Your domain stays yours' },
         description: {
-          vi: 'Thông tin của bạn được giữ kín. Chúng tôi sẵn sàng ký thỏa thuận bảo mật (NDA).',
-          en: 'Your information stays private. We are happy to sign a non-disclosure agreement (NDA).',
+          vi: 'Tên miền được đăng ký bằng tên bạn và gia hạn mỗi năm, trước ngày hết hạn.',
+          en: 'The domain is registered in your name and renewed every year before it expires.',
         },
       },
       {
-        title: { vi: 'Quyền sở hữu sản phẩm', en: 'Ownership' },
+        title: { vi: 'Việc ngoài phạm vi', en: 'Work outside the scope' },
         description: {
-          vi: 'Sau khi thanh toán đủ, bạn sở hữu sản phẩm được bàn giao theo hợp đồng.',
-          en: 'Once payment is complete, you own the product delivered under the contract.',
+          vi: 'Khi vượt số giờ hỗ trợ của gói, chúng tôi báo giá riêng và chỉ làm khi bạn đồng ý.',
+          en: 'When work goes beyond the support hours of your package we quote it separately and only start once you agree.',
         },
       },
       {
-        title: { vi: 'Bảo hành và hỗ trợ', en: 'Warranty and support' },
+        title: { vi: 'Kết thúc hợp đồng', en: 'Ending the contract' },
         description: {
-          vi: 'Thời gian bảo hành và hỗ trợ sau bàn giao được ghi rõ trong hợp đồng của từng dự án.',
-          en: 'Warranty and after-delivery support are written into each project contract.',
+          vi: 'Bạn nhận lại mã nguồn, bản sao lưu dữ liệu và quyền quản lý tên miền.',
+          en: 'You receive your source code, a backup of your data and control of your domain.',
         },
       },
     ],

@@ -3,6 +3,7 @@ import { defaultCategories } from './catalog/categories.js';
 import { defaultTechnologies } from './catalog/technologies.js';
 import { defaultServices } from './catalog/services.js';
 import { defaultSolutions } from './catalog/solutions.js';
+import { defaultPackages } from './catalog/packages.js';
 
 export * from './define.js';
 export * from './resolve.js';
@@ -16,6 +17,7 @@ export const defaultCatalog = {
   categories: defaultCategories,
   technologies: defaultTechnologies,
   services: defaultServices,
+  packages: defaultPackages,
   solutions: defaultSolutions,
   projects: [],
 };

@@ -8,5 +8,6 @@ export const { service: servicesService, controller: serviceController } = creat
   searchFields: ['name.vi', 'name.en', 'shortDescription.vi', 'shortDescription.en'],
   allowedSortFields: ['createdAt', 'publishedAt', 'order', 'name'],
   defaultSort: 'order',
-  populatePublic: ['technologies', 'category'],
+  populatePublic: ['technologies', { path: 'category', select: 'name slug' }],
+  filterByLocale: true,
 });

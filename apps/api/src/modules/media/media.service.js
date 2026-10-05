@@ -8,6 +8,7 @@ import { AppError } from '../../core/errors/index.js';
 
 // Models for media usage check
 import { ServiceModel } from '../services/service.model.js';
+import { ProductModel } from '../products/product.model.js';
 import { SolutionModel } from '../solutions/solution.model.js';
 import { ProjectModel } from '../projects/project.model.js';
 import { TechnologyModel } from '../technologies/technology.model.js';
@@ -191,6 +192,8 @@ export const mediaService = {
       $or: [
         { 'coverImage.mediaId': mediaIdStr },
         { 'coverImage.publicId': publicId },
+        { 'image.mediaId': mediaIdStr },
+        { 'image.publicId': publicId },
         { 'gallery.mediaId': mediaIdStr },
         { 'gallery.publicId': publicId },
       ],
@@ -201,6 +204,20 @@ export const mediaService = {
         id: s._id.toString(),
         label: s.title?.vi || s.title?.en || s.slug?.vi,
         path: `/services/${s.slug?.vi}`,
+      });
+    }
+
+    // 1b. Products (card thumbnails)
+    const products = await ProductModel.find({
+      isDeleted: false,
+      $or: [{ 'thumbnails.mediaId': mediaIdStr }, { 'thumbnails.publicId': publicId }],
+    }).lean();
+    for (const product of products) {
+      usages.push({
+        resourceType: 'product',
+        id: product._id.toString(),
+        label: product.name?.vi || product.name?.en || product.slug?.vi,
+        path: `/products`,
       });
     }
 

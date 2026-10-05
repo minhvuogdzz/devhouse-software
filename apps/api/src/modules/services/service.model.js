@@ -4,6 +4,7 @@ import { softDeletePlugin } from '../../core/db/plugins/soft-delete.js';
 import { auditablePlugin } from '../../core/db/plugins/auditable.js';
 import { localizedPlugin } from '../../core/db/plugins/localized.js';
 import { sluggablePlugin } from '../../core/db/plugins/sluggable.js';
+import { imageRefSchema } from '../../core/db/schemas/image-ref.js';
 
 const featureSchema = new mongoose.Schema(
   {
@@ -12,6 +13,20 @@ const featureSchema = new mongoose.Schema(
       en: { type: String, default: '' },
     },
     description: {
+      vi: { type: String, default: '' },
+      en: { type: String, default: '' },
+    },
+  },
+  { _id: false },
+);
+
+const faqSchema = new mongoose.Schema(
+  {
+    question: {
+      vi: { type: String, default: '' },
+      en: { type: String, default: '' },
+    },
+    answer: {
       vi: { type: String, default: '' },
       en: { type: String, default: '' },
     },
@@ -48,8 +63,25 @@ const serviceSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+    image: {
+      type: imageRefSchema,
+      default: null,
+    },
+    billing: {
+      type: String,
+      enum: ['one_time', 'recurring', 'yearly'],
+      default: 'recurring',
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+    },
     features: {
       type: [featureSchema],
+      default: [],
+    },
+    faqs: {
+      type: [faqSchema],
       default: [],
     },
     technologies: [
