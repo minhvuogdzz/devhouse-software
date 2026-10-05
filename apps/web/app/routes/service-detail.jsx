@@ -1,30 +1,34 @@
 import React from 'react';
 import { Link, useLoaderData } from 'react-router';
-import { defaultCatalog, localize } from '@devhouse/content';
+import { resolveDefaultServices } from '@devhouse/content';
+import { ArrowRight, ChevronDown, ChevronRight, HelpCircle } from 'lucide-react';
 import { apiClient } from '../lib/api-client.js';
+import { loadPage, loadList, isShown } from '../lib/page-data.js';
 import { generateSeoMeta } from '../lib/seo.js';
 import { getLocaleFromUrl, getTranslation } from '../lib/i18n.js';
 import { localePrefix } from '../lib/navigation.js';
 import { iconFor } from '../lib/icons.js';
 import { resizedImage } from '../lib/images.js';
 import { Button } from '../components/ui/Button.jsx';
-import { ArrowRight, CheckCircle2, ChevronDown, ChevronRight, HelpCircle } from 'lucide-react';
+import { Collection } from '../components/ui/Collection.jsx';
+import { ServiceCard } from '../components/sections/ServiceCard.jsx';
+import { StepCard } from '../components/sections/ProcessSection.jsx';
+import { ValueGrid } from '../components/sections/ValueGrid.jsx';
 
 export async function loader({ params, request }) {
   const locale = getLocaleFromUrl(request.url);
   const { slug } = params;
 
   let service = null;
+  let apiReachable = true;
   try {
     const res = await apiClient(`/services/${slug}?locale=${locale}`);
     service = res.data;
   } catch (error) {
     // A missing service is a real 404; only an unreachable API falls back to the code defaults.
     if (error.status !== 404) {
-      const fallback = defaultCatalog.services.find(
-        item => item.slug?.vi === slug || item.slug?.en === slug,
-      );
-      if (fallback) service = localize(fallback, locale);
+      apiReachable = false;
+      service = resolveDefaultServices(locale).find(item => item.slug === slug) || null;
     }
   }
 
@@ -32,7 +36,18 @@ export async function loader({ params, request }) {
     throw new Response('Service Not Found', { status: 404 });
   }
 
-  return { service, url: request.url, locale };
+  // A group lists the kinds of service inside it
+  const types = service.parent
+    ? []
+    : await loadList(
+        `/services?parent=${encodeURIComponent(service.slug)}&limit=100&locale=${locale}`,
+        apiReachable
+          ? []
+          : resolveDefaultServices(locale).filter(item => item.parent?.slug === slug),
+      );
+
+  const page = await loadPage('service-detail', request);
+  return { service, types, sections: page.sections, url: request.url, locale };
 }
 
 export function meta({ data }) {
@@ -59,13 +74,15 @@ export function meta({ data }) {
 }
 
 export default function ServiceDetailPage() {
-  const { service, locale } = useLoaderData();
+  const { service, types, sections, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = localePrefix(locale);
   const Icon = iconFor(service.icon);
   const interest = encodeURIComponent(service.name);
   const features = service.features || [];
+  const steps = service.process || [];
   const faqs = (service.faqs || []).filter(faq => faq.question);
+  const { types: typesSection, features: featuresSection, process: processSection } = sections;
 
   return (
     <div className="py-10 lg:py-16">
@@ -81,6 +98,14 @@ export default function ServiceDetailPage() {
           <Link to={`${prefix}/services`} className="hover:text-fg">
             {t('header.nav.services')}
           </Link>
+          {service.parent && (
+            <>
+              <ChevronRight className="w-3 h-3" aria-hidden="true" />
+              <Link to={`${prefix}/services/${service.parent.slug}`} className="hover:text-fg">
+                {service.parent.name}
+              </Link>
+            </>
+          )}
           <ChevronRight className="w-3 h-3" aria-hidden="true" />
           <span className="text-fg font-medium" aria-current="page">
             {service.name}
@@ -89,7 +114,7 @@ export default function ServiceDetailPage() {
 
         <header className="grid gap-8 lg:grid-cols-[1fr_minmax(0,22rem)] lg:items-center">
           <div className="space-y-5">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-subtle text-primary">
                 <Icon className="w-7 h-7" aria-hidden="true" />
               </span>
@@ -97,6 +122,14 @@ export default function ServiceDetailPage() {
                 <span className="rounded-full border border-border-subtle bg-surface-2 px-3 py-1 text-xs font-medium text-fg-muted">
                   {t(`services.billing.${service.billing}`)}
                 </span>
+              )}
+              {service.parent && (
+                <Link
+                  to={`${prefix}/services/${service.parent.slug}`}
+                  className="rounded-full border border-border px-3 py-1 text-xs font-medium text-fg-muted hover:text-fg"
+                >
+                  {t('services.parentLink')}: {service.parent.name}
+                </Link>
               )}
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
@@ -135,30 +168,53 @@ export default function ServiceDetailPage() {
           </div>
         )}
 
-        {features.length > 0 && (
+        {types.length > 0 && isShown(typesSection) && (
           <section className="space-y-6 pt-6 border-t border-border">
-            <h2 className="text-2xl font-bold font-display text-fg">{t('services.includes')}</h2>
-            <ul className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {features.map((item, index) => (
-                <li
-                  key={index}
-                  className="flex items-start gap-3 rounded-xl border border-border bg-surface p-4"
-                >
-                  <CheckCircle2
-                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
-                    aria-hidden="true"
-                  />
-                  <div>
-                    <h3 className="text-base font-semibold text-fg">{item.title}</h3>
-                    {item.description && (
-                      <p className="mt-1 text-sm leading-relaxed text-fg-muted">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <h2 className="text-2xl font-bold font-display text-fg">
+              {typesSection.heading || t('services.typesIn')}
+            </h2>
+            <Collection
+              items={types}
+              display={typesSection.display}
+              label={typesSection.heading || t('services.typesIn')}
+              getKey={item => item._id || item.slug}
+              renderItem={(item, _index, { layout }) => (
+                <ServiceCard service={item} prefix={prefix} t={t} layout={layout} />
+              )}
+            />
+          </section>
+        )}
+
+        {steps.length > 0 && isShown(processSection) && (
+          <section className="space-y-6 pt-6 border-t border-border">
+            <div className="max-w-2xl space-y-2">
+              <h2 className="text-2xl font-bold font-display text-fg">{processSection.heading}</h2>
+              {processSection.subheading && (
+                <p className="text-sm text-fg-muted sm:text-base">{processSection.subheading}</p>
+              )}
+            </div>
+            <Collection
+              items={steps}
+              display={processSection.display}
+              label={processSection.heading}
+              getKey={(step, index) => `${step.title}-${index}`}
+              renderItem={(step, index, { layout }) => (
+                <StepCard step={step} index={index} layout={layout} />
+              )}
+            />
+          </section>
+        )}
+
+        {features.length > 0 && isShown(featuresSection) && (
+          <section className="space-y-6 pt-6 border-t border-border">
+            <h2 className="text-2xl font-bold font-display text-fg">
+              {featuresSection.heading || t('services.includes')}
+            </h2>
+            <ValueGrid
+              items={features.map(item => ({ ...item, icon: 'check' }))}
+              display={featuresSection.display}
+              label={featuresSection.heading}
+            />
           </section>
         )}
 

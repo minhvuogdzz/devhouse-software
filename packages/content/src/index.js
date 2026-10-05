@@ -2,6 +2,7 @@ import { PAGE_REGISTRY } from './pages/index.js';
 import { defaultCategories } from './catalog/categories.js';
 import { defaultTechnologies } from './catalog/technologies.js';
 import { defaultServices } from './catalog/services.js';
+import { defaultServiceTypes } from './catalog/service-types.js';
 import { defaultSolutions } from './catalog/solutions.js';
 import { defaultPackages } from './catalog/packages.js';
 
@@ -17,6 +18,7 @@ export const defaultCatalog = {
   categories: defaultCategories,
   technologies: defaultTechnologies,
   services: defaultServices,
+  serviceTypes: defaultServiceTypes,
   packages: defaultPackages,
   solutions: defaultSolutions,
   projects: [],

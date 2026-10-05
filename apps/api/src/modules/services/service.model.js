@@ -63,6 +63,13 @@ const serviceSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+    // A service type belongs to one of the top-level service groups. Only two levels are allowed.
+    parent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Service',
+      default: null,
+      index: true,
+    },
     image: {
       type: imageRefSchema,
       default: null,
@@ -82,6 +89,11 @@ const serviceSchema = new mongoose.Schema(
     },
     faqs: {
       type: [faqSchema],
+      default: [],
+    },
+    // How the service is set up, step by step (same shape as a feature: a title and a text)
+    process: {
+      type: [featureSchema],
       default: [],
     },
     technologies: [
@@ -106,6 +118,27 @@ const serviceSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+
+// Keep the structure simple: a group holds types, and a type cannot hold anything.
+serviceSchema.pre('validate', async function () {
+  if (!this.parent) return;
+  if (this._id.equals(this.parent)) {
+    this.invalidate('parent', 'A service cannot be placed inside itself');
+    return;
+  }
+  const Service = this.constructor;
+  const parent = await Service.findById(this.parent).select('parent').lean();
+  if (!parent) {
+    this.invalidate('parent', 'The group does not exist');
+  } else if (parent.parent) {
+    this.invalidate('parent', 'A service can only be placed inside a top-level group');
+  } else if (await Service.exists({ parent: this._id })) {
+    this.invalidate(
+      'parent',
+      'This service has services inside it, so it cannot be placed in another',
+    );
+  }
+});
 
 serviceSchema.plugin(sluggablePlugin, { source: 'name', localized: true });
 serviceSchema.plugin(publishablePlugin);

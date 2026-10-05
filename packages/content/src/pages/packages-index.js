@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 const noteList = field.list({
@@ -27,11 +28,25 @@ export const packagesHero = defineSection({
   },
 });
 
+export const packagesList = defineSection({
+  key: 'list',
+  label: 'Danh sách gói (cách hiển thị)',
+  fields: { display: field.display({ maxColumns: 4 }) },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+  },
+});
+
 export const packagesPayment = defineSection({
   key: 'payment',
   label: 'Cách thanh toán',
-  fields: { heading: field.text({ max: 120 }), items: noteList },
+  fields: {
+    heading: field.text({ max: 120 }),
+    items: noteList,
+    display: field.display(),
+  },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 4 } }),
     heading: { vi: 'Cách thanh toán', en: 'How payment works' },
     items: [
       {
@@ -73,8 +88,10 @@ export const packagesCommitments = defineSection({
     heading: field.text({ max: 120 }),
     intro: field.textarea({ max: 300 }),
     items: noteList,
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 4 } }),
     heading: { vi: 'Cam kết dịch vụ', en: 'Service commitments' },
     intro: {
       vi: 'Mỗi gói có cam kết riêng, được ghi rõ trong hợp đồng.',
@@ -116,7 +133,7 @@ export const packagesCommitments = defineSection({
 export const packagesIndexPage = {
   key: 'packages-index',
   title: { vi: 'Bảng Giá & Gói Cước', en: 'Pricing & Packages' },
-  sections: [packagesHero, packagesPayment, packagesCommitments],
+  sections: [packagesHero, packagesList, packagesPayment, packagesCommitments],
   seo: {
     title: {
       vi: 'Gói dịch vụ — Dev House Software',

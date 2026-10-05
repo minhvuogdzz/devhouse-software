@@ -198,6 +198,13 @@ export const ServiceSchema = z.object({
     .array(z.object({ question: LocalizedStringSchema, answer: LocalizedStringSchema }))
     .max(30)
     .default([]),
+  // The steps that show how the service is set up
+  process: z
+    .array(z.object({ title: LocalizedStringSchema, description: LocalizedStringSchema }))
+    .max(30)
+    .default([]),
+  // The group this service belongs to; null for a top-level group
+  parent: ObjectIdString.nullable().default(null),
   technologies: z.array(ObjectIdString).default([]),
   category: ObjectIdString.nullable().default(null),
   isFeatured: z.boolean().default(false),

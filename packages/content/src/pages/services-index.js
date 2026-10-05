@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const servicesHero = defineSection({
@@ -18,6 +19,15 @@ export const servicesHero = defineSection({
       vi: 'Chúng tôi lo từ lúc dựng website đến khi web chạy an toàn, có sao lưu và có người xử lý sự cố.',
       en: 'We take care of everything from building the website to keeping it safe, backed up and fixed when something breaks.',
     },
+  },
+});
+
+export const servicesList = defineSection({
+  key: 'list',
+  label: 'Danh sách dịch vụ (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
   },
 });
 
@@ -49,7 +59,7 @@ export const servicesCta = defineSection({
 export const servicesIndexPage = {
   key: 'services-index',
   title: { vi: 'Dịch vụ', en: 'Services' },
-  sections: [servicesHero, servicesCta],
+  sections: [servicesHero, servicesList, servicesCta],
   seo: {
     title: {
       vi: 'Dịch vụ — Dev House Software',

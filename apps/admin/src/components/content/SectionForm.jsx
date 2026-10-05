@@ -3,8 +3,11 @@ import { LocalizedField } from '../form/LocalizedField.jsx';
 import { ListField } from '../form/ListField.jsx';
 import { Toggle } from '../form/Toggle.jsx';
 import { IconSelect } from '../form/IconSelect.jsx';
+import { DisplayField } from '../form/DisplayField.jsx';
+import { GalleryField } from '../form/GalleryField.jsx';
 import { Input, Select } from '../ui/Input.jsx';
 import { ImageField } from '../media-picker/MediaPickerModal.jsx';
+import { normalizeDisplay } from '@devhouse/shared';
 
 /**
  * Draws an editor for one page section from the field descriptors defined in
@@ -48,6 +51,11 @@ const LABELS = {
   question: 'Câu hỏi',
   answer: 'Trả lời',
   content: 'Nội dung',
+  paragraphs: 'Các đoạn giới thiệu',
+  images: 'Ảnh (slide)',
+  display: 'Cách hiển thị danh sách',
+  path: 'Đường dẫn trang (ví dụ /services/thiet-ke-website)',
+  caption: 'Chú thích',
 };
 
 const labelOf = name => LABELS[name] || name;
@@ -61,6 +69,7 @@ const MULTILINE = new Set([
   'groupNote',
   'content',
   'answer',
+  'paragraphs',
 ]);
 
 export function emptyValue(descriptor) {
@@ -80,6 +89,10 @@ export function emptyValue(descriptor) {
     case 'select':
       return descriptor.options?.[0] ?? '';
     case 'list':
+      return [];
+    case 'display':
+      return normalizeDisplay({});
+    case 'gallery':
       return [];
     case 'group':
       return Object.fromEntries(
@@ -122,6 +135,14 @@ function FieldEditor({ name, descriptor, value, onChange }) {
 
     case 'image':
       return <ImageField label={label} value={value} onChange={onChange} />;
+
+    case 'display':
+      return (
+        <DisplayField label={label} value={value} onChange={onChange} descriptor={descriptor} />
+      );
+
+    case 'gallery':
+      return <GalleryField label={label} value={value} onChange={onChange} />;
 
     case 'boolean':
       return <Toggle label={label} checked={value} onChange={onChange} />;
@@ -189,7 +210,8 @@ function FieldEditor({ name, descriptor, value, onChange }) {
           createItem={() => emptyValue(itemDescriptor)}
           itemTitle={(item, index) => {
             const title = item?.title?.vi || item?.name || item?.vi || item?.question?.vi;
-            return `${index + 1}. ${typeof title === 'string' && title ? title : 'Mục mới'}`;
+            const text = typeof title === 'string' && title ? title : 'Mục mới';
+            return `${index + 1}. ${text.length > 56 ? `${text.slice(0, 56)}…` : text}`;
           }}
           renderItem={(item, setItem) => (
             <FieldEditor

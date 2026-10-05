@@ -2,6 +2,8 @@ import React from 'react';
 import { generateSeoMeta } from '../lib/seo.js';
 import { useLoaderData, Link } from 'react-router';
 import { apiClient } from '../lib/api-client.js';
+import { loadPage, isShown } from '../lib/page-data.js';
+import { Collection } from '../components/ui/Collection.jsx';
 import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
@@ -33,28 +35,8 @@ export async function loader({ request, params }) {
       pagination: res.pagination || { total: 0, totalPages: 1, page: 1 },
     };
   } catch {
-    // Fallback if no posts in DB yet
-    postsData = {
-      data: [
-        {
-          _id: 'default-1',
-          slug: 'software-architecture-principles',
-          title:
-            locale === 'en'
-              ? 'Engineering Principles for Sustainable Software Systems'
-              : 'Các Nguyên tắc Kiến trúc Phần mềm Hướng tới Sự Bền vững',
-          excerpt:
-            locale === 'en'
-              ? 'How we approach maintainability, system boundaries, and technology selection for enterprise platforms.'
-              : 'Phương pháp tiếp cận tính bảo trì, phân định ranh giới hệ thống và lựa chọn công nghệ cho doanh nghiệp.',
-          readingTimeMinutes: 5,
-          publishedAt: new Date().toISOString(),
-          author: { name: 'Dev House Engineering Team' },
-          tags: [{ name: locale === 'en' ? 'Architecture' : 'Kiến trúc', slug: 'architecture' }],
-        },
-      ],
-      pagination: { total: 1, totalPages: 1, page: 1 },
-    };
+    // No made-up posts: when the API cannot be reached the list is simply empty
+    postsData = { data: [], pagination: { total: 0, totalPages: 1, page: 1 } };
   }
 
   try {
@@ -64,7 +46,11 @@ export async function loader({ request, params }) {
     tags = [];
   }
 
+  const pageContent = await loadPage('blog-index', request);
+
   return {
+    sections: pageContent.sections,
+    seo: pageContent.seo,
     posts: postsData.data,
     pagination: postsData.pagination,
     tags,
@@ -78,19 +64,17 @@ export async function loader({ request, params }) {
 }
 
 export function meta({ data }) {
-  const isEn = data?.locale === 'en';
-    const title = isEn
-        ? 'Engineering Insights & Architecture Perspectives — Dev House Software'
-        : 'Góc nhìn Công nghệ & Kiến trúc Hệ thống — Dev House Software';
-  const description = isEn
-        ? 'Pragmatic perspectives on software design, scalable architecture, and engineering management from Dev House.'
-        : 'Chia sẻ thực tế về thiết kế kiến trúc phần mềm, quản trị vận hành và giải pháp số từ Dev House.';
-
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
+  return generateSeoMeta({
+    title: data?.seo?.title || 'Dev House Software',
+    description: data?.seo?.description || '',
+    url: data?.url,
+    locale: data?.locale,
+  });
 }
 
 export default function BlogPage() {
-  const { posts, pagination, tags, locale, currentFilter } = useLoaderData();
+  const { sections, posts, pagination, tags, locale, currentFilter } = useLoaderData();
+  const { hero, list } = sections;
   const t = getTranslation(locale);
   const prefix = locale === 'en' ? '/en' : '';
 
@@ -111,20 +95,17 @@ export default function BlogPage() {
   return (
     <div className="py-12 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Header */}
-        <div className="max-w-3xl space-y-4">
-          <Badge variant="default">{t('header.nav.blog')}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight">
-            {locale === 'en'
-              ? 'Engineering Perspectives & System Insights'
-              : 'Góc nhìn Kỹ thuật & Kiến trúc Phần mềm'}
-          </h1>
-          <p className="text-lg text-fg-muted leading-relaxed">
-            {locale === 'en'
-              ? 'Articles written by our practicing engineers on building reliable, maintainable systems.'
-              : 'Những bài viết đúc kết từ kinh nghiệm thiết kế, triển khai và vận hành hệ thống thực tế.'}
-          </p>
-        </div>
+        {isShown(hero) && (
+          <div className="max-w-3xl space-y-4">
+            <Badge variant="default">{hero.eyebrow || t('header.nav.blog')}</Badge>
+            <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight">
+              {hero.heading}
+            </h1>
+            {hero.subheading && (
+              <p className="text-lg text-fg-muted leading-relaxed">{hero.subheading}</p>
+            )}
+          </div>
+        )}
 
         {/* Filters / Tags */}
         <div className="flex flex-wrap items-center gap-2 pt-2 pb-6">
@@ -160,11 +141,16 @@ export default function BlogPage() {
           })}
         </div>
 
-        {/* Posts Grid */}
+        {/* Posts: shown as the admin chose (grid, list or slide) */}
         {posts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map(post => (
-              <Card key={post._id || post.slug} className="flex flex-col justify-between">
+          <Collection
+            items={posts}
+            display={list?.display}
+            label={t('header.nav.blog')}
+            gap="lg"
+            getKey={post => post._id || post.slug}
+            renderItem={post => (
+              <Card className="flex h-full flex-col justify-between">
                 <div className="space-y-4">
                   {/* Tags & Reading Time */}
                   <div className="flex items-center justify-between text-xs text-fg-subtle">
@@ -216,8 +202,8 @@ export default function BlogPage() {
                   )}
                 </div>
               </Card>
-            ))}
-          </div>
+            )}
+          />
         ) : (
           <div className="text-center py-16 text-fg-muted border border-dashed border-border rounded-xl">
             <p>{t('common.noResults')}</p>

@@ -5,12 +5,17 @@ import { iconFor } from '../../lib/icons.js';
 import { resizedImage } from '../../lib/images.js';
 
 /** One of the service groups. Image, icon and the points shown all come from the admin. */
-export function ServiceCard({ service, prefix, t }) {
+export function ServiceCard({ service, prefix, t, layout = 'grid' }) {
+  const row = layout === 'list';
   const Icon = iconFor(service.icon);
   const features = (service.features || []).slice(0, 3);
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface transition-all duration-200 hover:border-primary/50 hover:shadow-md">
+    <article
+      className={`group flex overflow-hidden rounded-xl border border-border bg-surface transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
+        row ? 'flex-col sm:flex-row' : 'h-full flex-col'
+      }`}
+    >
       {service.image?.url && (
         <img
           src={resizedImage(service.image.url, 720)}
@@ -19,7 +24,7 @@ export function ServiceCard({ service, prefix, t }) {
           height={service.image.height || 405}
           loading="lazy"
           decoding="async"
-          className="aspect-video w-full object-cover"
+          className={`object-cover ${row ? 'aspect-video w-full sm:aspect-auto sm:w-56 sm:shrink-0' : 'aspect-video w-full'}`}
         />
       )}
       <div className="flex flex-1 flex-col gap-4 p-5 sm:p-6">

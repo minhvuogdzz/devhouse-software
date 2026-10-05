@@ -5,6 +5,7 @@ import {
   defaultCategories,
   defaultTechnologies,
   defaultServices,
+  defaultServiceTypes,
   defaultPackages,
 } from '@devhouse/content';
 
@@ -99,7 +100,8 @@ export async function runSeeds() {
   }
   logger.info('Seeded technologies.');
 
-  // 4. Seed Services (the four service groups)
+  // 4. Seed Services: the four service groups, then the kinds of service inside each group
+  const groupIds = new Map();
   for (const service of defaultServices) {
     await ServiceModel.updateOne(
       { 'slug.vi': service.slug.vi },
@@ -116,7 +118,39 @@ export async function runSeeds() {
           publishedAt: service.publishedAt,
           features: service.features,
           faqs: service.faqs,
+          process: service.process,
           seo: service.seo,
+          locales: ['vi', 'en'],
+        },
+      },
+      { upsert: true },
+    );
+    // A group saved by an earlier release has no setup steps yet: add them once, never overwrite
+    await ServiceModel.updateOne(
+      { 'slug.vi': service.slug.vi, process: { $exists: false } },
+      { $set: { process: service.process } },
+    );
+    const group = await ServiceModel.findOne({ 'slug.vi': service.slug.vi }).select('_id').lean();
+    groupIds.set(service.slug.vi, group._id);
+  }
+  for (const item of defaultServiceTypes) {
+    await ServiceModel.updateOne(
+      { 'slug.vi': item.slug.vi },
+      {
+        $setOnInsert: {
+          name: item.name,
+          slug: item.slug,
+          parent: groupIds.get(item.parentSlug),
+          shortDescription: item.shortDescription,
+          description: item.description,
+          icon: item.icon,
+          billing: item.billing,
+          order: item.order,
+          status: item.status,
+          publishedAt: item.publishedAt,
+          features: item.features,
+          faqs: item.faqs,
+          process: item.process,
           locales: ['vi', 'en'],
         },
       },

@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const projectsHero = defineSection({
@@ -18,6 +19,15 @@ export const projectsHero = defineSection({
       vi: 'Rê chuột vào dự án để xem thông tin, bấm Xem demo để dùng thử ngay trên trang này.',
       en: 'Hover over a project for its details and press View demo to try it on this page.',
     },
+  },
+});
+
+export const projectsList = defineSection({
+  key: 'list',
+  label: 'Danh sách dự án (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 2, tablet: 3, desktop: 5 } }),
   },
 });
 
@@ -59,7 +69,7 @@ export const projectsCta = defineSection({
 export const projectsIndexPage = {
   key: 'projects-index',
   title: { vi: 'Dự án', en: 'Projects' },
-  sections: [projectsHero, projectsEmpty, projectsCta],
+  sections: [projectsHero, projectsList, projectsEmpty, projectsCta],
   seo: {
     title: {
       vi: 'Dự án — Dev House Software',

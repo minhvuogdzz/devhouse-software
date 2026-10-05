@@ -30,7 +30,7 @@ export default function ProjectsPage() {
   const { sections, projects, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = localePrefix(locale);
-  const { hero, empty, cta } = sections;
+  const { hero, list, empty, cta } = sections;
 
   return (
     <div className="py-12 lg:py-20">
@@ -55,6 +55,7 @@ export default function ProjectsPage() {
           prefix={prefix}
           t={t}
           filterable
+          display={list?.display}
           textKey="projects"
           detailPath={project => `${prefix}/projects/${project.slug}`}
           detailLabel={t('projects.viewProject')}

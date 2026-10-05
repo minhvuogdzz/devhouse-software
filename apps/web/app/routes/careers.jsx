@@ -7,6 +7,7 @@ import { getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
+import { Collection } from '../components/ui/Collection.jsx';
 import { Sparkles, Mail, ArrowRight } from 'lucide-react';
 
 export async function loader({ request }) {
@@ -30,14 +31,20 @@ export async function loader({ request }) {
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-    const title = isEn
-        ? 'Careers & Engineering Opportunities — Dev House Software'
-        : 'Cơ hội Nghề nghiệp & Gia nhập Đội ngũ — Dev House Software';
+  const title = isEn
+    ? 'Careers & Engineering Opportunities — Dev House Software'
+    : 'Cơ hội Nghề nghiệp & Gia nhập Đội ngũ — Dev House Software';
   const description = isEn
-        ? 'Discover software engineering and systems roles at Dev House Software.'
-        : 'Khám phá các vị trí kỹ sư phần mềm và kiến trúc sư hệ thống tại Dev House Software.';
+    ? 'Discover software engineering and systems roles at Dev House Software.'
+    : 'Khám phá các vị trí kỹ sư phần mềm và kiến trúc sư hệ thống tại Dev House Software.';
 
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
+  return generateSeoMeta({
+    title,
+    description,
+    url: data?.url,
+    locale: data?.locale,
+    type: 'website',
+  });
 }
 
 export default function CareersPage() {
@@ -110,17 +117,22 @@ export default function CareersPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {culture.items?.map((item, idx) => (
-              <Card key={idx} className="space-y-4">
+          <Collection
+            items={culture.items || []}
+            display={culture.display}
+            label={culture.heading}
+            gap="lg"
+            getKey={(item, idx) => `${item.title}-${idx}`}
+            renderItem={item => (
+              <Card className="h-full space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold font-display text-fg">{item.title}</h3>
                 <p className="text-sm text-fg-muted leading-relaxed">{item.description}</p>
               </Card>
-            ))}
-          </div>
+            )}
+          />
         </div>
 
         {/* General Application Callout */}

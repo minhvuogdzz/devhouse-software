@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
+import { Select } from '../../components/ui/Input.jsx';
 import { Plus, Edit, Trash2, RotateCcw, FileText } from 'lucide-react';
 
 export default function ServiceListPage() {
@@ -10,17 +11,26 @@ export default function ServiceListPage() {
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [groupFilter, setGroupFilter] = useState('');
+  const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    apiClient('/admin/services?parent=none&limit=100')
+      .then(res => setGroups(res.data || []))
+      .catch(() => setGroups([]));
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(loadServices, search ? 300 : 0);
     return () => clearTimeout(timer);
-  }, [pagination.page, statusFilter, search]);
+  }, [pagination.page, statusFilter, groupFilter, search]);
 
   const loadServices = async () => {
     try {
       setIsLoading(true);
       let query = `/admin/services?page=${pagination.page}&limit=10`;
+      if (groupFilter) query += `&parent=${groupFilter}`;
       if (search) query += `&search=${encodeURIComponent(search)}`;
       if (statusFilter !== 'all') query += `&status=${statusFilter}`;
 
@@ -70,6 +80,18 @@ export default function ServiceListPage() {
           </span>
         </div>
       ),
+    },
+    {
+      header: 'Nhóm',
+      key: 'parent',
+      render: row => {
+        const group = groups.find(item => item._id === (row.parent?._id || row.parent));
+        return (
+          <span className="text-xs text-fg-muted">
+            {group ? group.name?.vi || group.name?.en : 'Là một nhóm'}
+          </span>
+        );
+      },
     },
     {
       header: 'Trạng thái',
@@ -122,8 +144,8 @@ export default function ServiceListPage() {
         <div>
           <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Dịch vụ</h1>
           <p className="text-xs text-fg-muted mt-1">
-            Các nhóm dịch vụ công ty cung cấp: thiết kế website, máy chủ, tên miền, bảo mật và hỗ
-            trợ.
+            Bốn nhóm dịch vụ công ty cung cấp và các dạng dịch vụ nằm trong từng nhóm. Mỗi dịch vụ
+            có trang riêng giải thích cách triển khai.
           </p>
         </div>
 
@@ -144,11 +166,37 @@ export default function ServiceListPage() {
         data={data}
         isLoading={isLoading}
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={value => {
+          setSearch(value);
+          setPagination(prev => ({ ...prev, page: 1 }));
+        }}
         pagination={pagination}
         onPageChange={page => setPagination(prev => ({ ...prev, page }))}
         statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
+        onStatusFilterChange={value => {
+          setStatusFilter(value);
+          setPagination(prev => ({ ...prev, page: 1 }));
+        }}
+        extraFilters={
+          <div className="w-56">
+            <Select
+              aria-label="Lọc theo nhóm"
+              value={groupFilter}
+              onChange={e => {
+                setGroupFilter(e.target.value);
+                setPagination(prev => ({ ...prev, page: 1 }));
+              }}
+            >
+              <option value="">Mọi nhóm</option>
+              <option value="none">Chỉ các nhóm</option>
+              {groups.map(group => (
+                <option key={group._id} value={group._id}>
+                  Trong: {group.name?.vi || group.name?.en}
+                </option>
+              ))}
+            </Select>
+          </div>
+        }
         statusOptions={[
           { label: 'Tất cả', value: 'all' },
           { label: 'Bản nháp', value: 'draft' },

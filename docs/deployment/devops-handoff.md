@@ -66,7 +66,7 @@ Template cards and service pictures come from Cloudinary, so set `CLOUDINARY_*` 
 
 1. Create the VPS, DNS, certificates, `/opt/devhouse` layout and env files (sections 2–3).
 2. In GitLab, merge the code to `main`. The pipeline lint/test/builds, then (on `main`) builds and pushes `api`, `web`, `admin`, `edge` images tagged with the short commit SHA.
-3. On the VPS run `/opt/devhouse/deploy.sh <short-sha>`. It pulls the images, runs the idempotent seed in a one-off API container (roles, categories, technologies, the four service groups, the three packages, site settings), starts `api`, `web`, `admin`, then `edge`, waits up to 90 s for health, and rolls back automatically to the previous tag on failure.
+3. On the VPS run `/opt/devhouse/deploy.sh <short-sha>`. It pulls the images, runs the idempotent seed in a one-off API container (roles, categories, technologies, the four service groups with the 19 kinds of service inside them, the three packages, site settings), starts `api`, `web`, `admin`, then `edge`, waits up to 90 s for health, and rolls back automatically to the previous tag on failure.
 4. Create the first administrator (there is no default account):
 
    ```bash

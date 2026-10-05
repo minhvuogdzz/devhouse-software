@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLoaderData } from 'react-router';
 import { apiClient } from '../lib/api-client.js';
+import { loadPage } from '../lib/page-data.js';
 import { generateSeoMeta } from '../lib/seo.js';
 import { getLocaleFromUrl, getTranslation } from '../lib/i18n.js';
 import { localePrefix } from '../lib/navigation.js';
@@ -9,15 +10,18 @@ import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Stars } from '../components/ui/Stars.jsx';
+import { Collection } from '../components/ui/Collection.jsx';
+import { ValueGrid } from '../components/sections/ValueGrid.jsx';
 import { DemoModal } from '../components/sections/DemoModal.jsx';
 import { RichTextRenderer } from '../components/rich-text/RichTextRenderer.jsx';
-import { ArrowLeft, ArrowRight, CheckCircle2, Eye, Play, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, Play, ShieldCheck } from 'lucide-react';
 
 export async function loader({ params, request }) {
   const locale = getLocaleFromUrl(request.url);
   try {
     const res = await apiClient(`/projects/${params.slug}?locale=${locale}`);
-    return { project: res.data, url: request.url, locale };
+    const page = await loadPage('project-detail', request);
+    return { project: res.data, sections: page.sections, url: request.url, locale };
   } catch (error) {
     // A missing project is a real 404. There is no made-up stand-in project.
     if (error.status === 404) throw new Response('Project Not Found', { status: 404 });
@@ -41,7 +45,7 @@ export function meta({ data }) {
 }
 
 export default function ProjectDetailPage() {
-  const { project, locale } = useLoaderData();
+  const { project, sections, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = localePrefix(locale);
   const [demoOpen, setDemoOpen] = useState(false);
@@ -147,12 +151,15 @@ export default function ProjectDetailPage() {
         {project.results?.length > 0 && (
           <section className="space-y-6">
             <h2 className="text-xl font-bold font-display text-fg">{t('projects.results')}</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {project.results.map((result, i) => (
+            <Collection
+              items={project.results}
+              display={sections.results?.display}
+              label={t('projects.results')}
+              getKey={(result, i) => `${result.label}-${i}`}
+              renderItem={result => (
                 <Card
-                  key={i}
                   hover={false}
-                  className="space-y-2 border-primary/20 bg-primary-subtle/30"
+                  className="h-full space-y-2 border-primary/20 bg-primary-subtle/30"
                 >
                   <div className="text-3xl lg:text-4xl font-extrabold font-display text-primary">
                     {result.value}
@@ -162,8 +169,8 @@ export default function ProjectDetailPage() {
                     <div className="text-xs text-fg-muted">{result.description}</div>
                   )}
                 </Card>
-              ))}
-            </div>
+              )}
+            />
           </section>
         )}
 
@@ -206,25 +213,11 @@ export default function ProjectDetailPage() {
         {project.features?.length > 0 && (
           <section className="space-y-6">
             <h2 className="text-xl font-bold font-display text-fg">{t('projects.features')}</h2>
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {project.features.map((feature, i) => (
-                <li
-                  key={i}
-                  className="flex items-start gap-3 p-4 rounded-xl border border-border bg-surface"
-                >
-                  <CheckCircle2
-                    className="w-5 h-5 text-primary shrink-0 mt-0.5"
-                    aria-hidden="true"
-                  />
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-semibold text-fg">{feature.title}</h3>
-                    {feature.description && (
-                      <p className="text-xs text-fg-muted leading-relaxed">{feature.description}</p>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <ValueGrid
+              items={project.features.map(feature => ({ ...feature, icon: 'check' }))}
+              display={sections.features?.display}
+              label={t('projects.features')}
+            />
           </section>
         )}
 

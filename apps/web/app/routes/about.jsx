@@ -1,28 +1,18 @@
 import React from 'react';
+import { Link, useLoaderData, useRouteLoaderData } from 'react-router';
+import { ArrowRight, Building2, Mail, MapPin, Phone } from 'lucide-react';
+import { loadPage, isShown } from '../lib/page-data.js';
 import { generateSeoMeta } from '../lib/seo.js';
-import { useLoaderData, useRouteLoaderData, Link } from 'react-router';
-import { loadPage } from '../lib/page-data.js';
 import { getTranslation } from '../lib/i18n.js';
-import { localePrefix } from '../lib/navigation.js';
-import { Card } from '../components/ui/Card.jsx';
+import { iconFor } from '../lib/icons.js';
+import { resizedImage } from '../lib/images.js';
+import { localePrefix, withLocale } from '../lib/navigation.js';
 import { Badge } from '../components/ui/Badge.jsx';
-import { Button } from '../components/ui/Button.jsx';
-import { OrgChart } from '../components/sections/OrgChart.jsx';
-import {
-  ShieldCheck,
-  Clock,
-  CheckCircle2,
-  ArrowRight,
-  Mail,
-  Phone,
-  MapPin,
-  FileText,
-  Globe,
-  Building2,
-  Cloud,
-  Link2,
-  Layers,
-} from 'lucide-react';
+import { Card } from '../components/ui/Card.jsx';
+import { Collection } from '../components/ui/Collection.jsx';
+import { SectionHeading } from '../components/ui/SectionHeading.jsx';
+import { CtaSection } from '../components/sections/CtaSection.jsx';
+import { ValueGrid } from '../components/sections/ValueGrid.jsx';
 
 export async function loader({ request }) {
   return loadPage('about', request);
@@ -37,8 +27,54 @@ export function meta({ data }) {
   });
 }
 
-const offeringIcons = [Globe, Cloud, Link2, ShieldCheck];
-const valueIcons = [ShieldCheck, Clock, CheckCircle2, FileText];
+/** One of the company's services, linking to its page when the admin gave a path. */
+function OfferingCard({ item, locale, t, layout }) {
+  const Icon = iconFor(item.icon);
+  const row = layout === 'list';
+  return (
+    <div
+      className={`flex w-full gap-3 rounded-xl border border-border bg-surface p-5 sm:p-6 transition-colors hover:border-primary/40 ${
+        row ? 'flex-row items-start gap-4' : 'h-full flex-col'
+      }`}
+    >
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-subtle text-primary">
+        <Icon className="h-5 w-5" aria-hidden="true" />
+      </span>
+      <div className="flex flex-1 flex-col gap-2">
+        <h3 className="font-display text-base font-bold text-fg">{item.title}</h3>
+        <p className="text-sm leading-relaxed text-fg-muted">{item.description}</p>
+        {item.path && (
+          <Link
+            to={withLocale(item.path, locale)}
+            className="mt-auto inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-primary hover:text-primary-hover"
+          >
+            {t('services.seeHow')}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** One picture of the company slider. */
+function GalleryPicture({ entry, layout }) {
+  const { image, caption } = entry;
+  return (
+    <figure className="w-full space-y-2">
+      <img
+        src={resizedImage(image.url, layout === 'list' ? 1200 : 800)}
+        alt={image.alt || caption || ''}
+        width={image.width || 800}
+        height={image.height || 600}
+        loading="lazy"
+        decoding="async"
+        className="aspect-[4/3] w-full rounded-xl border border-border object-cover"
+      />
+      {caption && <figcaption className="text-sm text-fg-muted">{caption}</figcaption>}
+    </figure>
+  );
+}
 
 export default function AboutPage() {
   const { sections, locale } = useLoaderData();
@@ -47,51 +83,65 @@ export default function AboutPage() {
   const t = getTranslation(locale);
   const prefix = localePrefix(locale);
   const phoneHref = (settings.hotline || '').replace(/[^+\d]/g, '');
-
-  const { hero, company, leadership, mission, serviceTerms } = sections;
+  const { hero, company, gallery, vision, offerings, values, serviceTerms, cta } = sections;
+  const pictures = (gallery?.images || []).filter(entry => entry?.image?.url);
 
   return (
     <div className="py-12 lg:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20 lg:space-y-24">
-        {/* Hero */}
-        <div className="max-w-3xl space-y-6">
-          <Badge variant="default">{t('header.nav.about')}</Badge>
-          <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
-            {hero?.heading}
-          </h1>
-          <p className="text-lg sm:text-xl text-fg-muted leading-relaxed">{hero?.subheading}</p>
-        </div>
+        {isShown(hero) && (
+          <div className="max-w-3xl space-y-6">
+            <Badge variant="default">{t('header.nav.about')}</Badge>
+            <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
+              {hero.heading}
+            </h1>
+            <p className="text-lg sm:text-xl text-fg-muted leading-relaxed">{hero.subheading}</p>
+          </div>
+        )}
 
-        {/* Company */}
-        {company && (
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14">
-            <div className="lg:col-span-7 space-y-5">
+        {isShown(company) && (
+          <section className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="space-y-5 lg:col-span-7">
               <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg">
                 {company.heading}
               </h2>
-              <p className="text-base sm:text-lg text-fg leading-relaxed">{company.intro}</p>
-              <p className="text-base text-fg-muted leading-relaxed">{company.groupNote}</p>
+              {company.intro && (
+                <p className="text-base sm:text-lg text-fg leading-relaxed">{company.intro}</p>
+              )}
+              {(company.paragraphs || []).map((paragraph, index) => (
+                <p key={index} className="text-base text-fg-muted leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+              {company.groupNote && (
+                <p className="border-l-2 border-primary/40 pl-4 text-sm text-fg-muted leading-relaxed">
+                  {company.groupNote}
+                </p>
+              )}
             </div>
 
             <div className="lg:col-span-5">
-              <Card className="space-y-5 p-6 sm:p-8">
+              <Card hover={false} className="space-y-5 p-6 sm:p-8">
                 <h3 className="text-lg font-bold font-display text-fg">{t('about.companyInfo')}</h3>
                 <ul className="space-y-4 text-sm text-fg-muted">
                   {settings.legalName && (
                     <li className="flex items-start gap-3">
-                      <Building2 className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden />
+                      <Building2
+                        className="w-4 h-4 mt-0.5 text-primary shrink-0"
+                        aria-hidden="true"
+                      />
                       <span>{settings.legalName}</span>
                     </li>
                   )}
                   {settings.address && (
                     <li className="flex items-start gap-3">
-                      <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden />
+                      <MapPin className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
                       <span>{settings.address}</span>
                     </li>
                   )}
                   {settings.contactEmail && (
                     <li className="flex items-start gap-3">
-                      <Mail className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden />
+                      <Mail className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
                       <a
                         href={`mailto:${settings.contactEmail}`}
                         className="hover:text-primary transition-colors"
@@ -102,7 +152,7 @@ export default function AboutPage() {
                   )}
                   {settings.hotline && (
                     <li className="flex items-start gap-3">
-                      <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden />
+                      <Phone className="w-4 h-4 mt-0.5 text-primary shrink-0" aria-hidden="true" />
                       <a href={`tel:${phoneHref}`} className="hover:text-primary transition-colors">
                         {settings.hotline}
                       </a>
@@ -111,121 +161,86 @@ export default function AboutPage() {
                 </ul>
               </Card>
             </div>
-
-            {company.offerings?.length > 0 && (
-              <div className="lg:col-span-12 space-y-6">
-                <h3 className="text-xl font-bold font-display text-fg">
-                  {company.offeringsHeading}
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {company.offerings.map((item, idx) => {
-                    const Icon = offeringIcons[idx % offeringIcons.length] || Layers;
-                    return (
-                      <Card key={idx} className="space-y-3">
-                        <div className="w-11 h-11 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
-                          <Icon className="w-5 h-5" aria-hidden />
-                        </div>
-                        <h4 className="text-base font-bold font-display text-fg">{item.title}</h4>
-                        <p className="text-sm text-fg-muted leading-relaxed">{item.description}</p>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </section>
         )}
 
-        {/* Organization chart */}
-        {leadership?.nodes?.length > 0 && (
-          <section className="space-y-10">
-            <div className="max-w-2xl mx-auto text-center space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg">
-                {leadership.heading}
-              </h2>
-              <p className="text-sm sm:text-base text-fg-muted">{leadership.subheading}</p>
-            </div>
-            <OrgChart nodes={leadership.nodes} />
+        {isShown(gallery) && pictures.length > 0 && (
+          <section>
+            <SectionHeading heading={gallery.heading} subheading={gallery.subheading} />
+            <Collection
+              items={pictures}
+              display={gallery.display}
+              label={gallery.heading}
+              getKey={(entry, index) => `${entry.image.url}-${index}`}
+              renderItem={(entry, _index, { layout }) => (
+                <GalleryPicture entry={entry} layout={layout} />
+              )}
+            />
           </section>
         )}
 
-        {/* Core values */}
-        {mission?.values?.length > 0 && (
-          <section className="space-y-10">
-            <div className="max-w-2xl space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg">
-                {mission.heading}
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {mission.values.map((val, idx) => {
-                const Icon = valueIcons[idx % valueIcons.length];
-                return (
-                  <Card key={idx} className="space-y-4">
-                    <div className="w-12 h-12 rounded-xl bg-primary-subtle text-primary flex items-center justify-center">
-                      <Icon className="w-6 h-6" aria-hidden />
-                    </div>
-                    <h3 className="text-lg font-bold font-display text-fg">{val.title}</h3>
-                    <p className="text-sm text-fg-muted leading-relaxed">{val.description}</p>
-                  </Card>
-                );
-              })}
-            </div>
+        {isShown(vision) && vision.items?.length > 0 && (
+          <section>
+            <SectionHeading heading={vision.heading} />
+            <ValueGrid items={vision.items} display={vision.display} label={vision.heading} />
           </section>
         )}
 
-        {/* Service terms summary */}
-        {serviceTerms?.items?.length > 0 && (
-          <section className="rounded-2xl bg-surface-raised border border-border p-8 sm:p-12 space-y-8">
-            <div className="max-w-2xl space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-bold font-display text-fg">
-                {serviceTerms.heading}
-              </h2>
-              <p className="text-sm sm:text-base text-fg-muted">{serviceTerms.intro}</p>
-            </div>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
-              {serviceTerms.items.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-lg bg-primary-subtle text-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <FileText className="w-4 h-4" aria-hidden />
-                  </div>
-                  <div className="space-y-1">
-                    <h3 className="font-bold text-fg">{item.title}</h3>
-                    <p className="text-sm text-fg-muted leading-relaxed">{item.description}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+        {isShown(offerings) && offerings.items?.length > 0 && (
+          <section>
+            <SectionHeading heading={offerings.heading} />
+            <Collection
+              items={offerings.items}
+              display={offerings.display}
+              label={offerings.heading}
+              getKey={(item, index) => `${item.title}-${index}`}
+              renderItem={(item, _index, { layout }) => (
+                <OfferingCard item={item} locale={locale} t={t} layout={layout} />
+              )}
+            />
+          </section>
+        )}
+
+        {isShown(values) && values.items?.length > 0 && (
+          <section>
+            <SectionHeading heading={values.heading} />
+            <ValueGrid items={values.items} display={values.display} label={values.heading} />
+          </section>
+        )}
+
+        {isShown(serviceTerms) && serviceTerms.items?.length > 0 && (
+          <section className="rounded-2xl bg-surface-raised border border-border p-6 sm:p-10 space-y-8">
+            <SectionHeading
+              heading={serviceTerms.heading}
+              subheading={serviceTerms.intro}
+              className="!mb-0"
+            />
+            <ValueGrid
+              items={serviceTerms.items}
+              display={serviceTerms.display}
+              label={serviceTerms.heading}
+            />
             <Link
               to={`${prefix}/terms`}
               className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline"
             >
               {serviceTerms.linkLabel}
-              <ArrowRight className="w-4 h-4" aria-hidden />
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
           </section>
         )}
-
-        {/* CTA */}
-        <div className="rounded-2xl bg-primary text-primary-fg p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="space-y-2 max-w-xl text-center md:text-left">
-            <h2 className="text-2xl sm:text-3xl font-bold font-display text-primary-fg">
-              {t('about.ctaTitle')}
-            </h2>
-            <p className="text-primary-fg/90 text-sm sm:text-base">{t('about.ctaText')}</p>
-          </div>
-          <Button
-            as={Link}
-            to={`${prefix}/contact`}
-            variant="secondary"
-            size="lg"
-            className="shrink-0"
-          >
-            {t('common.contactUs')}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-        </div>
       </div>
+
+      {isShown(cta) && (
+        <div className="mt-20 lg:mt-24">
+          <CtaSection
+            heading={cta.heading}
+            subheading={cta.subheading}
+            primaryCta={cta.button}
+            locale={locale}
+          />
+        </div>
+      )}
     </div>
   );
 }

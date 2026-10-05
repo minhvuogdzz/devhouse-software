@@ -1,4 +1,21 @@
+import { ICON_KEYS, makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
+
+/*
+ * The About page is about the company: who we are, what we do and how we work.
+ * It deliberately does not introduce the leadership team.
+ */
+
+const titleAndText = withIcon =>
+  field.list({
+    of: field.group({
+      fields: {
+        ...(withIcon ? { icon: field.select({ options: ICON_KEYS }) } : {}),
+        title: field.text({ max: 80 }),
+        description: field.textarea({ max: 400 }),
+      },
+    }),
+  });
 
 export const aboutHero = defineSection({
   key: 'hero',
@@ -19,27 +36,173 @@ export const aboutHero = defineSection({
   },
 });
 
-export const aboutMission = defineSection({
-  key: 'mission',
-  label: 'Giá trị cam kết',
+export const aboutCompany = defineSection({
+  key: 'company',
+  label: 'Câu chuyện công ty',
   fields: {
     heading: field.text({ max: 120 }),
-    values: field.list({
+    intro: field.textarea({ max: 600 }),
+    paragraphs: field.list({ of: field.textarea({ max: 800 }), max: 8 }),
+    groupNote: field.textarea({ max: 400 }),
+  },
+  defaults: {
+    heading: { vi: 'Về Dev House Software', en: 'About Dev House Software' },
+    intro: {
+      vi: 'Dev House Software là công ty công nghệ có trụ sở tại Hà Nội. Chúng tôi bán trọn gói website, máy chủ, tên miền và bảo mật, rồi đồng hành vận hành lâu dài để bạn không phải lo phần kỹ thuật.',
+      en: 'Dev House Software is a technology company based in Hanoi. We offer websites, hosting, domains and security as one package, and keep running them for you so you never have to deal with the technical side.',
+    },
+    paragraphs: [
+      {
+        vi: 'Nhiều cửa hàng, quán ăn và sinh viên cần một website nhưng không có thời gian, cũng không muốn tìm hiểu về máy chủ, tên miền hay bảo mật. Dev House Software làm thay phần việc đó.',
+        en: 'Many shops, cafés and students need a website but have no time, and no wish, to learn about servers, domains or security. Dev House Software does that work for them.',
+      },
+      {
+        vi: 'Chúng tôi dựng website từ những mẫu đã được kiểm chứng, cho chạy trên máy chủ đám mây an toàn, rồi ở lại vận hành: theo dõi, sao lưu, cập nhật bảo mật và xử lý sự cố. Bạn chỉ làm việc với một đầu mối cho cả website, máy chủ và tên miền.',
+        en: 'We build websites from templates that have already been proven, run them on safe cloud servers and then stay to look after them: monitoring, backups, security updates and fixing problems. You deal with a single contact for your website, hosting and domain.',
+      },
+      {
+        vi: 'Chúng tôi bắt đầu với sinh viên, cửa hàng và quán ăn nhỏ tại Việt Nam, sau đó là doanh nghiệp nhỏ và startup. Mỗi khách hàng đi qua cùng một quy trình, nên bạn biết trước mỗi bước sẽ diễn ra thế nào.',
+        en: 'We start with students, shops and small cafés in Vietnam, followed by small businesses and startups. Every customer follows the same process, so you know in advance what each step will look like.',
+      },
+    ],
+    groupNote: {
+      vi: 'Dev House Software là thành viên của Dev House Group, phụ trách mảng website và hạ tầng cho khách hàng.',
+      en: 'Dev House Software is a member of Dev House Group and looks after websites and hosting for clients.',
+    },
+  },
+});
+
+export const aboutGallery = defineSection({
+  key: 'gallery',
+  label: 'Ảnh về công ty (slide)',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    images: field.gallery(),
+    display: field.display(),
+  },
+  defaults: {
+    heading: { vi: 'Hình ảnh', en: 'Pictures' },
+    subheading: { vi: '', en: '' },
+    // No pictures are made up: the section stays hidden until an admin uploads some.
+    images: [],
+    display: makeDisplay({
+      layout: 'slide',
+      columns: { mobile: 1, tablet: 2, desktop: 3 },
+      slide: { motion: 'step', autoplay: true, interval: 4, dots: 'slide', arrows: true },
+    }),
+  },
+});
+
+export const aboutVision = defineSection({
+  key: 'vision',
+  label: 'Tầm nhìn và sứ mệnh',
+  fields: {
+    heading: field.text({ max: 120 }),
+    items: titleAndText(true),
+    display: field.display(),
+  },
+  defaults: {
+    heading: { vi: 'Điều chúng tôi hướng tới', en: 'What we aim for' },
+    items: [
+      {
+        icon: 'rocket',
+        title: { vi: 'Tầm nhìn', en: 'Vision' },
+        description: {
+          vi: 'Trở thành đơn vị lo trọn phần kỹ thuật website cho khách hàng nhỏ, từ Việt Nam ra thị trường quốc tế.',
+          en: 'To be the team that takes care of the whole technical side of websites for small customers, from Vietnam to the international market.',
+        },
+      },
+      {
+        icon: 'heart',
+        title: { vi: 'Sứ mệnh', en: 'Mission' },
+        description: {
+          vi: 'Để bạn chỉ cần tập trung kinh doanh: website, tên miền, bảo mật và sự cố đã có Dev House đảm nhận.',
+          en: 'So that you only need to focus on your business: your website, domain, security and any problems are taken care of by Dev House.',
+        },
+      },
+    ],
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 2 } }),
+  },
+});
+
+export const aboutOfferings = defineSection({
+  key: 'offerings',
+  label: 'Chúng tôi làm gì',
+  fields: {
+    heading: field.text({ max: 120 }),
+    items: field.list({
       of: field.group({
         fields: {
-          title: field.text(),
-          description: field.textarea(),
+          icon: field.select({ options: ICON_KEYS }),
+          title: field.text({ max: 80 }),
+          description: field.textarea({ max: 400 }),
+          path: field.string({ max: 200 }),
         },
       }),
     }),
+    display: field.display(),
+  },
+  defaults: {
+    heading: { vi: 'Bốn nhóm dịch vụ của chúng tôi', en: 'Our four services' },
+    items: [
+      {
+        icon: 'layout',
+        title: { vi: 'Thiết kế website', en: 'Website design' },
+        description: {
+          vi: 'Website giới thiệu, landing page và web bán hàng nhỏ, dựng từ mẫu chuẩn.',
+          en: 'Business sites, landing pages and small online shops, built from proven templates.',
+        },
+        path: '/services/thiet-ke-website',
+      },
+      {
+        icon: 'server',
+        title: { vi: 'Máy chủ và hạ tầng đám mây', en: 'Cloud hosting' },
+        description: {
+          vi: 'Website chạy trên máy chủ an toàn, có giám sát, sao lưu và cập nhật bảo mật.',
+          en: 'Your site runs on secure servers with monitoring, backups and security updates.',
+        },
+        path: '/services/may-chu-va-ha-tang-dam-may',
+      },
+      {
+        icon: 'link',
+        title: { vi: 'Tên miền và DNS', en: 'Domain and DNS' },
+        description: {
+          vi: 'Đăng ký, gia hạn và cấu hình tên miền, email theo tên miền. Tên miền đứng tên bạn.',
+          en: 'We register, renew and configure your domain and email. The domain stays in your name.',
+        },
+        path: '/services/ten-mien-va-dns',
+      },
+      {
+        icon: 'shield',
+        title: { vi: 'Bảo mật và hỗ trợ', en: 'Security and support' },
+        description: {
+          vi: 'Tường lửa, xử lý sự cố và chỉnh sửa nhỏ trong số giờ hỗ trợ của gói.',
+          en: 'A firewall, fixing problems and small edits within the support hours of your package.',
+        },
+        path: '/services/bao-mat-va-ho-tro',
+      },
+    ],
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 4 } }),
+  },
+});
+
+export const aboutValues = defineSection({
+  key: 'values',
+  label: 'Bốn giá trị cam kết',
+  fields: {
+    heading: field.text({ max: 120 }),
+    items: titleAndText(true),
+    display: field.display(),
   },
   defaults: {
     heading: {
       vi: 'Bốn giá trị chúng tôi cam kết với khách hàng',
       en: 'The four values we promise our customers',
     },
-    values: [
+    items: [
       {
+        icon: 'shield',
         title: { vi: 'An toàn', en: 'Safe' },
         description: {
           vi: 'Kết nối HTTPS bắt buộc, tường lửa, chống tấn công quá tải cơ bản và vá bảo mật định kỳ.',
@@ -47,6 +210,7 @@ export const aboutMission = defineSection({
         },
       },
       {
+        icon: 'clock',
         title: { vi: 'Ổn định', en: 'Stable' },
         description: {
           vi: 'Giám sát liên tục, sao lưu tự động và có người xử lý khi web gặp sự cố.',
@@ -54,6 +218,7 @@ export const aboutMission = defineSection({
         },
       },
       {
+        icon: 'check',
         title: { vi: 'Đơn giản', en: 'Simple' },
         description: {
           vi: 'Một đầu mối cho website, máy chủ và tên miền. Bạn không cần hiểu kỹ thuật.',
@@ -61,6 +226,7 @@ export const aboutMission = defineSection({
         },
       },
       {
+        icon: 'file-text',
         title: { vi: 'Minh bạch', en: 'Transparent' },
         description: {
           vi: 'Giá và phạm vi hỗ trợ ghi rõ trước khi ký hợp đồng. Tên miền đứng tên bạn.',
@@ -68,162 +234,7 @@ export const aboutMission = defineSection({
         },
       },
     ],
-  },
-});
-
-export const aboutCompany = defineSection({
-  key: 'company',
-  label: 'Thông tin công ty',
-  fields: {
-    heading: field.text({ max: 120 }),
-    intro: field.textarea({ max: 600 }),
-    groupNote: field.textarea({ max: 400 }),
-    offeringsHeading: field.text({ max: 120 }),
-    offerings: field.list({
-      of: field.group({
-        fields: {
-          title: field.text(),
-          description: field.textarea(),
-        },
-      }),
-    }),
-  },
-  defaults: {
-    heading: { vi: 'Về Dev House Software', en: 'About Dev House Software' },
-    intro: {
-      vi: 'Dev House Software là công ty công nghệ thuộc Dev House Group, có trụ sở tại Hà Nội. Chúng tôi bán trọn gói website, máy chủ, tên miền và bảo mật, rồi đồng hành vận hành lâu dài để bạn không phải lo phần kỹ thuật.',
-      en: 'Dev House Software is a technology company within Dev House Group, based in Hanoi. We offer websites, hosting, domains and security as one package, and keep running them for you so you never have to deal with the technical side.',
-    },
-    groupNote: {
-      vi: 'Dev House Group là tổ chức mẹ, do ông Dương Minh Vương sáng lập. Dev House Software phụ trách mảng website và hạ tầng cho khách hàng.',
-      en: 'Dev House Group is the parent organization, founded by Dương Minh Vương. Dev House Software looks after websites and hosting for clients.',
-    },
-    offeringsHeading: { vi: 'Bốn nhóm dịch vụ của chúng tôi', en: 'Our four services' },
-    offerings: [
-      {
-        title: { vi: 'Thiết kế website', en: 'Website design' },
-        description: {
-          vi: 'Website giới thiệu, landing page và web bán hàng nhỏ, dựng từ mẫu chuẩn.',
-          en: 'Business sites, landing pages and small online shops, built from proven templates.',
-        },
-      },
-      {
-        title: { vi: 'Máy chủ và hạ tầng đám mây', en: 'Cloud hosting' },
-        description: {
-          vi: 'Website chạy trên máy chủ an toàn, có giám sát, sao lưu và cập nhật bảo mật.',
-          en: 'Your site runs on secure servers with monitoring, backups and security updates.',
-        },
-      },
-      {
-        title: { vi: 'Tên miền và DNS', en: 'Domain and DNS' },
-        description: {
-          vi: 'Đăng ký, gia hạn và cấu hình tên miền, email theo tên miền. Tên miền đứng tên bạn.',
-          en: 'We register, renew and configure your domain and email. The domain stays in your name.',
-        },
-      },
-      {
-        title: { vi: 'Bảo mật và hỗ trợ', en: 'Security and support' },
-        description: {
-          vi: 'Tường lửa, xử lý sự cố và chỉnh sửa nhỏ trong số giờ hỗ trợ của gói.',
-          en: 'A firewall, fixing problems and small edits within the support hours of your package.',
-        },
-      },
-    ],
-  },
-});
-
-export const aboutLeadership = defineSection({
-  key: 'leadership',
-  label: 'Sơ đồ tổ chức',
-  fields: {
-    heading: field.text({ max: 120 }),
-    subheading: field.textarea({ max: 300 }),
-    // Org chart as a tree: each node points at its parent by id ('' = top of the chart).
-    // A node can hold one person, or several people shown together as a group (e.g. a board).
-    nodes: field.list({
-      of: field.group({
-        fields: {
-          id: field.string({ max: 40 }),
-          parent: field.string({ max: 40 }),
-          label: field.text({ max: 80 }),
-          members: field.list({
-            of: field.group({
-              fields: {
-                name: field.string({ max: 80 }),
-                role: field.text({ max: 120 }),
-              },
-            }),
-          }),
-        },
-      }),
-    }),
-  },
-  defaults: {
-    heading: { vi: 'Sơ đồ tổ chức', en: 'Our organization' },
-    subheading: {
-      vi: 'Đội ngũ sáng lập và điều hành đứng sau Dev House Software.',
-      en: 'The founders and leaders behind Dev House Software.',
-    },
-    nodes: [
-      {
-        id: 'ceo',
-        parent: '',
-        members: [
-          {
-            name: 'Dương Minh Vương',
-            role: {
-              vi: 'CEO, Nhà sáng lập Dev House Group',
-              en: 'CEO and Founder, Dev House Group',
-            },
-          },
-        ],
-      },
-      {
-        id: 'cto',
-        parent: 'ceo',
-        members: [
-          {
-            name: 'Nguyễn Thành Lâm',
-            role: { vi: 'Giám đốc Công nghệ (CTO), Đồng sáng lập', en: 'CTO and Co-Founder' },
-          },
-        ],
-      },
-      {
-        id: 'board',
-        parent: 'ceo',
-        label: { vi: 'Ban giám đốc Dev House Software', en: 'Dev House Software Directors' },
-        members: [
-          {
-            name: 'Lưu Công Hải',
-            role: { vi: 'Đồng sáng lập, Giám đốc', en: 'Co-Founder and Director' },
-          },
-          {
-            name: 'Nguyễn Hữu Trọng Anh',
-            role: { vi: 'Đồng sáng lập, Giám đốc', en: 'Co-Founder and Director' },
-          },
-        ],
-      },
-      {
-        id: 'product',
-        parent: 'board',
-        members: [
-          {
-            name: 'Nguyễn Đức Việt',
-            role: { vi: 'Giám đốc Sản phẩm (CPO)', en: 'Chief Product Officer (CPO)' },
-          },
-        ],
-      },
-      {
-        id: 'hr',
-        parent: 'board',
-        members: [
-          {
-            name: 'Lê Trương Nguyễn Hoàng',
-            role: { vi: 'Giám đốc Hành chính Nhân sự', en: 'Head of Administration and HR' },
-          },
-        ],
-      },
-    ],
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 4 } }),
   },
 });
 
@@ -242,6 +253,7 @@ export const aboutServiceTerms = defineSection({
       }),
     }),
     linkLabel: field.text({ max: 80 }),
+    display: field.display(),
   },
   defaults: {
     heading: { vi: 'Điều khoản dịch vụ', en: 'Service terms' },
@@ -294,13 +306,45 @@ export const aboutServiceTerms = defineSection({
       },
     ],
     linkLabel: { vi: 'Xem điều khoản đầy đủ', en: 'Read the full terms' },
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 2 } }),
+  },
+});
+
+export const aboutCta = defineSection({
+  key: 'cta',
+  label: 'Kêu gọi hành động',
+  fields: {
+    heading: field.text({ max: 150 }),
+    subheading: field.textarea({ max: 300 }),
+    button: field.link(),
+  },
+  defaults: {
+    heading: { vi: 'Bạn muốn có website của mình?', en: 'Want a website of your own?' },
+    subheading: {
+      vi: 'Cho chúng tôi biết nhu cầu, chúng tôi sẽ gợi ý gói phù hợp.',
+      en: 'Tell us what you need and we will suggest the right package.',
+    },
+    button: {
+      label: { vi: 'Liên hệ tư vấn', en: 'Talk to us' },
+      url: '/contact',
+      target: '_self',
+    },
   },
 });
 
 export const aboutPage = {
   key: 'about',
   title: { vi: 'Về Dev House', en: 'About Dev House' },
-  sections: [aboutHero, aboutCompany, aboutLeadership, aboutMission, aboutServiceTerms],
+  sections: [
+    aboutHero,
+    aboutCompany,
+    aboutGallery,
+    aboutVision,
+    aboutOfferings,
+    aboutValues,
+    aboutServiceTerms,
+    aboutCta,
+  ],
   seo: {
     title: {
       vi: 'Về chúng tôi — Dev House Software',

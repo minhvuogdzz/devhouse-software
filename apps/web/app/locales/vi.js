@@ -52,6 +52,9 @@ export default {
     emptyTitle: 'Nội dung đang được cập nhật',
   },
   services: {
+    seeHow: 'Xem cách triển khai',
+    typesIn: 'Các dạng dịch vụ',
+    parentLink: 'Thuộc nhóm',
     billing: {
       one_time: 'Trả một lần',
       recurring: 'Trả theo quý hoặc năm',
@@ -125,6 +128,11 @@ export default {
     ctaText: 'Cho chúng tôi biết nhu cầu, chúng tôi sẽ gợi ý gói phù hợp.',
     askAbout: 'Tư vấn dự án tương tự',
   },
+  slider: {
+    previous: 'Trước',
+    next: 'Tiếp theo',
+    page: 'Trang {current} trên {total}',
+  },
   contact: {
     title: 'Liên hệ tư vấn',
     subtitle: 'Cho chúng tôi biết bạn cần gì, chúng tôi sẽ gợi ý gói phù hợp.',
@@ -171,8 +179,6 @@ export default {
   },
   about: {
     companyInfo: 'Thông tin công ty',
-    ctaTitle: 'Bạn muốn có website cho mình?',
-    ctaText: 'Cho chúng tôi biết nhu cầu, chúng tôi sẽ gợi ý gói phù hợp.',
   },
   terms: {
     badge: 'Điều khoản',

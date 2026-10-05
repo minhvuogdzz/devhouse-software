@@ -28,7 +28,7 @@ export default function ProductsPage() {
   const { sections, products, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = localePrefix(locale);
-  const { hero, empty, cta } = sections;
+  const { hero, list, empty, cta } = sections;
 
   return (
     <div className="py-12 lg:py-20">
@@ -53,6 +53,7 @@ export default function ProductsPage() {
           prefix={prefix}
           t={t}
           filterable
+          display={list?.display}
           empty={
             isShown(empty) ? (
               <div className="rounded-xl border border-dashed border-border p-10 text-center space-y-2">

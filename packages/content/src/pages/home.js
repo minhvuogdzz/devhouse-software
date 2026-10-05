@@ -1,5 +1,5 @@
 import { defineSection, field } from '../define.js';
-import { ICON_KEYS } from '@devhouse/shared';
+import { ICON_KEYS, makeDisplay } from '@devhouse/shared';
 
 const cardList = withIcon =>
   field.list({
@@ -61,8 +61,10 @@ export const homeValues = defineSection({
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
     items: cardList(true),
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 4 } }),
     heading: { vi: 'Bốn điều chúng tôi cam kết', en: 'Four things we promise' },
     subheading: {
       vi: 'Website an toàn, hạ tầng chuẩn, và bạn không phải lo kỹ thuật.',
@@ -107,12 +109,18 @@ export const homeValues = defineSection({
 
 export const homeServicesIntro = defineSection({
   key: 'servicesIntro',
-  label: 'Giới thiệu mục Dịch vụ',
+  label: 'Mục Dịch vụ trên trang chủ',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({
+      layout: 'slide',
+      columns: { mobile: 1, tablet: 2, desktop: 3 },
+      slide: { motion: 'smooth', interval: 6, dots: 'none' },
+    }),
     heading: { vi: 'Bốn nhóm dịch vụ, một đầu mối', en: 'Four services, one contact' },
     subheading: {
       vi: 'Từ lúc dựng website đến khi web chạy ổn định, an toàn và có sao lưu.',
@@ -123,12 +131,18 @@ export const homeServicesIntro = defineSection({
 
 export const homeProductsIntro = defineSection({
   key: 'productsIntro',
-  label: 'Giới thiệu mục Mẫu website',
+  label: 'Mục Mẫu website trên trang chủ',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({
+      layout: 'slide',
+      columns: { mobile: 2, tablet: 3, desktop: 5 },
+      slide: { motion: 'smooth', interval: 5, dots: 'none' },
+    }),
     heading: { vi: 'Mẫu website có sẵn', en: 'Ready-made website templates' },
     subheading: {
       vi: 'Xem thử ngay trên trang này, chọn mẫu phù hợp rồi để chúng tôi triển khai cho bạn.',
@@ -144,8 +158,10 @@ export const homeAudiences = defineSection({
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
     items: cardList(true),
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
     heading: { vi: 'Dành cho ai?', en: 'Who is it for?' },
     subheading: {
       vi: 'Chúng tôi bắt đầu với những khách hàng cần một website ổn định mà không muốn đau đầu vì kỹ thuật.',
@@ -182,12 +198,14 @@ export const homeAudiences = defineSection({
 
 export const homePackagesIntro = defineSection({
   key: 'packagesIntro',
-  label: 'Giới thiệu mục Gói dịch vụ',
+  label: 'Mục Gói dịch vụ trên trang chủ',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
+    display: field.display({ maxColumns: 4 }),
   },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
     heading: { vi: 'Gói dịch vụ', en: 'Packages' },
     subheading: {
       vi: 'Chọn gói theo nhu cầu: phí cài đặt một lần cộng phí duy trì theo quý hoặc năm.',
@@ -211,8 +229,10 @@ export const homeProcess = defineSection({
         },
       }),
     }),
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 5 } }),
     heading: { vi: 'Năm bước để có website của bạn', en: 'Five steps to your website' },
     subheading: {
       vi: 'Khách hàng nào cũng đi qua cùng một quy trình, để bạn biết trước mỗi bước sẽ diễn ra thế nào.',

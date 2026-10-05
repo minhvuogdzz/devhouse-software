@@ -28,21 +28,24 @@ const PAGE_META = {
     menuLabel: 'Tab: Bảng Giá & Gói Cước',
     publicUrl: '/packages',
     icon: PackageIcon,
-    summary: 'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Phương thức thanh toán, Cam kết dịch vụ.',
+    summary:
+      'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Phương thức thanh toán, Cam kết dịch vụ.',
   },
   'products-index': {
     group: 'menu',
     menuLabel: 'Tab: Mẫu website',
     publicUrl: '/products',
     icon: LayoutTemplate,
-    summary: 'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Trạng thái trống, Khung kêu gọi (CTA).',
+    summary:
+      'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Trạng thái trống, Khung kêu gọi (CTA).',
   },
   'projects-index': {
     group: 'menu',
     menuLabel: 'Tab: Dự án',
     publicUrl: '/projects',
     icon: Briefcase,
-    summary: 'Cấu hình Tiêu đề (Heading), Mô tả ngắn (Subheading) trang danh mục dự án & case study.',
+    summary:
+      'Cấu hình Tiêu đề (Heading), Mô tả ngắn (Subheading) trang danh mục dự án & case study.',
   },
   'services-index': {
     group: 'menu',
@@ -56,14 +59,32 @@ const PAGE_META = {
     menuLabel: 'Tab: Về Dev House',
     publicUrl: '/about',
     icon: Building2,
-    summary: 'Cấu hình Tiêu đề (Heading), Giới thiệu công ty, 4 Giá trị cốt lõi, Sơ đồ lãnh đạo, Cam kết.',
+    summary:
+      'Cấu hình Tiêu đề (Heading), Giới thiệu công ty, 4 Giá trị cốt lõi, Sơ đồ lãnh đạo, Cam kết.',
   },
   contact: {
     group: 'menu',
     menuLabel: 'Tab: Liên hệ',
     publicUrl: '/contact',
     icon: Phone,
-    summary: 'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Lời chào và hướng dẫn gửi yêu cầu tư vấn.',
+    summary:
+      'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Lời chào và hướng dẫn gửi yêu cầu tư vấn.',
+  },
+  'service-detail': {
+    group: 'core',
+    menuLabel: 'Trang từng dịch vụ',
+    publicUrl: '/services/...',
+    icon: Layers,
+    summary:
+      'Tiêu đề các phần và cách hiển thị (lưới, danh sách, trượt) trên trang của từng dịch vụ: dạng dịch vụ trong nhóm, điểm nổi bật, các bước triển khai.',
+  },
+  'project-detail': {
+    group: 'core',
+    menuLabel: 'Trang từng dự án',
+    publicUrl: '/projects/...',
+    icon: Briefcase,
+    summary:
+      'Cách hiển thị (lưới, danh sách, trượt) của kết quả và tính năng trên trang từng dự án.',
   },
   home: {
     group: 'core',
@@ -233,9 +254,9 @@ export default function PageListPage() {
           Nội dung các Trang (Heading, Subheading & Văn bản)
         </h1>
         <p className="text-xs text-fg-muted mt-1 leading-relaxed">
-          Tùy chỉnh tiêu đề chính (Heading), mô tả ngắn (Subheading), lời giới thiệu và các khung kêu
-          gọi hành động (CTA) cho từng tab trên thanh menu website bằng cả 2 ngôn ngữ (Tiếng Việt &
-          English).
+          Tùy chỉnh tiêu đề chính (Heading), mô tả ngắn (Subheading), lời giới thiệu và các khung
+          kêu gọi hành động (CTA) cho từng tab trên thanh menu website bằng cả 2 ngôn ngữ (Tiếng
+          Việt & English).
         </p>
       </div>
 
@@ -247,9 +268,9 @@ export default function PageListPage() {
             Tất cả các Tab trên thanh Menu website đều có thể chỉnh sửa nội dung tại đây:
           </p>
           <p className="text-fg-muted">
-            Chọn tab tương ứng (Mẫu website, Bảng Giá & Gói Cước, Dự án, Dịch vụ, Về Dev House,
-            Liên hệ) rồi bấm <strong>"Sửa Heading & Text"</strong> để thay đổi chữ hiển thị ngoài
-            trang web theo ý bạn.
+            Chọn tab tương ứng (Mẫu website, Bảng Giá & Gói Cước, Dự án, Dịch vụ, Về Dev House, Liên
+            hệ) rồi bấm <strong>"Sửa Heading & Text"</strong> để thay đổi chữ hiển thị ngoài trang
+            web theo ý bạn.
           </p>
         </div>
       </div>

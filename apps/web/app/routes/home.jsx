@@ -1,11 +1,12 @@
 import React from 'react';
 import { useLoaderData } from 'react-router';
-import { defaultCatalog, localize } from '@devhouse/content';
+import { defaultCatalog, localize, resolveDefaultServices } from '@devhouse/content';
 import { loadPage, loadList, isShown } from '../lib/page-data.js';
 import { generateSeoMeta } from '../lib/seo.js';
 import { getTranslation } from '../lib/i18n.js';
 import { localePrefix } from '../lib/navigation.js';
 import { Button } from '../components/ui/Button.jsx';
+import { Collection } from '../components/ui/Collection.jsx';
 import { SectionHeading } from '../components/ui/SectionHeading.jsx';
 import { HeroSection } from '../components/sections/HeroSection.jsx';
 import { ValueGrid } from '../components/sections/ValueGrid.jsx';
@@ -29,8 +30,8 @@ export async function loader({ request }) {
   // Code defaults are used only when the API cannot be reached.
   const [services, products, packages] = await Promise.all([
     loadList(
-      `/services?limit=8&locale=${locale}`,
-      defaultCatalog.services.map(item => localize(item, locale)),
+      `/services?limit=8&parent=none&locale=${locale}`,
+      resolveDefaultServices(locale).filter(service => !service.parent),
     ),
     loadHomeProducts(locale),
     loadList(
@@ -98,7 +99,7 @@ export default function HomePage() {
               subheading={values.subheading}
               align="center"
             />
-            <ValueGrid items={values.items} columns={4} />
+            <ValueGrid items={values.items} display={values.display} label={values.heading} />
           </div>
         </section>
       )}
@@ -112,13 +113,15 @@ export default function HomePage() {
               subheading={servicesIntro.subheading}
               action={<SeeAll to={`${prefix}/services`}>{t('common.exploreServices')}</SeeAll>}
             />
-            <ul className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-              {services.map(service => (
-                <li key={service._id || service.slug}>
-                  <ServiceCard service={service} prefix={prefix} t={t} />
-                </li>
-              ))}
-            </ul>
+            <Collection
+              items={services}
+              display={servicesIntro.display}
+              label={servicesIntro.heading}
+              getKey={service => service._id || service.slug}
+              renderItem={(service, _index, { layout }) => (
+                <ServiceCard service={service} prefix={prefix} t={t} layout={layout} />
+              )}
+            />
           </div>
         </section>
       )}
@@ -132,7 +135,13 @@ export default function HomePage() {
               subheading={productsIntro.subheading}
               action={<SeeAll to={`${prefix}/products`}>{t('common.exploreProducts')}</SeeAll>}
             />
-            <ProductShowcase products={products} locale={locale} prefix={prefix} t={t} />
+            <ProductShowcase
+              products={products}
+              locale={locale}
+              prefix={prefix}
+              t={t}
+              display={productsIntro.display}
+            />
           </div>
         </section>
       )}
@@ -145,7 +154,11 @@ export default function HomePage() {
               subheading={audiences.subheading}
               align="center"
             />
-            <ValueGrid items={audiences.items} columns={3} />
+            <ValueGrid
+              items={audiences.items}
+              display={audiences.display}
+              label={audiences.heading}
+            />
           </div>
         </section>
       )}
@@ -159,15 +172,18 @@ export default function HomePage() {
               subheading={packagesIntro.subheading}
               action={<SeeAll to={`${prefix}/packages`}>{t('common.explorePackages')}</SeeAll>}
             />
-            <ul className="grid grid-cols-1 gap-6 pt-3 md:grid-cols-2 xl:grid-cols-3">
-              {packages.map(pack => (
-                <li key={pack._id || pack.slug} className="flex">
-                  <div className="w-full">
-                    <PackageCard pack={pack} locale={locale} prefix={prefix} t={t} />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="pt-3">
+              <Collection
+                items={packages}
+                display={packagesIntro.display}
+                label={packagesIntro.heading}
+                gap="lg"
+                getKey={pack => pack._id || pack.slug}
+                renderItem={pack => (
+                  <PackageCard pack={pack} locale={locale} prefix={prefix} t={t} />
+                )}
+              />
+            </div>
           </div>
         </section>
       )}
@@ -177,6 +193,7 @@ export default function HomePage() {
           heading={process.heading}
           subheading={process.subheading}
           steps={process.steps}
+          display={process.display}
         />
       )}
 

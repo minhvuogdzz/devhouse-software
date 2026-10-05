@@ -52,6 +52,7 @@ export function ProductCard({
   onOpenDemo,
   detailHref = null,
   detailLabel = '',
+  variant = 'card',
 }) {
   const rootRef = useRef(null);
   const [failed, setFailed] = useState(() => new Set());
@@ -85,18 +86,8 @@ export function ProductCard({
     product.views || 0,
   );
 
-  const overlayVisible =
-    'group-hover:opacity-100 group-focus-within:opacity-100 ' +
-    (touchOpen ? 'opacity-100' : 'opacity-0');
-
-  return (
-    <article
-      ref={rootRef}
-      tabIndex={0}
-      aria-label={product.name}
-      onClick={() => !canHover && setTouchOpen(open => !open)}
-      className="group relative aspect-[4/6] cursor-pointer overflow-hidden rounded-md bg-surface-2 ring-1 ring-border transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-    >
+  const pictures = (
+    <>
       {images.length > 0 ? (
         images.map((image, index) => (
           <img
@@ -120,6 +111,85 @@ export function ProductCard({
           <ImageIcon className="h-8 w-8 text-primary/50" aria-hidden="true" />
         </div>
       )}
+    </>
+  );
+
+  const overlayVisible =
+    'group-hover:opacity-100 group-focus-within:opacity-100 ' +
+    (touchOpen ? 'opacity-100' : 'opacity-0');
+
+  if (variant === 'row') {
+    return (
+      <article
+        ref={rootRef}
+        aria-label={product.name}
+        className="flex gap-3 rounded-xl border border-border bg-surface p-3 sm:gap-4 sm:p-4"
+      >
+        <div className="relative aspect-[4/6] w-24 shrink-0 overflow-hidden rounded-md bg-surface-2 ring-1 ring-border sm:w-32">
+          {pictures}
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-2">
+          {product.category?.name && (
+            <span className="w-fit rounded-full border border-border px-2 py-0.5 text-[11px] font-medium text-fg-muted">
+              {product.category.name}
+            </span>
+          )}
+          <h3 className="font-display text-base font-semibold leading-snug text-fg">
+            {product.name}
+          </h3>
+          {product.shortDescription && (
+            <p className="line-clamp-3 text-sm leading-relaxed text-fg-muted">
+              {product.shortDescription}
+            </p>
+          )}
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-fg-muted">
+            <Stars
+              value={product.rating}
+              emptyClass="text-border"
+              label={t('products.ratingValue').replace(
+                '{value}',
+                Number(product.rating || 0).toFixed(1),
+              )}
+            />
+            <span className="inline-flex items-center gap-1">
+              <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+              {views} {t('products.views')}
+            </span>
+          </div>
+          <div className="mt-auto flex flex-wrap gap-2 pt-1">
+            {product.demoUrl && (
+              <button
+                type="button"
+                onClick={() => onOpenDemo(product)}
+                className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-xs font-semibold text-primary-fg transition-colors hover:bg-primary-hover cursor-pointer"
+              >
+                <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
+                {t('products.viewDemo')}
+              </button>
+            )}
+            {detailHref && (
+              <Link
+                to={detailHref}
+                className="inline-flex items-center rounded-md border border-border px-3 py-2 text-xs font-semibold text-fg transition-colors hover:bg-surface-2"
+              >
+                {detailLabel}
+              </Link>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  }
+
+  return (
+    <article
+      ref={rootRef}
+      tabIndex={0}
+      aria-label={product.name}
+      onClick={() => !canHover && setTouchOpen(open => !open)}
+      className="group relative aspect-[4/6] cursor-pointer overflow-hidden rounded-md bg-surface-2 ring-1 ring-border transition-shadow hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      {pictures}
 
       {images.length > 1 && (
         <div className="absolute right-2 top-2 flex gap-1" aria-hidden="true">

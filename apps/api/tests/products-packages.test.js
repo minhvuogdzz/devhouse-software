@@ -62,7 +62,7 @@ describe('Products, packages and service groups', () => {
 
   describe('seeded defaults', () => {
     it('seeds the four service groups and three packages', async () => {
-      const services = await request(app).get('/api/v1/services?locale=vi');
+      const services = await request(app).get('/api/v1/services?locale=vi&parent=none');
       expect(services.status).toBe(200);
       expect(services.body.data.map(s => s.name)).toEqual([
         'Thiết kế website',

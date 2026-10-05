@@ -52,6 +52,9 @@ export default {
     emptyTitle: 'Content is being updated',
   },
   services: {
+    seeHow: 'See how it works',
+    typesIn: 'Kinds of service',
+    parentLink: 'Part of',
     billing: {
       one_time: 'Paid once',
       recurring: 'Paid per quarter or year',
@@ -125,6 +128,11 @@ export default {
     ctaText: 'Tell us what you need and we will suggest the right package.',
     askAbout: 'Ask about a similar project',
   },
+  slider: {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page {current} of {total}',
+  },
   contact: {
     title: 'Talk to us',
     subtitle: 'Tell us what you need and we will suggest the right package.',
@@ -171,8 +179,6 @@ export default {
   },
   about: {
     companyInfo: 'Company information',
-    ctaTitle: 'Want a website of your own?',
-    ctaText: 'Tell us what you need and we will suggest the right package.',
   },
   terms: {
     badge: 'Terms',

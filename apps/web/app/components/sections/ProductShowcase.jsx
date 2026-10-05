@@ -1,9 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { ProductCard } from './ProductCard.jsx';
+import { Collection } from '../ui/Collection.jsx';
 import { DemoModal } from './DemoModal.jsx';
-
-const GRID = 'grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4 xl:grid-cols-5';
 
 function distinctBy(products, key) {
   const seen = new Map();
@@ -60,6 +59,8 @@ export function ProductShowcase({
   t,
   filterable = false,
   empty = null,
+  // How the cards are shown (grid, list or slide), set by the admin for this page
+  display,
   // Text group for the count, empty and list labels ('products' or 'projects')
   textKey = 'products',
   // Optional: where a card's own page is, for items that have one (projects do)
@@ -132,20 +133,24 @@ export function ProductShowcase({
       )}
 
       {visible.length > 0 ? (
-        <ul className={GRID} aria-label={t(`${textKey}.listLabel`)}>
-          {visible.map(product => (
-            <li key={product._id || product.slug}>
-              <ProductCard
-                product={product}
-                locale={locale}
-                t={t}
-                onOpenDemo={setActiveDemo}
-                detailHref={detailPath ? detailPath(product) : null}
-                detailLabel={detailLabel}
-              />
-            </li>
-          ))}
-        </ul>
+        <Collection
+          items={visible}
+          display={display}
+          gap="sm"
+          label={t(`${textKey}.listLabel`)}
+          getKey={product => product._id || product.slug}
+          renderItem={(product, _index, { layout }) => (
+            <ProductCard
+              product={product}
+              locale={locale}
+              t={t}
+              onOpenDemo={setActiveDemo}
+              detailHref={detailPath ? detailPath(product) : null}
+              detailLabel={detailLabel}
+              variant={layout === 'list' ? 'row' : 'card'}
+            />
+          )}
+        />
       ) : products.length > 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center space-y-3">
           <p className="text-sm text-fg-muted">{t(`${textKey}.noMatch`)}</p>

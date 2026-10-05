@@ -8,6 +8,7 @@ import { localePrefix } from '../lib/navigation.js';
 import { Badge } from '../components/ui/Badge.jsx';
 import { ScrollReveal } from '../components/ui/ScrollReveal.jsx';
 import { SectionHeading } from '../components/ui/SectionHeading.jsx';
+import { Collection } from '../components/ui/Collection.jsx';
 import { PackageCard } from '../components/sections/PackageCard.jsx';
 import { ValueGrid } from '../components/sections/ValueGrid.jsx';
 
@@ -34,7 +35,7 @@ export default function PackagesPage() {
   const { sections, packages, locale } = useLoaderData();
   const t = getTranslation(locale);
   const prefix = localePrefix(locale);
-  const { hero, payment, commitments } = sections;
+  const { hero, list, payment, commitments } = sections;
 
   return (
     <div className="py-12 lg:py-20">
@@ -54,15 +55,16 @@ export default function PackagesPage() {
         )}
 
         {packages.length > 0 ? (
-          <ul className="grid grid-cols-1 gap-6 pt-3 md:grid-cols-2 xl:grid-cols-3">
-            {packages.map(pack => (
-              <li key={pack._id || pack.slug} className="flex">
-                <div className="w-full">
-                  <PackageCard pack={pack} locale={locale} prefix={prefix} t={t} />
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div className="pt-3">
+            <Collection
+              items={packages}
+              display={list?.display}
+              label={t('header.nav.packages')}
+              gap="lg"
+              getKey={pack => pack._id || pack.slug}
+              renderItem={pack => <PackageCard pack={pack} locale={locale} prefix={prefix} t={t} />}
+            />
+          </div>
         ) : (
           <p className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-fg-muted">
             {t('packages.empty')}
@@ -72,14 +74,18 @@ export default function PackagesPage() {
         {isShown(payment) && payment.items?.length > 0 && (
           <section>
             <SectionHeading heading={payment.heading} />
-            <ValueGrid items={payment.items} columns={4} />
+            <ValueGrid items={payment.items} display={payment.display} label={payment.heading} />
           </section>
         )}
 
         {isShown(commitments) && commitments.items?.length > 0 && (
           <section>
             <SectionHeading heading={commitments.heading} subheading={commitments.intro} />
-            <ValueGrid items={commitments.items} columns={4} />
+            <ValueGrid
+              items={commitments.items}
+              display={commitments.display}
+              label={commitments.heading}
+            />
           </section>
         )}
       </div>

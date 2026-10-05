@@ -20,7 +20,9 @@ const EMPTY = {
   billing: 'recurring',
   image: null,
   features: [],
+  process: [],
   faqs: [],
+  parent: null,
   order: 0,
   isFeatured: false,
   status: 'draft',
@@ -38,6 +40,22 @@ export default function ServiceEditorPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  // The top-level groups this service can be placed in, and whether it already holds services
+  const [groups, setGroups] = useState([]);
+  const [holdsServices, setHoldsServices] = useState(false);
+
+  useEffect(() => {
+    apiClient('/admin/services?parent=none&limit=100')
+      .then(res => setGroups(res.data || []))
+      .catch(() => setGroups([]));
+  }, []);
+
+  useEffect(() => {
+    if (isNew) return;
+    apiClient(`/admin/services?parent=${id}&limit=1`)
+      .then(res => setHoldsServices((res.pagination?.total ?? res.data?.length ?? 0) > 0))
+      .catch(() => setHoldsServices(false));
+  }, [id, isNew]);
 
   useEffect(() => {
     if (isNew) return;
@@ -53,6 +71,8 @@ export default function ServiceEditorPage() {
           description: d.description || blank(),
           image: d.image?.url ? d.image : null,
           features: d.features || [],
+          process: d.process || [],
+          parent: d.parent ? String(d.parent._id || d.parent) : null,
           faqs: d.faqs || [],
           seo: { title: d.seo?.title || blank(), description: d.seo?.description || blank() },
         });
@@ -89,6 +109,8 @@ export default function ServiceEditorPage() {
           }
         : null,
       features: form.features,
+      process: form.process,
+      parent: form.parent || null,
       faqs: form.faqs,
       order: parseInt(form.order, 10) || 0,
       isFeatured: form.isFeatured,
@@ -178,6 +200,28 @@ export default function ServiceEditorPage() {
           value={form.description}
           onChange={description => set({ description })}
         />
+        <div className="space-y-1">
+          <Select
+            label="Thuộc nhóm dịch vụ"
+            value={form.parent || ''}
+            disabled={holdsServices}
+            onChange={e => set({ parent: e.target.value || null })}
+          >
+            <option value="">— Đây là một nhóm dịch vụ (cấp cao nhất) —</option>
+            {groups
+              .filter(group => group._id !== id)
+              .map(group => (
+                <option key={group._id} value={group._id}>
+                  {group.name?.vi || group.name?.en}
+                </option>
+              ))}
+          </Select>
+          <p className="text-[11px] text-fg-subtle">
+            {holdsServices
+              ? 'Nhóm này đang có dịch vụ bên trong nên không thể đặt vào nhóm khác.'
+              : 'Chọn một nhóm để biến đây thành một dạng dịch vụ nằm trong nhóm đó. Để trống nếu đây là một nhóm.'}
+          </p>
+        </div>
         <IconSelect label="Biểu tượng" value={form.icon} onChange={icon => set({ icon })} />
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <Select
@@ -222,6 +266,40 @@ export default function ServiceEditorPage() {
             <>
               <LocalizedField
                 label="Tiêu đề"
+                value={item.title}
+                onChange={title => setItem({ ...item, title })}
+              />
+              <LocalizedField
+                label="Mô tả"
+                type="textarea"
+                rows={2}
+                value={item.description}
+                onChange={description => setItem({ ...item, description })}
+              />
+            </>
+          )}
+        />
+      </Card>
+
+      <Card className="space-y-6 p-6">
+        <div className="border-b border-border pb-3">
+          <h3 className="text-sm font-bold text-fg">Cách triển khai (các bước)</h3>
+          <p className="text-xs text-fg-muted">
+            Các bước thực hiện dịch vụ này, từ lúc bắt đầu đến khi bàn giao. Để trống nếu chưa cấu
+            hình: website sẽ không hiện phần này.
+          </p>
+        </div>
+        <ListField
+          items={form.process}
+          onChange={process => set({ process })}
+          createItem={() => ({ title: blank(), description: blank() })}
+          addLabel="Thêm bước"
+          emptyText="Chưa có bước nào."
+          itemTitle={(item, index) => `Bước ${index + 1}: ${item.title?.vi || 'Bước mới'}`}
+          renderItem={(item, setItem) => (
+            <>
+              <LocalizedField
+                label="Tên bước"
                 value={item.title}
                 onChange={title => setItem({ ...item, title })}
               />

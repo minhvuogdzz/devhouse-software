@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const careersHero = defineSection({
@@ -37,8 +38,10 @@ export const careersCulture = defineSection({
         },
       }),
     }),
+    display: field.display(),
   },
   defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
     heading: {
       vi: 'Môi trường làm việc tôn trọng và tạo điều kiện phát triển',
       en: 'A collaborative environment designed for sustained professional growth',

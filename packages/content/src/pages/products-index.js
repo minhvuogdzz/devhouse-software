@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const productsHero = defineSection({
@@ -18,6 +19,15 @@ export const productsHero = defineSection({
       vi: 'Rê chuột vào mẫu để xem thông tin, bấm Xem demo để dùng thử ngay trên trang này.',
       en: 'Hover over a template for its details and press View demo to try it on this page.',
     },
+  },
+});
+
+export const productsList = defineSection({
+  key: 'list',
+  label: 'Danh sách mẫu (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 2, tablet: 3, desktop: 5 } }),
   },
 });
 
@@ -59,7 +69,7 @@ export const productsCta = defineSection({
 export const productsIndexPage = {
   key: 'products-index',
   title: { vi: 'Mẫu website', en: 'Templates' },
-  sections: [productsHero, productsEmpty, productsCta],
+  sections: [productsHero, productsList, productsEmpty, productsCta],
   seo: {
     title: {
       vi: 'Mẫu website có sẵn — Dev House Software',

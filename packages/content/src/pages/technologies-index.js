@@ -1,3 +1,4 @@
+import { makeDisplay } from '@devhouse/shared';
 import { defineSection, field } from '../define.js';
 
 export const technologiesHero = defineSection({
@@ -24,10 +25,19 @@ export const technologiesHero = defineSection({
   },
 });
 
+export const technologiesList = defineSection({
+  key: 'list',
+  label: 'Danh sách công nghệ (cách hiển thị)',
+  fields: { display: field.display() },
+  defaults: {
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+  },
+});
+
 export const technologiesIndexPage = {
   key: 'technologies-index',
   title: { vi: 'Công nghệ', en: 'Technologies' },
-  sections: [technologiesHero],
+  sections: [technologiesHero, technologiesList],
   seo: {
     title: {
       vi: 'Năng lực Công nghệ — Dev House Software',

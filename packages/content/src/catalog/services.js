@@ -4,7 +4,7 @@
  */
 const PUBLISHED_AT = new Date('2026-01-01T00:00:00.000Z');
 
-export const defaultServices = [
+const serviceGroups = [
   {
     name: { vi: 'Thiết kế website', en: 'Website design' },
     slug: { vi: 'thiet-ke-website', en: 'website-design' },
@@ -283,3 +283,124 @@ export const defaultServices = [
     },
   },
 ];
+
+const step = (titleVi, titleEn, textVi, textEn) => ({
+  title: { vi: titleVi, en: titleEn },
+  description: { vi: textVi, en: textEn },
+});
+
+/**
+ * How each group is set up, from the working process in the company direction document.
+ * (The kinds of service inside a group have their own steps, see service-types.js.)
+ */
+const groupProcess = {
+  'thiet-ke-website': [
+    step(
+      'Chọn mẫu và chốt gói',
+      'Choose a template and a package',
+      'Bạn chọn mẫu website và gói phù hợp. Hợp đồng ghi rõ phạm vi, giờ hỗ trợ, chủ sở hữu tên miền và dữ liệu; bạn trả trước tối thiểu 50% phí cài đặt.',
+      'You pick a website template and a package. The contract spells out the scope, support hours and who owns the domain and data; you pay at least 50% of the setup fee up front.',
+    ),
+    step(
+      'Dựng website từ mẫu chuẩn',
+      'Build the website from a proven template',
+      'Chúng tôi tạo website từ mẫu đã kiểm chứng, đưa nội dung và thương hiệu của bạn vào.',
+      'We create the website from a proven template and add your content and brand.',
+    ),
+    step(
+      'Duyệt trên bản thử',
+      'Review the test version',
+      'Bạn xem thử, góp ý và chúng tôi chỉnh cho đến khi bạn hài lòng.',
+      'You look it over, give feedback and we adjust until you are happy.',
+    ),
+    step(
+      'Đưa lên chính thức và bàn giao',
+      'Go live and hand over',
+      'Chúng tôi đưa website lên chính thức, giao tài khoản quản trị nội dung và hướng dẫn ngắn.',
+      'We put the website live and give you a content account and a short guide.',
+    ),
+  ],
+  'may-chu-va-ha-tang-dam-may': [
+    step(
+      'Dựng hạ tầng từ mẫu chuẩn',
+      'Set up the hosting from a standard template',
+      'Website, cơ sở dữ liệu, kết nối an toàn, giám sát và sao lưu được dựng bằng công cụ tự động theo một mẫu chuẩn.',
+      'The website, its database, the secure connection, monitoring and backups are built with automated tools from a standard template.',
+    ),
+    step(
+      'Trỏ tên miền',
+      'Point the domain',
+      'Tên miền được trỏ về website qua Cloudflare.',
+      'The domain is pointed to the website through Cloudflare.',
+    ),
+    step(
+      'Kiểm tra và đưa lên chính thức',
+      'Check and go live',
+      'Bạn duyệt trên bản thử, sau đó website được đưa lên chính thức.',
+      'You review a test version, then the website goes live.',
+    ),
+    step(
+      'Vận hành hằng ngày',
+      'Day-to-day running',
+      'Hệ thống tự theo dõi và cảnh báo, sao lưu theo lịch và vá bảo mật mỗi tháng.',
+      'The system watches and alerts by itself, backs up on a schedule and applies security patches every month.',
+    ),
+  ],
+  'ten-mien-va-dns': [
+    step(
+      'Chọn tên miền',
+      'Choose the domain',
+      'Bạn chọn tên miền mong muốn, chúng tôi kiểm tra tên còn trống.',
+      'You pick the domain you want and we check that it is available.',
+    ),
+    step(
+      'Đăng ký đứng tên bạn',
+      'Register it in your name',
+      'Tên miền được đăng ký bằng thông tin của bạn.',
+      'The domain is registered with your details.',
+    ),
+    step(
+      'Cấu hình DNS và email',
+      'Set up DNS and email',
+      'Trỏ tên miền về website qua Cloudflare và tạo email theo tên miền nếu gói có.',
+      'We point the domain to the website through Cloudflare and create email on the domain if your package includes it.',
+    ),
+    step(
+      'Gia hạn mỗi năm',
+      'Renew every year',
+      'Phí thu mỗi năm, trước ngày hết hạn, để tên miền không bị gián đoạn.',
+      'The fee is charged yearly, before it expires, so the domain is never interrupted.',
+    ),
+  ],
+  'bao-mat-va-ho-tro': [
+    step(
+      'Bật bảo vệ cho website',
+      'Turn on protection for the website',
+      'Tường lửa và chống quá tải cơ bản được bật ngay khi dựng website.',
+      'The firewall and basic overload protection are turned on when the website is built.',
+    ),
+    step(
+      'Bạn gửi yêu cầu qua một kênh duy nhất',
+      'You send requests through one channel',
+      'Mọi yêu cầu hỗ trợ đi qua cùng một kênh và được ghi lại.',
+      'Every support request goes through the same channel and is logged.',
+    ),
+    step(
+      'Chúng tôi xử lý và ghi lại thời gian',
+      'We handle it and log the time',
+      'Thời gian xử lý được ghi lại để tính vào giờ hỗ trợ của gói.',
+      'The time spent is logged against the support hours of your package.',
+    ),
+    step(
+      'Báo giá riêng khi vượt giờ',
+      'Quote separately beyond the hours',
+      'Việc ngoài phạm vi được báo giá riêng và chỉ làm khi bạn đồng ý.',
+      'Work outside the package is quoted separately and only done once you agree.',
+    ),
+  ],
+};
+
+export const defaultServices = serviceGroups.map(group => ({
+  ...group,
+  process: groupProcess[group.slug.vi] || [],
+}));
