@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal.jsx';
 import { Button } from '../ui/Button.jsx';
 import { Input } from '../ui/Input.jsx';
+import { MediaUploader } from './MediaUploader.jsx';
 import { apiClient } from '../../lib/api-client.js';
 import { Image as ImageIcon, Upload, Check, AlertTriangle } from 'lucide-react';
 
@@ -43,6 +44,7 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, value }) {
     }
 
     onSelect({
+      mediaId: selectedAsset._id,
       publicId: selectedAsset.publicId,
       url: selectedAsset.secureUrl || selectedAsset.url,
       width: selectedAsset.width,
@@ -80,8 +82,8 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, value }) {
             <div>
               <p className="font-bold">Cloudinary chưa được cấu hình</p>
               <p>
-                Dịch vụ lưu trữ media đang ở chế độ chờ cấu hình tài khoản. Bạn có thể tiếp tục nhập
-                URL ảnh thủ công hoặc sử dụng hệ thống mà không cần ảnh (quy tắc P3).
+                Dịch vụ lưu trữ ảnh chưa có thông tin tài khoản nên chưa thể tải ảnh lên. Hãy nhờ
+                quản trị hệ thống điền các biến CLOUDINARY_* trong cấu hình máy chủ.
               </p>
             </div>
           </div>
@@ -103,7 +105,7 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, value }) {
             onClick={() => setActiveTab('upload')}
           >
             <Upload className="w-4 h-4 mr-1.5" />
-            Tải ảnh mới / Nhập URL
+            Tải ảnh từ máy tính
           </Button>
         </div>
 
@@ -154,24 +156,17 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, value }) {
             )}
           </div>
         ) : (
-          <div className="space-y-4 p-4 rounded-xl border border-border bg-surface-raised/40">
-            <p className="text-xs text-fg-muted leading-relaxed">
-              Bạn có thể nhập liên kết ảnh trực tiếp để gán vào mục nội dung này:
-            </p>
-            <Input
-              label="URL hình ảnh"
-              placeholder="https://example.com/image.webp"
-              value={selectedAsset?.url || ''}
-              onChange={e =>
-                setSelectedAsset({
-                  publicId: 'manual-' + Date.now(),
-                  url: e.target.value,
-                  width: 800,
-                  height: 600,
-                })
-              }
-            />
-          </div>
+          <MediaUploader
+            folder="site"
+            onUploaded={async uploaded => {
+              await loadMedia();
+              const newest = uploaded[uploaded.length - 1];
+              setSelectedAsset(newest);
+              setAltVi(newest.alt?.vi || '');
+              setAltEn(newest.alt?.en || '');
+              setActiveTab('library');
+            }}
+          />
         )}
 
         {/* Alt text fields */}

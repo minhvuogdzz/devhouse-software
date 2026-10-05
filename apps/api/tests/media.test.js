@@ -1,9 +1,10 @@
-import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
 import mongoose from 'mongoose';
 import { MediaModel } from '../src/modules/media/media.model.js';
 import { mediaService } from '../src/modules/media/media.service.js';
 import { ProjectModel } from '../src/modules/projects/project.model.js';
 import { config } from '../src/config/index.js';
+import { cloudinary } from '../src/integrations/cloudinary/index.js';
 import { ERROR_CODES } from '@devhouse/shared';
 
 describe('Media Module (M8)', () => {
@@ -65,31 +66,99 @@ describe('Media Module (M8)', () => {
   });
 
   describe('Media Registration & Management', () => {
-    it('registers uploaded asset and prevents duplicate registration', async () => {
-      const mediaData = {
-        publicId: 'devhouse/dev/projects/hero-image-banner-abcd',
-        resourceType: 'image',
-        format: 'png',
-        bytes: 102400,
-        width: 1920,
-        height: 1080,
-        url: 'https://res.cloudinary.com/demo/image/upload/v1/devhouse/dev/projects/hero-image-banner-abcd.png',
-        originalFilename: 'Hero Image Banner.png',
-        title: 'Project Hero Banner',
-        folder: 'projects',
-        alt: { vi: 'Ảnh bìa dự án', en: 'Project cover image' },
-      };
+    const webpAsset = (overrides = {}) => ({
+      public_id: 'devhouse/dev/projects/hero-image-banner-abcd',
+      format: 'webp',
+      bytes: 480_000,
+      width: 1920,
+      height: 1080,
+      version: 1700000000,
+      secure_url:
+        'https://res.cloudinary.com/demo/image/upload/v1700000000/devhouse/dev/projects/hero-image-banner-abcd.webp',
+      ...overrides,
+    });
 
-      const media = await mediaService.registerMedia(mediaData, '507f1f77bcf86cd799439011');
+    const registration = (overrides = {}) => ({
+      publicId: 'devhouse/dev/projects/hero-image-banner-abcd',
+      resourceType: 'image',
+      originalFilename: 'Hero Image Banner.webp',
+      title: 'Project Hero Banner',
+      folder: 'projects',
+      alt: { vi: 'Ảnh bìa dự án', en: 'Project cover image' },
+      ...overrides,
+    });
+
+    beforeEach(() => {
+      config.CLOUDINARY_CLOUD_NAME = 'demo-cloud';
+      config.CLOUDINARY_API_KEY = '1234567890';
+      config.CLOUDINARY_API_SECRET = 'secretkey123';
+      vi.spyOn(cloudinary, 'destroy').mockResolvedValue({ result: 'ok' });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('registers an uploaded asset using the metadata read from Cloudinary', async () => {
+      vi.spyOn(cloudinary, 'fetchResource').mockResolvedValue(webpAsset());
+
+      // The browser claims something different; the server must ignore it.
+      const media = await mediaService.registerMedia(
+        registration({ bytes: 1, width: 1, height: 1, format: 'png' }),
+        '507f1f77bcf86cd799439011',
+      );
       expect(media._id).toBeDefined();
-      expect(media.publicId).toBe(mediaData.publicId);
+      expect(media.publicId).toBe('devhouse/dev/projects/hero-image-banner-abcd');
+      expect(media.format).toBe('webp');
+      expect(media.bytes).toBe(480_000);
       expect(media.width).toBe(1920);
       expect(media.isDeleted).toBe(false);
 
       // Attempt duplicate registration
       await expect(
-        mediaService.registerMedia(mediaData, '507f1f77bcf86cd799439011'),
+        mediaService.registerMedia(registration(), '507f1f77bcf86cd799439011'),
       ).rejects.toThrow();
+    });
+
+    it('rejects an image that is not WebP and removes it from Cloudinary', async () => {
+      vi.spyOn(cloudinary, 'fetchResource').mockResolvedValue(webpAsset({ format: 'png' }));
+
+      await expect(
+        mediaService.registerMedia(registration(), '507f1f77bcf86cd799439011'),
+      ).rejects.toMatchObject({ code: ERROR_CODES.VALIDATION_ERROR });
+      expect(cloudinary.destroy).toHaveBeenCalledOnce();
+      expect(await MediaModel.countDocuments({})).toBe(0);
+    });
+
+    it('rejects an image larger than 1 MB and removes it from Cloudinary', async () => {
+      vi.spyOn(cloudinary, 'fetchResource').mockResolvedValue(webpAsset({ bytes: 1_200_000 }));
+
+      await expect(
+        mediaService.registerMedia(registration(), '507f1f77bcf86cd799439011'),
+      ).rejects.toMatchObject({ code: ERROR_CODES.VALIDATION_ERROR });
+      expect(cloudinary.destroy).toHaveBeenCalledOnce();
+      expect(await MediaModel.countDocuments({})).toBe(0);
+    });
+
+    it('rejects registration when the file does not exist on Cloudinary', async () => {
+      vi.spyOn(cloudinary, 'fetchResource').mockResolvedValue(null);
+
+      await expect(
+        mediaService.registerMedia(registration(), '507f1f77bcf86cd799439011'),
+      ).rejects.toMatchObject({ code: ERROR_CODES.VALIDATION_ERROR });
+    });
+
+    it('rejects registration with 503 when Cloudinary is not configured', async () => {
+      config.CLOUDINARY_API_SECRET = '';
+
+      await expect(
+        mediaService.registerMedia(registration(), '507f1f77bcf86cd799439011'),
+      ).rejects.toMatchObject({ code: ERROR_CODES.MEDIA_NOT_CONFIGURED });
+    });
+
+    it('only signs uploads for WebP files', () => {
+      const sig = mediaService.getUploadSignature({ folder: 'projects', filename: 'a.webp' });
+      expect(sig.params.allowed_formats).toBe('webp');
     });
 
     it('updates media metadata', async () => {
