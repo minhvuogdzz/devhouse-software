@@ -13,8 +13,16 @@ export const MAX_DOTS = 20;
  * the bars stay put wherever the row sits on the page. The slider writes how far the wait has
  * come into `--progress` on `rowRef`; the CSS turns that into the filling bar.
  */
-export function SliderDots({ style, pages, page, onSelect, rowRef, running, label }) {
-  if (style === 'none' || pages < 2) return null;
+export function SliderDots({ style, pages, page, count = 0, onSelect, rowRef, running, label }) {
+  if (style === 'none') return null;
+
+  // Until the slider has measured itself (on the server, and while the page loads) keep the room
+  // the dots will need, so the content below does not jump down when they appear. `count` is how
+  // many items there are; the CSS keeps the room only if they do not all fit on one page.
+  if (pages === 0) {
+    return <div className="slider-dots slider-dots--pending" style={{ '--items': count }} />;
+  }
+  if (pages < 2) return null;
 
   if (pages > MAX_DOTS) {
     return (

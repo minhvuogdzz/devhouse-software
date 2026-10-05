@@ -211,6 +211,12 @@ h6 {
   justify-content: center;
   margin-top: 0.5rem;
 }
+/* Room kept for dots that are not drawn yet: none when everything fits on one page */
+.slider-dots--pending {
+  --needed: clamp(0, var(--items, 0) - var(--per-view, 1), 1);
+  height: calc(var(--needed) * 1.5rem);
+  margin-top: calc(var(--needed) * 0.5rem);
+}
 .slider-dots-row {
   --dot: 0.5rem;
   --cell: 1rem; /* the width one mark takes, including the space around it */

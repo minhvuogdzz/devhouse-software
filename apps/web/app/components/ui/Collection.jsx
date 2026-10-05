@@ -331,6 +331,7 @@ function Slider({ items, config, renderItem, getKey, label, classes, style }) {
         style={slide.dots}
         pages={pages}
         page={page}
+        count={items.length}
         onSelect={goTo}
         rowRef={dotsRef}
         running={running}

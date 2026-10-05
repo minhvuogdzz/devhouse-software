@@ -103,6 +103,15 @@ describe('SliderDots', () => {
     expect(draw({ style: 'dot', pages: 1 })).toBe('');
   });
 
+  it('keeps room for the dots before the slider has measured itself', () => {
+    const html = draw({ style: 'dot', pages: 0, count: 6 });
+    expect(html).toContain('slider-dots--pending');
+    expect(html).toContain('--items:6');
+    expect(html).not.toContain('<button');
+    // dots that are turned off never take room
+    expect(draw({ style: 'none', pages: 0, count: 6 })).toBe('');
+  });
+
   it('draws plain dots, marking the current one', () => {
     const html = draw({ style: 'dot' });
     expect(html).toContain('slider-dots--dot');
