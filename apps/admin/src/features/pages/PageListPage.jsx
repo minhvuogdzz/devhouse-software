@@ -60,7 +60,7 @@ const PAGE_META = {
     publicUrl: '/about',
     icon: Building2,
     summary:
-      'Cấu hình Tiêu đề (Heading), Giới thiệu công ty, 4 Giá trị cốt lõi, Sơ đồ lãnh đạo, Cam kết.',
+      'Giới thiệu công ty, ảnh slide, tầm nhìn, việc công ty làm, giá trị, điều khoản dịch vụ. Bật/tắt từng khối và chọn kiểu hiển thị.',
   },
   contact: {
     group: 'menu',
@@ -91,7 +91,8 @@ const PAGE_META = {
     menuLabel: 'Trang chủ (Home)',
     publicUrl: '/',
     icon: Home,
-    summary: 'Banner Hero, Giới thiệu ngắn, 4 Nhóm dịch vụ, Thống kê, Quy trình làm việc, Đối tác.',
+    summary:
+      'Đầu trang, cam kết, dịch vụ, mẫu website, dành cho ai, gói dịch vụ, quy trình, kêu gọi hành động. Bật/tắt từng khối và chọn kiểu hiển thị.',
   },
   'blog-index': {
     group: 'core',

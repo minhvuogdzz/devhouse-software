@@ -127,9 +127,11 @@ export const contentService = {
       definition: {
         key: pageDef.key,
         title: pageDef.title,
+        overview: Boolean(pageDef.overview),
         sections: pageDef.sections.map(s => ({
           key: s.key,
           label: s.label,
+          summary: s.summary || '',
           fields: s.fields,
         })),
       },

@@ -33,6 +33,7 @@ import {
   ChevronDown,
   X,
   Building2,
+  Home as HomeIcon,
   Phone,
 } from 'lucide-react';
 
@@ -72,6 +73,7 @@ export function AdminShell() {
     {
       title: locale === 'en' ? 'Website Menu Tabs' : 'Các Tab trên Website',
       items: [
+        { to: '/pages/home', label: t('nav.home'), icon: HomeIcon, permission: 'pages:read' },
         { to: '/services', label: t('nav.services'), icon: Layers, permission: 'services:read' },
         {
           to: '/products',
@@ -98,7 +100,7 @@ export function AdminShell() {
           label: t('nav.pages'),
           icon: FileText,
           permission: 'pages:read',
-          except: ['/pages/about', '/pages/contact'],
+          except: ['/pages/home', '/pages/about', '/pages/contact'],
         },
       ],
     },

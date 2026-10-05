@@ -130,6 +130,24 @@ describe('Singleton Content (Pages, Settings, Navigation)', () => {
       expect(res.body.data.resolved.hero).toBeDefined();
     });
 
+    it('tells the admin which pages list their sections with a switch, and what each section is', async () => {
+      const home = await request(app)
+        .get('/api/v1/admin/pages/home')
+        .set('Cookie', [superAdminCookie]);
+      expect(home.body.data.definition.overview).toBe(true);
+      expect(home.body.data.definition.sections.map(s => s.key)).toEqual(
+        PAGE_REGISTRY.home.sections.map(s => s.key),
+      );
+      for (const section of home.body.data.definition.sections) {
+        expect(section.summary.length).toBeGreaterThan(10);
+      }
+
+      const contact = await request(app)
+        .get('/api/v1/admin/pages/contact')
+        .set('Cookie', [superAdminCookie]);
+      expect(contact.body.data.definition.overview).toBe(false);
+    });
+
     it('PUT /api/v1/admin/pages/home updates section overrides and invalidates cache', async () => {
       const customHeading = {
         vi: 'Tiêu đề tuỳ chỉnh mới',

@@ -5,6 +5,7 @@ const translations = {
     nav: {
       dashboard: 'Bảng điều khiển',
       pages: 'Tất cả các trang',
+      home: 'Trang chủ',
       services: 'Dịch vụ',
       products: 'Mẫu website',
       packages: 'Bảng Giá & Gói Cước',
@@ -79,6 +80,7 @@ const translations = {
     nav: {
       dashboard: 'Dashboard',
       pages: 'All Pages',
+      home: 'Home page',
       services: 'Services',
       products: 'Templates',
       packages: 'Pricing & Packages',
