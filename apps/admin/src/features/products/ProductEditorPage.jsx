@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { Star, Play } from 'lucide-react';
-import { isEmbeddableDemoUrl } from '@devhouse/shared';
 import { apiClient } from '../../lib/api-client.js';
 import { ResourceForm } from '../../components/form/ResourceForm.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
 import { ThumbnailsField } from '../../components/form/ThumbnailsField.jsx';
 import { CategorySelect, MultiSelect } from '../../components/form/ReferenceSelect.jsx';
 import { Toggle } from '../../components/form/Toggle.jsx';
+import { RatingStars } from '../../components/form/RatingStars.jsx';
+import { DemoUrlField, isDemoUrlValid } from '../../components/form/DemoUrlField.jsx';
 import { Input } from '../../components/ui/Input.jsx';
 import { Card } from '../../components/ui/Card.jsx';
-import { Button } from '../../components/ui/Button.jsx';
-import { Modal } from '../../components/ui/Modal.jsx';
 
 const EMPTY = {
   name: { vi: '', en: '' },
@@ -30,20 +28,6 @@ const EMPTY = {
   seo: { title: { vi: '', en: '' }, description: { vi: '', en: '' } },
 };
 
-function Stars({ value }) {
-  return (
-    <span className="inline-flex items-center gap-0.5" aria-label={`${value} trên 5 sao`}>
-      {[1, 2, 3, 4, 5].map(n => (
-        <Star
-          key={n}
-          className={`h-4 w-4 ${value >= n - 0.25 ? 'fill-warning text-warning' : 'text-border'}`}
-          aria-hidden="true"
-        />
-      ))}
-    </span>
-  );
-}
-
 export default function ProductEditorPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -55,7 +39,6 @@ export default function ProductEditorPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [isDemoOpen, setIsDemoOpen] = useState(false);
 
   useEffect(() => {
     if (isNew) return;
@@ -87,7 +70,7 @@ export default function ProductEditorPage() {
   }, [id]);
 
   const set = patch => setForm(prev => ({ ...prev, ...patch }));
-  const demoOk = form.demoUrl === '' || isEmbeddableDemoUrl(form.demoUrl);
+  const demoOk = isDemoUrlValid(form.demoUrl);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -248,7 +231,7 @@ export default function ProductEditorPage() {
               value={form.rating}
               onChange={e => set({ rating: e.target.value })}
             />
-            <Stars value={Number(form.rating) || 0} />
+            <RatingStars value={Number(form.rating) || 0} />
           </div>
           <Input
             label="Lượt xem"
@@ -266,30 +249,7 @@ export default function ProductEditorPage() {
           />
         </div>
 
-        <div className="space-y-2">
-          <Input
-            label="Link xem thử (demo)"
-            placeholder="https://demo.tenmien.com"
-            value={form.demoUrl}
-            onChange={e => set({ demoUrl: e.target.value })}
-            error={!demoOk ? 'Link demo phải bắt đầu bằng https://' : undefined}
-            helperText="Khách xem demo ngay trong khung trên website, không bị chuyển sang trang khác."
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            disabled={!form.demoUrl || !demoOk}
-            onClick={() => setIsDemoOpen(true)}
-          >
-            <Play className="mr-1.5 h-3.5 w-3.5" />
-            Kiểm tra xem có hiện được trong khung không
-          </Button>
-          <p className="text-[11px] text-fg-subtle">
-            Một số trang web chặn việc hiển thị trong khung nhúng. Nếu khung bên dưới trống, hãy
-            dùng link khác.
-          </p>
-        </div>
+        <DemoUrlField value={form.demoUrl} onChange={demoUrl => set({ demoUrl })} />
 
         <Toggle
           label="Mẫu nổi bật"
@@ -324,28 +284,6 @@ export default function ProductEditorPage() {
           onChange={description => set({ seo: { ...form.seo, description } })}
         />
       </Card>
-
-      <Modal
-        isOpen={isDemoOpen}
-        onClose={() => setIsDemoOpen(false)}
-        title="Xem thử trong khung"
-        size="xl"
-        footer={
-          <Button variant="secondary" onClick={() => setIsDemoOpen(false)}>
-            Đóng
-          </Button>
-        }
-      >
-        {isDemoOpen && (
-          <iframe
-            title="Xem thử demo"
-            src={form.demoUrl}
-            className="h-[60vh] w-full rounded-lg border border-border bg-surface"
-            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-presentation"
-            referrerPolicy="strict-origin-when-cross-origin"
-          />
-        )}
-      </Modal>
     </ResourceForm>
   );
 }

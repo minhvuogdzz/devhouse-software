@@ -102,6 +102,8 @@ export const createEslintConfig = () => [
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^(_|React)' }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'react/jsx-uses-vars': 'error',
+      // A component that is used but never imported only fails when it is drawn, so catch it here
+      'react/jsx-no-undef': 'error',
     },
   },
   // Feature code in apps/web and apps/admin: disallow raw palette colors

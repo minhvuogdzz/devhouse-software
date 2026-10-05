@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
+import { Button } from '../../components/ui/Button.jsx';
 import { Eye, Trash2 } from 'lucide-react';
 
 export default function ContactRequestListPage() {

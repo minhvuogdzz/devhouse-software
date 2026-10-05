@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router';
 import { Eye, Play, ImageIcon } from 'lucide-react';
 import { resizedImage } from '../../lib/images.js';
 import { Stars } from '../ui/Stars.jsx';
@@ -44,7 +45,14 @@ function useAutoRotate(count, rootRef) {
  * 3 seconds. Hovering (or tapping on a touch screen, or focusing with the keyboard) dims it and
  * shows the category, rating, views and the demo button.
  */
-export function ProductCard({ product, locale, t, onOpenDemo }) {
+export function ProductCard({
+  product,
+  locale,
+  t,
+  onOpenDemo,
+  detailHref = null,
+  detailLabel = '',
+}) {
   const rootRef = useRef(null);
   const [failed, setFailed] = useState(() => new Set());
   // A picture that cannot be loaded is skipped, so the card never shows a broken-image icon
@@ -183,6 +191,16 @@ export function ProductCard({ product, locale, t, onOpenDemo }) {
               <Play className="h-3.5 w-3.5 fill-current" aria-hidden="true" />
               {t('products.viewDemo')}
             </button>
+          )}
+
+          {detailHref && (
+            <Link
+              to={detailHref}
+              onClick={event => event.stopPropagation()}
+              className="flex w-full items-center justify-center rounded-md border border-on-scrim/40 px-3 py-2 text-xs font-semibold text-on-scrim transition-colors hover:bg-on-scrim/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-scrim"
+            >
+              {detailLabel}
+            </Link>
           )}
         </div>
       </div>

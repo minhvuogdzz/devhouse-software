@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { isEmbeddableDemoUrl } from '@devhouse/shared';
+import { imageRefSchema as pictureRefSchema } from '../../core/db/schemas/image-ref.js';
 import { publishablePlugin } from '../../core/db/plugins/publishable.js';
 import { softDeletePlugin } from '../../core/db/plugins/soft-delete.js';
 import { auditablePlugin } from '../../core/db/plugins/auditable.js';
@@ -19,6 +21,14 @@ const imageRefSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const MAX_THUMBNAILS = 3;
+
+/**
+ * A project is set up like a website template: up to three card pictures, an area ("segment")
+ * and a type ("category") managed under Categories, a rating, a view count and a demo link
+ * that opens inside the site. The case-study fields (client, challenge, solution, results) are
+ * optional extras. `coverImage` and `projectUrl` are older fields, kept so existing data still shows.
+ */
 const projectSchema = new mongoose.Schema(
   {
     title: {
@@ -43,11 +53,31 @@ const projectSchema = new mongoose.Schema(
       logo: { type: imageRefSchema, default: () => ({}) },
       isConfidential: { type: Boolean, default: false },
     },
+    thumbnails: {
+      type: [pictureRefSchema],
+      default: [],
+      validate: {
+        validator: value => value.length <= MAX_THUMBNAILS,
+        message: `A project can have at most ${MAX_THUMBNAILS} thumbnails`,
+      },
+    },
+    segment: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', default: null, index: true },
     category: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Category',
       default: null,
       index: true,
+    },
+    rating: { type: Number, default: 0, min: 0, max: 5 },
+    views: { type: Number, default: 0, min: 0 },
+    demoUrl: {
+      type: String,
+      default: '',
+      trim: true,
+      validate: {
+        validator: value => value === '' || isEmbeddableDemoUrl(value),
+        message: 'Demo link must start with https://',
+      },
     },
     services: [
       {
@@ -149,6 +179,7 @@ projectSchema.index(
   { unique: true, partialFilterExpression: { isDeleted: false } },
 );
 projectSchema.index({ category: 1, status: 1, publishedAt: -1 });
+projectSchema.index({ segment: 1, category: 1, order: 1 });
 projectSchema.index({ services: 1, publishedAt: -1 });
 projectSchema.index({ technologies: 1, publishedAt: -1 });
 

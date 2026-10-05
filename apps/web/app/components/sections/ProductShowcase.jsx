@@ -53,7 +53,19 @@ function Chips({ label, allLabel, items, value, onChange }) {
  * The filters live in the address (?segment=...&category=...), so a filtered view can be shared.
  * Opening a demo shows it inside the page; the visitor never leaves the site.
  */
-export function ProductShowcase({ products, locale, prefix, t, filterable = false, empty = null }) {
+export function ProductShowcase({
+  products,
+  locale,
+  prefix,
+  t,
+  filterable = false,
+  empty = null,
+  // Text group for the count, empty and list labels ('products' or 'projects')
+  textKey = 'products',
+  // Optional: where a card's own page is, for items that have one (projects do)
+  detailPath = null,
+  detailLabel = '',
+}) {
   const [params, setParams] = useSearchParams();
   const [activeDemo, setActiveDemo] = useState(null);
 
@@ -114,22 +126,29 @@ export function ProductShowcase({ products, locale, prefix, t, filterable = fals
             onChange={value => update('category', value)}
           />
           <p className="text-xs text-fg-subtle" aria-live="polite">
-            {t('products.count').replace('{count}', String(visible.length))}
+            {t(`${textKey}.count`).replace('{count}', String(visible.length))}
           </p>
         </div>
       )}
 
       {visible.length > 0 ? (
-        <ul className={GRID} aria-label={t('products.listLabel')}>
+        <ul className={GRID} aria-label={t(`${textKey}.listLabel`)}>
           {visible.map(product => (
             <li key={product._id || product.slug}>
-              <ProductCard product={product} locale={locale} t={t} onOpenDemo={setActiveDemo} />
+              <ProductCard
+                product={product}
+                locale={locale}
+                t={t}
+                onOpenDemo={setActiveDemo}
+                detailHref={detailPath ? detailPath(product) : null}
+                detailLabel={detailLabel}
+              />
             </li>
           ))}
         </ul>
       ) : products.length > 0 ? (
         <div className="rounded-xl border border-dashed border-border p-10 text-center space-y-3">
-          <p className="text-sm text-fg-muted">{t('products.noMatch')}</p>
+          <p className="text-sm text-fg-muted">{t(`${textKey}.noMatch`)}</p>
           <button
             type="button"
             onClick={() =>
@@ -137,7 +156,7 @@ export function ProductShowcase({ products, locale, prefix, t, filterable = fals
             }
             className="text-sm font-semibold text-primary hover:underline cursor-pointer"
           >
-            {t('products.clearFilters')}
+            {t(`${textKey}.clearFilters`)}
           </button>
         </div>
       ) : (

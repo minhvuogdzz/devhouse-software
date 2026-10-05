@@ -1,21 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router';
+import { Plus, Edit, Trash2, RotateCcw, Star, Eye, ImageOff, FileText } from 'lucide-react';
 import { apiClient } from '../../lib/api-client.js';
 import { DataTable, StatusBadge } from '../../components/data-table/DataTable.jsx';
 import { Button } from '../../components/ui/Button.jsx';
-import { Badge } from '../../components/ui/Badge.jsx';
-import { Plus, Edit, Trash2, RotateCcw, ShieldCheck, FileText } from 'lucide-react';
+import { Select } from '../../components/ui/Input.jsx';
 
 export default function ProjectListPage() {
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [segmentFilter, setSegmentFilter] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [segments, setSegments] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    loadProjects();
-  }, [pagination.page, statusFilter]);
+    Promise.all([
+      apiClient('/admin/categories?type=project-segment'),
+      apiClient('/admin/categories?type=project'),
+    ])
+      .then(([seg, cat]) => {
+        setSegments(seg.data || []);
+        setCategories(cat.data || []);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(loadProjects, search ? 300 : 0);
+    return () => clearTimeout(timer);
+  }, [pagination.page, statusFilter, segmentFilter, search]);
 
   const loadProjects = async () => {
     try {
@@ -23,7 +39,7 @@ export default function ProjectListPage() {
       let query = `/admin/projects?page=${pagination.page}&limit=10`;
       if (search) query += `&search=${encodeURIComponent(search)}`;
       if (statusFilter !== 'all') query += `&status=${statusFilter}`;
-
+      if (segmentFilter) query += `&segment=${segmentFilter}`;
       const res = await apiClient(query);
       setData(res.data || []);
       setPagination(res.pagination || { page: 1, limit: 10, total: 0, totalPages: 1 });
@@ -34,13 +50,18 @@ export default function ProjectListPage() {
     }
   };
 
+  const nameOf = (list, id) => {
+    const found = list.find(item => item._id === id);
+    return found?.name?.vi || found?.name?.en || '—';
+  };
+
   const handleDelete = async id => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa dự án này?')) return;
+    if (!window.confirm('Xoá dự án này? Bạn có thể khôi phục lại sau.')) return;
     try {
       await apiClient(`/admin/projects/${id}`, { method: 'DELETE' });
       await loadProjects();
     } catch (err) {
-      alert(err.message || 'Lỗi khi xóa dự án');
+      alert(err.message || 'Lỗi khi xoá dự án');
     }
   };
 
@@ -55,30 +76,55 @@ export default function ProjectListPage() {
 
   const columns = [
     {
-      header: 'Tên dự án',
+      header: 'Dự án',
       key: 'title',
       render: row => (
-        <div>
-          <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-3">
+          <div className="h-14 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-surface-sunken">
+            {row.thumbnails?.[0]?.url ? (
+              <img src={row.thumbnails[0].url} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-fg-subtle">
+                <ImageOff className="h-4 w-4" aria-hidden="true" />
+              </div>
+            )}
+          </div>
+          <div>
             <Link
               to={`/projects/${row._id}`}
-              className="font-bold text-fg hover:text-primary transition-colors text-xs"
+              className="text-xs font-bold text-fg transition-colors hover:text-primary"
             >
               {row.title?.vi || row.title?.en || '—'}
             </Link>
-            {row.client?.isConfidential && (
-              <Badge
-                variant="secondary"
-                className="text-[10px] py-0 px-1.5 flex items-center gap-0.5"
-              >
-                <ShieldCheck className="w-3 h-3 text-fg-subtle" />
-                Bảo mật
-              </Badge>
-            )}
+            <span className="block text-[11px] text-fg-subtle">
+              {row.locales?.includes('en') ? 'VI + EN' : 'Chỉ có tiếng Việt'}
+            </span>
           </div>
-          <span className="block text-[11px] text-fg-subtle">
-            Khách hàng:{' '}
-            {row.client?.isConfidential ? 'Khách hàng bảo mật' : row.client?.name || '—'}
+        </div>
+      ),
+    },
+    {
+      header: 'Mảng / Thể loại',
+      key: 'taxonomy',
+      render: row => (
+        <div className="text-xs">
+          <span className="block font-semibold text-fg">{nameOf(segments, row.segment)}</span>
+          <span className="block text-fg-subtle">{nameOf(categories, row.category)}</span>
+        </div>
+      ),
+    },
+    {
+      header: 'Đánh giá / Lượt xem',
+      key: 'stats',
+      render: row => (
+        <div className="space-y-0.5 text-xs tabular-nums text-fg-muted">
+          <span className="flex items-center gap-1">
+            <Star className="h-3.5 w-3.5 text-warning" aria-hidden="true" />
+            {Number(row.rating || 0).toFixed(1)}
+          </span>
+          <span className="flex items-center gap-1">
+            <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+            {Number(row.views || 0).toLocaleString('vi-VN')}
           </span>
         </div>
       ),
@@ -91,7 +137,7 @@ export default function ProjectListPage() {
     {
       header: 'Thứ tự',
       key: 'order',
-      render: row => <span className="tabular-nums text-xs">{row.order ?? 0}</span>,
+      render: row => <span className="text-xs tabular-nums">{row.order ?? 0}</span>,
     },
     {
       header: 'Thao tác',
@@ -101,16 +147,27 @@ export default function ProjectListPage() {
         <div className="flex items-center justify-end gap-1.5">
           {row.isDeleted ? (
             <Button variant="outline" size="sm" onClick={() => handleRestore(row._id)}>
-              <RotateCcw className="w-3.5 h-3.5 mr-1" />
+              <RotateCcw className="mr-1 h-3.5 w-3.5" />
               Khôi phục
             </Button>
           ) : (
             <>
-              <Button as={Link} to={`/projects/${row._id}`} variant="outline" size="sm">
-                <Edit className="w-3.5 h-3.5" />
+              <Button
+                as={Link}
+                to={`/projects/${row._id}`}
+                variant="outline"
+                size="sm"
+                aria-label="Chỉnh sửa"
+              >
+                <Edit className="h-3.5 w-3.5" />
               </Button>
-              <Button variant="danger" size="sm" onClick={() => handleDelete(row._id)}>
-                <Trash2 className="w-3.5 h-3.5" />
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => handleDelete(row._id)}
+                aria-label="Xoá"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
               </Button>
             </>
           )}
@@ -121,23 +178,20 @@ export default function ProjectListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4">
+      <div className="flex flex-col justify-between gap-4 border-b border-border pb-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">
-            Quản lý Dự án & Case Study
-          </h1>
-          <p className="text-xs text-fg-muted mt-1">
-            Các dự án phần mềm doanh nghiệp, năng lực triển khai thực tế và kết quả đo lường được.
+          <h1 className="font-display text-2xl font-bold tracking-tight text-fg">Dự án</h1>
+          <p className="mt-1 text-xs text-fg-muted">
+            Các thẻ dự án hiện ở trang Dự án: ảnh, thể loại, đánh giá, lượt xem và bản xem thử.
           </p>
         </div>
-
         <div className="flex flex-wrap items-center gap-2">
           <Button as={Link} to="/pages/projects-index" variant="outline" size="md">
-            <FileText className="w-4 h-4 mr-1.5" />
+            <FileText className="mr-1.5 h-4 w-4" />
             Sửa tiêu đề & giới thiệu trang
           </Button>
           <Button as={Link} to="/projects/new" variant="primary" size="md">
-            <Plus className="w-4 h-4 mr-1.5" />
+            <Plus className="mr-1.5 h-4 w-4" />
             Thêm dự án mới
           </Button>
         </div>
@@ -148,17 +202,43 @@ export default function ProjectListPage() {
         data={data}
         isLoading={isLoading}
         search={search}
-        onSearchChange={setSearch}
+        onSearchChange={value => {
+          setSearch(value);
+          setPagination(prev => ({ ...prev, page: 1 }));
+        }}
         pagination={pagination}
         onPageChange={page => setPagination(prev => ({ ...prev, page }))}
         statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
+        onStatusFilterChange={value => {
+          setStatusFilter(value);
+          setPagination(prev => ({ ...prev, page: 1 }));
+        }}
         statusOptions={[
           { label: 'Tất cả', value: 'all' },
           { label: 'Bản nháp', value: 'draft' },
           { label: 'Đã xuất bản', value: 'published' },
           { label: 'Lưu trữ', value: 'archived' },
         ]}
+        extraFilters={
+          <div className="w-44">
+            <Select
+              aria-label="Lọc theo mảng"
+              value={segmentFilter}
+              onChange={e => {
+                setSegmentFilter(e.target.value);
+                setPagination(prev => ({ ...prev, page: 1 }));
+              }}
+            >
+              <option value="">Mọi mảng</option>
+              {segments.map(segment => (
+                <option key={segment._id} value={segment._id}>
+                  {segment.name?.vi || segment.name?.en}
+                </option>
+              ))}
+            </Select>
+          </div>
+        }
+        emptyMessage="Chưa có dự án nào. Bấm “Thêm dự án mới” để tạo dự án đầu tiên."
       />
     </div>
   );

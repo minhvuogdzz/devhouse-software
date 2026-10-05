@@ -30,7 +30,8 @@ export default function CategoryManagerPage() {
     { id: 'product-segment', label: 'Mẫu website: Mảng' },
     { id: 'product', label: 'Mẫu website: Thể loại' },
     { id: 'solution', label: 'Giải pháp' },
-    { id: 'project', label: 'Dự án' },
+    { id: 'project-segment', label: 'Dự án: Mảng' },
+    { id: 'project', label: 'Dự án: Thể loại' },
     { id: 'technology', label: 'Công nghệ' },
   ];
 

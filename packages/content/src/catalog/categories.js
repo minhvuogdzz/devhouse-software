@@ -145,25 +145,85 @@ export const defaultCategories = [
     order: 4,
   },
 
-  // Project categories
+  // Project segments ("mảng"): the broad area a project belongs to
+  {
+    type: 'project-segment',
+    slug: { vi: 'website', en: 'website' },
+    name: { vi: 'Website', en: 'Website' },
+    description: { vi: 'Website đã thực hiện.', en: 'Websites we have built.' },
+    order: 1,
+  },
+  {
+    type: 'project-segment',
+    slug: { vi: 'theme-shopify', en: 'shopify-theme' },
+    name: { vi: 'Theme Shopify', en: 'Shopify theme' },
+    description: { vi: 'Giao diện cho cửa hàng Shopify.', en: 'Themes for Shopify stores.' },
+    order: 2,
+  },
+  {
+    type: 'project-segment',
+    slug: { vi: 'game', en: 'game' },
+    name: { vi: 'Game', en: 'Games' },
+    description: {
+      vi: 'Trò chơi chơi thử ngay trên trình duyệt.',
+      en: 'Games you can try in the browser.',
+    },
+    order: 3,
+  },
+  {
+    type: 'project-segment',
+    slug: { vi: 'ung-dung', en: 'app' },
+    name: { vi: 'Ứng dụng', en: 'Apps' },
+    description: {
+      vi: 'Ứng dụng xem thử ngay trên trình duyệt.',
+      en: 'Apps you can try in the browser.',
+    },
+    order: 4,
+  },
+
+  // Project categories ("thể loại"): the kind of site a project is
   {
     type: 'project',
-    slug: { vi: 'phan-mem-quan-tri', en: 'enterprise-software' },
-    name: { vi: 'Phần mềm Quản trị', en: 'Enterprise Software' },
-    description: {
-      vi: 'Hệ thống ERP, CRM và công cụ điều hành tác nghiệp.',
-      en: 'Internal operations, ERP, and resource planning suites.',
-    },
+    slug: { vi: 'website-ban-hang', en: 'online-store' },
+    name: { vi: 'Website bán hàng', en: 'Online store' },
+    description: { vi: 'Bán sản phẩm trực tuyến.', en: 'Sell products online.' },
     order: 1,
   },
   {
     type: 'project',
-    slug: { vi: 'ung-dung-thuong-mai', en: 'digital-platforms' },
-    name: { vi: 'Nền tảng Số & Thương mại', en: 'Digital Platforms' },
+    slug: { vi: 'landing-page', en: 'landing-page' },
+    name: { vi: 'Landing page', en: 'Landing page' },
     description: {
-      vi: 'Các nền tảng dịch vụ số và ứng dụng kinh doanh trực tuyến.',
-      en: 'Scalable customer portals and digital service platforms.',
+      vi: 'Một trang giới thiệu gọn, tập trung vào hành động.',
+      en: 'A focused single page.',
     },
     order: 2,
+  },
+  {
+    type: 'project',
+    slug: { vi: 'website-gioi-thieu', en: 'business-website' },
+    name: { vi: 'Website giới thiệu doanh nghiệp', en: 'Business website' },
+    description: {
+      vi: 'Giới thiệu công ty và dịch vụ.',
+      en: 'Present a company and its services.',
+    },
+    order: 3,
+  },
+  {
+    type: 'project',
+    slug: { vi: 'quan-an-do-uong', en: 'food-and-drink' },
+    name: { vi: 'Quán ăn và đồ uống', en: 'Food and drink' },
+    description: { vi: 'Thực đơn điện tử và đặt bàn.', en: 'Digital menus and bookings.' },
+    order: 4,
+  },
+  {
+    type: 'project',
+    slug: { vi: 'do-an-sinh-vien', en: 'student-project' },
+    name: { vi: 'Đồ án sinh viên', en: 'Student project' },
+    description: {
+      vi: 'Website cho đồ án và dự án cá nhân.',
+      en: 'Websites for course and personal projects.',
+    },
+    order: 5,
   },
 ];

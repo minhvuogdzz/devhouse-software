@@ -39,6 +39,8 @@ export const categoryController = {
           count = await ProductModel.countDocuments({ segment: cat._id, isDeleted: false });
         } else if (cat.type === 'project') {
           count = await ProjectModel.countDocuments({ category: cat._id, isDeleted: false });
+        } else if (cat.type === 'project-segment') {
+          count = await ProjectModel.countDocuments({ segment: cat._id, isDeleted: false });
         } else if (cat.type === 'technology') {
           count = await TechnologyModel.countDocuments({
             $or: [{ category: cat._id }, { categorySlug: cat.slug?.vi }],
@@ -117,7 +119,10 @@ export const categoryController = {
     // In-use check
     const [serviceCount, projectCount, techCount, productCount] = await Promise.all([
       ServiceModel.countDocuments({ category: id, isDeleted: false }),
-      ProjectModel.countDocuments({ category: id, isDeleted: false }),
+      ProjectModel.countDocuments({
+        $or: [{ category: id }, { segment: id }],
+        isDeleted: false,
+      }),
       TechnologyModel.countDocuments({
         $or: [{ category: id }, { categorySlug: existing.slug?.vi }],
         isDeleted: false,

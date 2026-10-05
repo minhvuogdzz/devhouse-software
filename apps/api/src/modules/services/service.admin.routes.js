@@ -13,6 +13,11 @@ serviceAdminRoutes.post(
   ...validateBody(ServiceSchema),
   serviceController.adminCreate,
 );
+serviceAdminRoutes.patch(
+  '/reorder',
+  requirePermission('services:update'),
+  serviceController.adminReorder,
+);
 serviceAdminRoutes.get('/:id', requirePermission('services:read'), serviceController.adminGetById);
 serviceAdminRoutes.patch(
   '/:id',
@@ -24,11 +29,6 @@ serviceAdminRoutes.patch(
   '/:id/status',
   requirePermission('services:publish'),
   serviceController.adminUpdateStatus,
-);
-serviceAdminRoutes.patch(
-  '/reorder',
-  requirePermission('services:update'),
-  serviceController.adminReorder,
 );
 serviceAdminRoutes.delete(
   '/:id',

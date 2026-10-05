@@ -1,14 +1,17 @@
 import { z } from 'zod';
 import { isEmbeddableDemoUrl } from '../utils/url.js';
-import {
-  LocalizedStringSchema,
-  LocalizedSlugSchema,
-  ImageRefSchema,
-  SeoMetadataSchema,
-} from './common.js';
+import { LocalizedStringSchema, LocalizedSlugSchema, SeoMetadataSchema } from './common.js';
 
 export const CategorySchema = z.object({
-  type: z.enum(['service', 'solution', 'project', 'technology', 'product', 'product-segment']),
+  type: z.enum([
+    'service',
+    'solution',
+    'project',
+    'project-segment',
+    'technology',
+    'product',
+    'product-segment',
+  ]),
   name: LocalizedStringSchema,
   slug: LocalizedSlugSchema,
   description: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
@@ -35,32 +38,6 @@ export const SolutionSchema = z.object({
   order: z.number().int().default(0),
   services: z.array(z.string()).default([]),
   technologies: z.array(z.string()).default([]),
-  status: z.enum(['draft', 'published', 'archived']).default('draft'),
-  publishedAt: z.coerce.date().optional().nullable(),
-  seo: SeoMetadataSchema.optional().default({}),
-});
-
-export const ProjectSchema = z.object({
-  title: LocalizedStringSchema,
-  slug: LocalizedSlugSchema,
-  client: z.string().default(''),
-  clientIndustry: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
-  summary: LocalizedStringSchema,
-  challenge: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
-  solution: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
-  outcomes: z
-    .array(
-      z.object({
-        metric: z.string().default(''),
-        label: LocalizedStringSchema,
-      }),
-    )
-    .default([]),
-  services: z.array(z.string()).default([]),
-  technologies: z.array(z.string()).default([]),
-  thumbnail: ImageRefSchema.optional().default({ publicId: '', url: '' }),
-  featured: z.boolean().default(false),
-  order: z.number().int().default(0),
   status: z.enum(['draft', 'published', 'archived']).default('draft'),
   publishedAt: z.coerce.date().optional().nullable(),
   seo: SeoMetadataSchema.optional().default({}),
@@ -118,6 +95,60 @@ export const ProductSchema = z.object({
 });
 
 export const ProductUpdateSchema = ProductSchema.partial();
+
+/**
+ * Project (admin: "Dự án"). It is set up like a website template (card pictures, area, type,
+ * rating, views, demo link) and may also carry an optional case study (client, challenge,
+ * solution, results).
+ */
+export const ProjectSchema = z.object({
+  title: LocalizedRequiredViSchema,
+  slug: OptionalLocalizedSlugSchema,
+  shortDescription: LocalizedStringSchema.default({ vi: '', en: '' }),
+  description: LocalizedStringSchema.default({ vi: '', en: '' }),
+  thumbnails: z.array(ProductThumbnailSchema).max(3, 'At most 3 thumbnails').default([]),
+  segment: ObjectIdString.nullable().default(null),
+  category: ObjectIdString.nullable().default(null),
+  rating: z.number().min(0, 'Rating is 0 to 5').max(5, 'Rating is 0 to 5').default(0),
+  views: z.number().int().min(0).default(0),
+  demoUrl: z
+    .string()
+    .trim()
+    .refine(value => value === '' || isEmbeddableDemoUrl(value), {
+      message: 'Demo link must start with https://',
+    })
+    .default(''),
+  client: z
+    .object({
+      name: z.string().default(''),
+      industry: LocalizedStringSchema.default({ vi: '', en: '' }),
+      country: z.string().default(''),
+      isConfidential: z.boolean().default(false),
+    })
+    .default({}),
+  challenge: LocalizedStringSchema.default({ vi: '', en: '' }),
+  solution: LocalizedStringSchema.default({ vi: '', en: '' }),
+  results: z
+    .array(
+      z.object({
+        label: LocalizedStringSchema.default({ vi: '', en: '' }),
+        value: LocalizedStringSchema.default({ vi: '', en: '' }),
+        description: LocalizedStringSchema.default({ vi: '', en: '' }),
+      }),
+    )
+    .max(12)
+    .default([]),
+  services: z.array(ObjectIdString).default([]),
+  technologies: z.array(ObjectIdString).default([]),
+  isFeatured: z.boolean().default(false),
+  order: z.number().int().default(0),
+  status: z.enum(['draft', 'published', 'archived']).optional(),
+  publishedAt: z.coerce.date().nullable().optional(),
+  seo: SeoMetadataSchema.optional(),
+  updatedAt: z.string().optional(),
+});
+
+export const ProjectUpdateSchema = ProjectSchema.partial();
 
 const MoneySchema = z.number().min(0).nullable();
 

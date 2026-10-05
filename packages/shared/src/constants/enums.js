@@ -13,6 +13,7 @@ export const CATEGORY_TYPES = {
   TECHNOLOGY: 'technology',
   PRODUCT: 'product',
   PRODUCT_SEGMENT: 'product-segment',
+  PROJECT_SEGMENT: 'project-segment',
 };
 
 export const CATEGORY_TYPE_LIST = Object.values(CATEGORY_TYPES);

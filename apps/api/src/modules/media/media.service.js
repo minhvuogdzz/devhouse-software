@@ -202,7 +202,7 @@ export const mediaService = {
       usages.push({
         resourceType: 'service',
         id: s._id.toString(),
-        label: s.title?.vi || s.title?.en || s.slug?.vi,
+        label: s.name?.vi || s.name?.en || s.slug?.vi,
         path: `/services/${s.slug?.vi}`,
       });
     }
@@ -244,6 +244,8 @@ export const mediaService = {
     const projects = await ProjectModel.find({
       isDeleted: false,
       $or: [
+        { 'thumbnails.mediaId': mediaIdStr },
+        { 'thumbnails.publicId': publicId },
         { 'coverImage.mediaId': mediaIdStr },
         { 'coverImage.publicId': publicId },
         { 'gallery.mediaId': mediaIdStr },

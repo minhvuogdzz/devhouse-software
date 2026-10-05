@@ -37,6 +37,11 @@ export async function apiClient(endpoint, options = {}) {
       );
     }
 
+    // Lists carry their paging details in `meta.pagination`; pages read `response.pagination`
+    if (data?.meta?.pagination && data.pagination === undefined) {
+      data.pagination = data.meta.pagination;
+    }
+
     return data;
   } catch (err) {
     if (err instanceof ApiError) throw err;
