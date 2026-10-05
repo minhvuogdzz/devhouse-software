@@ -37,8 +37,15 @@ export async function runSeeds() {
 
     // Roles created by an earlier release gain the permissions added since, exactly once.
     // Nothing is ever removed, so changes an admin made to a role are kept.
+    // A role created before this field existed has no revision at all, which counts as the oldest.
     await RoleModel.updateOne(
-      { key: role.key, seedRevision: { $lt: SEEDED_ROLES_REVISION } },
+      {
+        key: role.key,
+        $or: [
+          { seedRevision: { $exists: false } },
+          { seedRevision: { $lt: SEEDED_ROLES_REVISION } },
+        ],
+      },
       {
         $addToSet: { permissions: { $each: role.permissions } },
         $set: { seedRevision: SEEDED_ROLES_REVISION },

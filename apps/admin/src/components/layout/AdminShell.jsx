@@ -36,6 +36,17 @@ import {
   Phone,
 } from 'lucide-react';
 
+/**
+ * Whether a sidebar entry is the screen being shown. Some entries start with the same path
+ * (/pages and /pages/about, /blog and /blog/tags), so an entry can list the paths that belong to
+ * another entry (`except`) or say which part of the address it covers (`activeFor`).
+ */
+export function isCurrentNavItem(item, pathname) {
+  const inside = path => pathname === path || pathname.startsWith(`${path}/`);
+  if (!inside(item.activeFor || item.to)) return false;
+  return !(item.except || []).some(inside);
+}
+
 export function AdminShell() {
   const { user, permissions, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
@@ -76,8 +87,19 @@ export function AdminShell() {
         },
         { to: '/projects', label: t('nav.projects'), icon: Briefcase, permission: 'projects:read' },
         { to: '/pages/about', label: t('nav.about'), icon: Building2, permission: 'pages:read' },
-        { to: '/pages/contact', label: t('nav.contactPage'), icon: Phone, permission: 'pages:read' },
-        { to: '/pages', label: t('nav.pages'), icon: FileText, permission: 'pages:read' },
+        {
+          to: '/pages/contact',
+          label: t('nav.contactPage'),
+          icon: Phone,
+          permission: 'pages:read',
+        },
+        {
+          to: '/pages',
+          label: t('nav.pages'),
+          icon: FileText,
+          permission: 'pages:read',
+          except: ['/pages/about', '/pages/contact'],
+        },
       ],
     },
     {
@@ -85,11 +107,18 @@ export function AdminShell() {
       items: [
         {
           to: '/categories/product-segment',
+          activeFor: '/categories',
           label: t('nav.categories'),
           icon: FolderTree,
           permission: 'categories:read',
         },
-        { to: '/blog', label: t('nav.blog'), icon: BookOpen, permission: 'blog:read' },
+        {
+          to: '/blog',
+          label: t('nav.blog'),
+          icon: BookOpen,
+          permission: 'blog:read',
+          except: ['/blog/tags', '/blog/authors'],
+        },
         { to: '/blog/tags', label: t('nav.tags'), icon: Tag, permission: 'tags:read' },
         {
           to: '/blog/authors',
@@ -167,23 +196,22 @@ export function AdminShell() {
             <div className="space-y-0.5">
               {visibleItems.map(item => {
                 const Icon = item.icon;
+                const active = isCurrentNavItem(item, location.pathname);
                 return (
-                  <NavLink
+                  <Link
                     key={item.to}
                     to={item.to}
-                    end={item.end}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={({ isActive }) =>
-                      `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                        isActive
-                          ? 'bg-primary text-primary-fg shadow-xs'
-                          : 'text-fg-muted hover:text-fg hover:bg-surface-sunken'
-                      }`
-                    }
+                    aria-current={active ? 'page' : undefined}
+                    className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                      active
+                        ? 'bg-primary text-primary-fg shadow-xs'
+                        : 'text-fg-muted hover:text-fg hover:bg-surface-sunken'
+                    }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                     <span>{item.label}</span>
-                  </NavLink>
+                  </Link>
                 );
               })}
             </div>

@@ -105,6 +105,7 @@ describe('Products, packages and service groups', () => {
         '/services',
         '/packages',
         '/products',
+        '/projects',
         '/#process',
         '/about',
         '/contact',
@@ -126,6 +127,16 @@ describe('Products, packages and service groups', () => {
       );
       await runSeeds();
       let after = await RoleModel.findOne({ key: 'editor' });
+      expect(after.permissions).toContain('products:read');
+      expect(after.seedRevision).toBeGreaterThanOrEqual(2);
+
+      // A role from before revisions existed has no revision field at all: it catches up too.
+      await RoleModel.updateOne(
+        { key: 'editor' },
+        { $unset: { seedRevision: 1 }, $pull: { permissions: 'products:read' } },
+      );
+      await runSeeds();
+      after = await RoleModel.findOne({ key: 'editor' });
       expect(after.permissions).toContain('products:read');
       expect(after.seedRevision).toBeGreaterThanOrEqual(2);
 

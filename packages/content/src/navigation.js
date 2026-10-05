@@ -25,24 +25,31 @@ export const defaultNavigation = {
       visible: true,
     },
     {
+      id: 'projects',
+      label: { vi: 'Dự án', en: 'Projects' },
+      path: '/projects',
+      order: 4,
+      visible: true,
+    },
+    {
       id: 'process',
       label: { vi: 'Quy trình', en: 'How we work' },
       path: '/#process',
-      order: 4,
+      order: 5,
       visible: true,
     },
     {
       id: 'about',
       label: { vi: 'Về Dev House', en: 'About Dev House' },
       path: '/about',
-      order: 5,
+      order: 6,
       visible: true,
     },
     {
       id: 'contact',
       label: { vi: 'Liên hệ', en: 'Contact' },
       path: '/contact',
-      order: 6,
+      order: 7,
       visible: true,
     },
   ],
@@ -53,19 +60,19 @@ export const defaultNavigation = {
         links: [
           {
             label: { vi: 'Thiết kế website & Shopify', en: 'Website & Shopify Design' },
-            path: '/services',
+            path: '/services/thiet-ke-website',
           },
           {
             label: { vi: 'Hạ tầng Cloud & DevSecOps', en: 'Cloud & DevSecOps' },
-            path: '/services',
+            path: '/services/may-chu-va-ha-tang-dam-may',
           },
           {
             label: { vi: 'Tên miền và DNS', en: 'Domain and DNS' },
-            path: '/services',
+            path: '/services/ten-mien-va-dns',
           },
           {
             label: { vi: 'Bảo mật và hỗ trợ định kỳ', en: 'Security & Maintenance' },
-            path: '/services',
+            path: '/services/bao-mat-va-ho-tro',
           },
         ],
       },
