@@ -65,10 +65,18 @@ describe('Catalog Modules (Services, Solutions, Projects, Technologies, Categori
       expect(res.status).toBe(200);
       const items = res.body.data;
       expect(items.length).toBeGreaterThan(0);
-      
+
       const first = items[0];
-      const restrictedFields = ['__v', 'createdBy', 'updatedBy', 'isDeleted', 'deletedAt', 'deletedBy', 'passwordHash'];
-      
+      const restrictedFields = [
+        '__v',
+        'createdBy',
+        'updatedBy',
+        'isDeleted',
+        'deletedAt',
+        'deletedBy',
+        'passwordHash',
+      ];
+
       restrictedFields.forEach(field => {
         expect(first).not.toHaveProperty(field);
       });

@@ -57,11 +57,7 @@ export const contactService = {
 
         if (!s) {
           s = await ServiceModel.findOne({
-            $or: [
-              { 'slug.vi': rawService },
-              { 'slug.en': rawService },
-              { slug: rawService },
-            ],
+            $or: [{ 'slug.vi': rawService }, { 'slug.en': rawService }, { slug: rawService }],
           }).lean();
         }
 

@@ -18,7 +18,7 @@ export async function loader({ params, request }) {
     return {
       post: res.data,
       url: request.url,
-    locale,
+      locale,
       slug,
     };
   } catch {
@@ -63,9 +63,22 @@ export function meta({ data }) {
   const p = data.post;
   const title = `${p.title} — Dev House Software`;
   const description = p.summary || p.excerpt || '';
-  const jsonLd = { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: p.createdAt || p.publishedAt };
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    datePublished: p.createdAt || p.publishedAt,
+  };
 
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article', jsonLd });
+  return generateSeoMeta({
+    title,
+    description,
+    url: data?.url,
+    locale: data?.locale,
+    type: 'article',
+    jsonLd,
+  });
 }
 
 export default function BlogPostPage() {

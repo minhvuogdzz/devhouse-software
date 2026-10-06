@@ -18,9 +18,13 @@ async function main() {
   console.log('Current SMTP Configuration:');
   console.log(`  - SMTP_HOST:     ${config.SMTP_HOST || '(auto: smtp.gmail.com)'}`);
   console.log(`  - SMTP_PORT:     ${config.SMTP_PORT}`);
-  console.log(`  - SMTP_SECURE:   ${config.SMTP_SECURE !== undefined ? config.SMTP_SECURE : (config.SMTP_PORT === 465 ? 'true (auto SSL)' : 'false')}`);
+  console.log(
+    `  - SMTP_SECURE:   ${config.SMTP_SECURE !== undefined ? config.SMTP_SECURE : config.SMTP_PORT === 465 ? 'true (auto SSL)' : 'false'}`,
+  );
   console.log(`  - SMTP_USER:     ${config.SMTP_USER || '(NOT CONFIGURED)'}`);
-  console.log(`  - SMTP_PASSWORD: ${config.SMTP_PASSWORD ? '•••••••••••••••• (' + config.SMTP_PASSWORD.length + ' chars)' : '(NOT CONFIGURED)'}`);
+  console.log(
+    `  - SMTP_PASSWORD: ${config.SMTP_PASSWORD ? '•••••••••••••••• (' + config.SMTP_PASSWORD.length + ' chars)' : '(NOT CONFIGURED)'}`,
+  );
   console.log(`  - MAIL_FROM:     ${config.MAIL_FROM}`);
   console.log(`  - NOTIFY_TO:     ${config.CONTACT_NOTIFY_TO}\n`);
 
@@ -44,8 +48,12 @@ async function main() {
   if (!verifyResult.verified) {
     console.error(`❌ SMTP Connection Failed: ${verifyResult.error}\n`);
     console.error('Troubleshooting Tips:');
-    console.error('  - If "EAUTH" or "Invalid login": Ensure you are using a 16-character Google App Password, NOT your regular Gmail password.');
-    console.error('  - If "ETIMEDOUT" or "ECONNREFUSED": Port may be blocked by your server/VPS firewall. Try port 465 (SSL) or 587 (TLS).');
+    console.error(
+      '  - If "EAUTH" or "Invalid login": Ensure you are using a 16-character Google App Password, NOT your regular Gmail password.',
+    );
+    console.error(
+      '  - If "ETIMEDOUT" or "ECONNREFUSED": Port may be blocked by your server/VPS firewall. Try port 465 (SSL) or 587 (TLS).',
+    );
     process.exit(1);
   }
 

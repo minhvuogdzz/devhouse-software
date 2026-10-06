@@ -28,14 +28,20 @@ export async function loader({ request }) {
 
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
-    const title = isEn
-        ? 'Privacy Policy — Dev House Software'
-        : 'Chính sách Bảo mật Thông tin — Dev House Software';
+  const title = isEn
+    ? 'Privacy Policy — Dev House Software'
+    : 'Chính sách Bảo mật Thông tin — Dev House Software';
   const description = isEn
-        ? 'Read our commitments and guidelines on safeguarding your personal and business data.'
-        : 'Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Dev House Software.';
+    ? 'Read our commitments and guidelines on safeguarding your personal and business data.'
+    : 'Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Dev House Software.';
 
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'website' });
+  return generateSeoMeta({
+    title,
+    description,
+    url: data?.url,
+    locale: data?.locale,
+    type: 'website',
+  });
 }
 
 export default function PrivacyPage() {

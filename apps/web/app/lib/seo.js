@@ -1,6 +1,13 @@
-export function generateSeoMeta({ title, description, url, locale, type = 'website', jsonLd = null }) {
+export function generateSeoMeta({
+  title,
+  description,
+  url,
+  locale,
+  type = 'website',
+  jsonLd = null,
+}) {
   const isEn = locale === 'en';
-  
+
   let baseUrl = 'https://devhouse.vn';
   let pathname = '/';
   if (url) {
@@ -36,7 +43,7 @@ export function generateSeoMeta({ title, description, url, locale, type = 'websi
 
   if (jsonLd) {
     tags.push({
-      'script:ld+json': jsonLd
+      'script:ld+json': jsonLd,
     });
   }
 

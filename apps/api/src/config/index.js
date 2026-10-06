@@ -33,11 +33,11 @@ const configSchema = z.object({
 
   SMTP_HOST: z.string().optional().default(''),
   SMTP_PORT: z.coerce.number().int().default(587),
-  SMTP_SECURE: z
-    .preprocess(
-      val => (val === 'true' || val === true ? true : val === 'false' || val === false ? false : undefined),
-      z.boolean().optional(),
-    ),
+  SMTP_SECURE: z.preprocess(
+    val =>
+      val === 'true' || val === true ? true : val === 'false' || val === false ? false : undefined,
+    z.boolean().optional(),
+  ),
   SMTP_USER: z.string().optional().default(''),
   SMTP_PASSWORD: z.string().optional().default(''),
   MAIL_FROM: z.string().default('Dev House Software <devhousesoftware.inc@gmail.com>'),

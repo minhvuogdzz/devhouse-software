@@ -8,8 +8,7 @@ function resolveSmtpOptions() {
   const host =
     config.SMTP_HOST || (config.SMTP_USER?.includes('@gmail.com') ? 'smtp.gmail.com' : '');
   const port = Number(config.SMTP_PORT) || 587;
-  const secure =
-    config.SMTP_SECURE !== undefined ? Boolean(config.SMTP_SECURE) : port === 465;
+  const secure = config.SMTP_SECURE !== undefined ? Boolean(config.SMTP_SECURE) : port === 465;
 
   return {
     host,

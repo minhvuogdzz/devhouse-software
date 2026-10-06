@@ -140,12 +140,15 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
       }
     } catch {
       // Reliable fallback: Cool & Cloudy Hanoi weather
-      const fallbackCondition = determineAccurateCondition({
-        weather_code: 3,
-        temperature_2m: 24,
-        cloud_cover: 90,
-        rain: 0,
-      }, locale);
+      const fallbackCondition = determineAccurateCondition(
+        {
+          weather_code: 3,
+          temperature_2m: 24,
+          cloud_cover: 90,
+          rain: 0,
+        },
+        locale,
+      );
 
       setWeather({
         temp: 24,
@@ -183,7 +186,7 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
         () => {
           // Keep Hanoi coordinates on denial
         },
-        { timeout: 6000 }
+        { timeout: 6000 },
       );
     }
   }, [locale]);
@@ -212,7 +215,9 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
         className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-surface/85 hover:bg-surface border border-border backdrop-blur-md shadow-sm transition-all duration-200 text-fg hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer"
-        title={locale === 'en' ? 'Click to change weather effect' : 'Nhấp để đổi hiệu ứng thời tiết'}
+        title={
+          locale === 'en' ? 'Click to change weather effect' : 'Nhấp để đổi hiệu ứng thời tiết'
+        }
       >
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-success/70 opacity-75" />
@@ -228,7 +233,11 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
         <span className="text-border">|</span>
 
         <span className="text-fg-muted font-medium truncate max-w-[140px] sm:max-w-none">
-          {loading ? (locale === 'en' ? 'Updating...' : 'Đang cập nhật...') : weather?.conditionText}
+          {loading
+            ? locale === 'en'
+              ? 'Updating...'
+              : 'Đang cập nhật...'
+            : weather?.conditionText}
         </span>
 
         <span className="text-border hidden sm:inline">•</span>
@@ -252,11 +261,10 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
                 <IconComponent className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-xs font-bold text-fg">
-                  {locationName}
-                </h4>
+                <h4 className="text-xs font-bold text-fg">{locationName}</h4>
                 <p className="text-[10px] text-fg-muted">
-                  {weather?.conditionText} • {locale === 'en' ? 'Live Station' : 'Trạm quan trắc thực tế'}
+                  {weather?.conditionText} •{' '}
+                  {locale === 'en' ? 'Live Station' : 'Trạm quan trắc thực tế'}
                 </p>
               </div>
             </div>
@@ -325,8 +333,12 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
                 >
                   <CloudLightning className="w-4 h-4 text-warning shrink-0" />
                   <div className="truncate">
-                    <span className="block leading-tight">{locale === 'en' ? 'Lightning' : 'Sấm chớp'}</span>
-                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Storm & Flash' : 'Bão & Tia sét'}</span>
+                    <span className="block leading-tight">
+                      {locale === 'en' ? 'Lightning' : 'Sấm chớp'}
+                    </span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">
+                      {locale === 'en' ? 'Storm & Flash' : 'Bão & Tia sét'}
+                    </span>
                   </div>
                 </button>
 
@@ -341,8 +353,12 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
                 >
                   <Cloud className="w-4 h-4 text-fg-muted shrink-0" />
                   <div className="truncate">
-                    <span className="block leading-tight">{locale === 'en' ? 'Rolling Mist' : 'Mây mù che'}</span>
-                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Clouds & Fog' : 'Mây bồng bềnh'}</span>
+                    <span className="block leading-tight">
+                      {locale === 'en' ? 'Rolling Mist' : 'Mây mù che'}
+                    </span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">
+                      {locale === 'en' ? 'Clouds & Fog' : 'Mây bồng bềnh'}
+                    </span>
                   </div>
                 </button>
 
@@ -357,8 +373,12 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
                 >
                   <CloudRain className="w-4 h-4 text-primary shrink-0" />
                   <div className="truncate">
-                    <span className="block leading-tight">{locale === 'en' ? 'Heavy Rain' : 'Mưa rơi'}</span>
-                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Rain & Splash' : 'Giọt mưa xiên'}</span>
+                    <span className="block leading-tight">
+                      {locale === 'en' ? 'Heavy Rain' : 'Mưa rơi'}
+                    </span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">
+                      {locale === 'en' ? 'Rain & Splash' : 'Giọt mưa xiên'}
+                    </span>
                   </div>
                 </button>
 
@@ -373,8 +393,12 @@ export function WeatherWidget({ locale = 'vi', onConditionChange, currentConditi
                 >
                   <Sun className="w-4 h-4 text-warning shrink-0" />
                   <div className="truncate">
-                    <span className="block leading-tight">{locale === 'en' ? 'Sun Rays' : 'Nắng ấm'}</span>
-                    <span className="text-[9px] opacity-75 font-normal block leading-tight">{locale === 'en' ? 'Golden Flare' : 'Tia nắng vàng'}</span>
+                    <span className="block leading-tight">
+                      {locale === 'en' ? 'Sun Rays' : 'Nắng ấm'}
+                    </span>
+                    <span className="text-[9px] opacity-75 font-normal block leading-tight">
+                      {locale === 'en' ? 'Golden Flare' : 'Tia nắng vàng'}
+                    </span>
                   </div>
                 </button>
               </div>

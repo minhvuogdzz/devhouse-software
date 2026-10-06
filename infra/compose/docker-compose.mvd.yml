@@ -11,7 +11,7 @@ services:
     container_name: mvd-backend
     restart: unless-stopped
     ports:
-      - "${BACKEND_PORT:-3000}:3000"
+      - '${BACKEND_PORT:-3000}:3000'
     env_file:
       - .env
     environment:
@@ -39,7 +39,7 @@ services:
     networks:
       - mvd-network
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/config/public || exit 1"]
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000/config/public || exit 1']
       interval: 15s
       timeout: 5s
       retries: 3
@@ -57,7 +57,7 @@ services:
     container_name: mvd-admin
     restart: unless-stopped
     ports:
-      - "${ADMIN_PORT:-3001}:80"
+      - '${ADMIN_PORT:-3001}:80'
     depends_on:
       - backend
     networks:
@@ -75,7 +75,7 @@ services:
     container_name: mvd-web
     restart: unless-stopped
     ports:
-      - "${WEB_PORT:-8080}:80"
+      - '${WEB_PORT:-8080}:80'
     depends_on:
       - backend
     networks:
@@ -91,7 +91,7 @@ services:
     container_name: mvd-mongo
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongo_data:/data/db
     networks:

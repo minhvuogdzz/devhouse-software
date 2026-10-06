@@ -39,7 +39,10 @@ export function WeatherHeroEffect({ condition = 'cloudy', className = '', onTrig
     const themeObserver = new MutationObserver(() => {
       isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     });
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
 
     // --- State Entities ---
     // Rain
@@ -81,8 +84,8 @@ export function WeatherHeroEffect({ condition = 'cloudy', className = '', onTrig
           y: Math.random() * height,
           speed: (condition === 'thunderstorm' ? 16 : 12) + Math.random() * 8,
           length: (condition === 'thunderstorm' ? 24 : 18) + Math.random() * 16,
-          thickness: isDark ? (0.8 + Math.random() * 0.9) : (1.1 + Math.random() * 0.9),
-          opacity: isDark ? (0.25 + Math.random() * 0.45) : (0.35 + Math.random() * 0.5),
+          thickness: isDark ? 0.8 + Math.random() * 0.9 : 1.1 + Math.random() * 0.9,
+          opacity: isDark ? 0.25 + Math.random() * 0.45 : 0.35 + Math.random() * 0.5,
         });
       }
 
@@ -123,14 +126,14 @@ export function WeatherHeroEffect({ condition = 'cloudy', className = '', onTrig
           speed: 0.25 + Math.random() * 0.35,
           puffs,
           baseRadius,
-          opacity: isDark ? (0.2 + Math.random() * 0.2) : (0.3 + Math.random() * 0.25),
+          opacity: isDark ? 0.2 + Math.random() * 0.2 : 0.3 + Math.random() * 0.25,
         });
       }
     }
 
     // Build procedural lightning with fractal branching
     function strikeLightning(startX = null) {
-      const rootX = startX ?? (width * 0.15 + Math.random() * (width * 0.7));
+      const rootX = startX ?? width * 0.15 + Math.random() * (width * 0.7);
       const rootY = 0;
       const targetY = height * 0.9;
       const segments = [];
@@ -210,16 +213,14 @@ export function WeatherHeroEffect({ condition = 'cloudy', className = '', onTrig
             1,
             isThunder
               ? `rgba(219, 234, 254, ${d.opacity * 1.2})`
-              : `rgba(147, 197, 253, ${d.opacity})`
+              : `rgba(147, 197, 253, ${d.opacity})`,
           );
         } else {
           // Light mode: High-contrast rich blue raindrops
           grad.addColorStop(0, 'rgba(30, 64, 175, 0)');
           grad.addColorStop(
             1,
-            isThunder
-              ? `rgba(29, 78, 216, ${d.opacity * 1.3})`
-              : `rgba(37, 99, 235, ${d.opacity})`
+            isThunder ? `rgba(29, 78, 216, ${d.opacity * 1.3})` : `rgba(37, 99, 235, ${d.opacity})`,
           );
         }
 
@@ -338,8 +339,14 @@ export function WeatherHeroEffect({ condition = 'cloudy', className = '', onTrig
           } else {
             // Light mode: High-definition sculpted white/slate cloud puff
             grad.addColorStop(0, `rgba(255, 255, 255, ${cluster.opacity * puff.alphaRatio * 1.6})`);
-            grad.addColorStop(0.45, `rgba(241, 245, 249, ${cluster.opacity * puff.alphaRatio * 1.1})`);
-            grad.addColorStop(0.75, `rgba(203, 213, 225, ${cluster.opacity * puff.alphaRatio * 0.55})`);
+            grad.addColorStop(
+              0.45,
+              `rgba(241, 245, 249, ${cluster.opacity * puff.alphaRatio * 1.1})`,
+            );
+            grad.addColorStop(
+              0.75,
+              `rgba(203, 213, 225, ${cluster.opacity * puff.alphaRatio * 0.55})`,
+            );
             grad.addColorStop(1, 'rgba(226, 232, 240, 0)');
           }
 

@@ -38,9 +38,22 @@ export function meta({ data }) {
   const s = data.solution;
   const title = `${s.title || s.name} — Dev House Software`;
   const description = s.summary || s.description || '';
-  const jsonLd = { '@context': 'https://schema.org', '@type': 'Product', name: s.title || s.name, description, brand: { '@type': 'Brand', name: 'Dev House Software' } };
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: s.title || s.name,
+    description,
+    brand: { '@type': 'Brand', name: 'Dev House Software' },
+  };
 
-  return generateSeoMeta({ title, description, url: data?.url, locale: data?.locale, type: 'article', jsonLd });
+  return generateSeoMeta({
+    title,
+    description,
+    url: data?.url,
+    locale: data?.locale,
+    type: 'article',
+    jsonLd,
+  });
 }
 
 export default function SolutionDetailPage() {
