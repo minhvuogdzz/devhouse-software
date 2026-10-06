@@ -148,8 +148,8 @@ export function buildCustomerConfirmationEmail({ contactDoc, serviceName }) {
     : 'Dev House Software — We received your consultation request';
 
   const text = isVi
-    ? `Kính gửi ${contactDoc.name},\n\nCảm ơn bạn đã liên hệ với Dev House Software.\nChúng tôi đã nhận được thông tin yêu cầu tư vấn về dịch vụ "${serviceName || 'Giải pháp phần mềm'}" của bạn.\n\nĐội ngũ chuyên viên của Dev House sẽ xem xét chi tiết và liên hệ lại với bạn trong vòng 24 giờ làm việc.\n\nNếu có vấn đề khẩn cấp, bạn có thể gửi phản hồi trực tiếp qua email: devhousesoftware.inc@gmail.com.\n\nTrân trọng,\nĐội ngũ Dev House Software\nhttps://devhouse.com`
-    : `Dear ${contactDoc.name},\n\nThank you for reaching out to Dev House Software.\nWe have successfully received your inquiry regarding "${serviceName || 'Software Solutions'}".\n\nOur team is reviewing your requirements and will get back to you within 24 business hours.\n\nIf you have any urgent inquiries, please reply directly to devhousesoftware.inc@gmail.com.\n\nBest regards,\nDev House Software Team\nhttps://devhouse.com`;
+    ? `Kính gửi ${contactDoc.name},\n\nCảm ơn bạn đã liên hệ với Dev House Software.\nChúng tôi đã nhận được thông tin yêu cầu tư vấn về dịch vụ "${serviceName || 'Giải pháp phần mềm'}" của bạn.\n\nĐội ngũ chuyên viên của Dev House sẽ xem xét chi tiết và liên hệ lại với bạn trong vòng 24 giờ làm việc.\n\nNếu có vấn đề khẩn cấp, bạn có thể gửi phản hồi trực tiếp qua email: devhousesoftware.inc@gmail.com.\n\nTrân trọng,\nĐội ngũ Dev House Software\nhttps://devhouse.vn`
+    : `Dear ${contactDoc.name},\n\nThank you for reaching out to Dev House Software.\nWe have successfully received your inquiry regarding "${serviceName || 'Software Solutions'}".\n\nOur team is reviewing your requirements and will get back to you within 24 business hours.\n\nIf you have any urgent inquiries, please reply directly to devhousesoftware.inc@gmail.com.\n\nBest regards,\nDev House Software Team\nhttps://devhouse.vn`;
 
   const html = isVi
     ? `
@@ -180,7 +180,7 @@ export function buildCustomerConfirmationEmail({ contactDoc, serviceName }) {
     </div>
     <div class="footer">
       Dev House Software &bull; Email: devhousesoftware.inc@gmail.com<br>
-      Website: <a href="https://devhouse.com" style="color: #2563eb; text-decoration: none;">devhouse.com</a>
+      Website: <a href="https://devhouse.vn" style="color: #2563eb; text-decoration: none;">devhouse.vn</a>
     </div>
   </div>
 </body>
@@ -214,7 +214,7 @@ export function buildCustomerConfirmationEmail({ contactDoc, serviceName }) {
     </div>
     <div class="footer">
       Dev House Software &bull; Email: devhousesoftware.inc@gmail.com<br>
-      Website: <a href="https://devhouse.com" style="color: #2563eb; text-decoration: none;">devhouse.com</a>
+      Website: <a href="https://devhouse.vn" style="color: #2563eb; text-decoration: none;">devhouse.vn</a>
     </div>
   </div>
 </body>
