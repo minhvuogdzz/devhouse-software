@@ -23,7 +23,18 @@ export const originCheck = (req, _res, next) => {
     );
   }
 
-  const allowedOrigins = [config.WEB_URL, config.ADMIN_URL];
+  const allowedOrigins = [
+    config.WEB_URL,
+    config.ADMIN_URL,
+    ...(config.NODE_ENV === 'development'
+      ? [
+          'http://localhost:5174',
+          'http://localhost:5175',
+          'http://127.0.0.1:5173',
+          'http://127.0.0.1:5174',
+        ]
+      : []),
+  ];
   // Strip trailing slashes for comparison
   const normalizedOrigin = origin.replace(/\/$/, '');
   const isAllowed = allowedOrigins.some(allowed => allowed.replace(/\/$/, '') === normalizedOrigin);
