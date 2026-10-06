@@ -49,9 +49,13 @@ MONGODB_DB_NAME=devhouse_prod
 SESSION_COOKIE_NAME=__Host-dh_sid
 CLOUDINARY_CLOUD_NAME= / CLOUDINARY_API_KEY= / CLOUDINARY_API_SECRET=   (leave empty to launch without media upload)
 CLOUDINARY_FOLDER_PREFIX=devhouse/prod
-SMTP_HOST= / SMTP_PORT=587 / SMTP_USER= / SMTP_PASSWORD=                 (leave empty: emails are written to the log)
-MAIL_FROM="Dev House Software <no-reply@<domain>>"
-CONTACT_NOTIFY_TO=<inbox that receives contact requests>
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=devhousesoftware.inc@gmail.com
+SMTP_PASSWORD=<Google App Password: 16 chars without spaces>
+MAIL_FROM="Dev House Software <devhousesoftware.inc@gmail.com>"
+CONTACT_NOTIFY_TO=devhousesoftware.inc@gmail.com
 DEFAULT_LOCALE=vi
 SUPPORTED_LOCALES=vi,en
 ```
