@@ -235,7 +235,7 @@ export default function ContactPage() {
                       <select id="service" name="service" className={inputClass}>
                         <option value="">{t('contact.selectService')}</option>
                         {services.map(s => (
-                          <option key={s._id || s.slug} value={s.slug}>
+                          <option key={s._id || s.slug} value={s._id || s.slug}>
                             {s.name}
                           </option>
                         ))}

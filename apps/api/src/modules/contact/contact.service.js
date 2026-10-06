@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { ContactRequestModel } from './contact.model.js';
 import { ServiceModel } from '../services/service.model.js';
 import {
@@ -41,12 +42,31 @@ export const contactService = {
     if (isHoneypotFilled) spamReasons.push('honeypot_filled');
     if (isTooFast) spamReasons.push('submitted_too_fast');
 
+    let resolvedServiceId = undefined;
     let serviceName = '';
-    if (data.service) {
+
+    if (data.service && typeof data.service === 'string' && data.service.trim().length > 0) {
+      const rawService = data.service.trim();
+      const loc = data.locale || 'vi';
+
       try {
-        const s = await ServiceModel.findById(data.service).lean();
+        let s = null;
+        if (mongoose.Types.ObjectId.isValid(rawService)) {
+          s = await ServiceModel.findById(rawService).lean();
+        }
+
+        if (!s) {
+          s = await ServiceModel.findOne({
+            $or: [
+              { 'slug.vi': rawService },
+              { 'slug.en': rawService },
+              { slug: rawService },
+            ],
+          }).lean();
+        }
+
         if (s) {
-          const loc = data.locale || 'vi';
+          resolvedServiceId = s._id;
           serviceName =
             s.name?.[loc] ||
             s.title?.[loc] ||
@@ -55,9 +75,12 @@ export const contactService = {
             s.title?.vi ||
             s.title?.en ||
             '';
+        } else {
+          serviceName = rawService;
         }
-      } catch {
-        // Ignored if invalid ObjectId
+      } catch (err) {
+        logger.warn(`Could not resolve service for contact: ${err.message}`);
+        serviceName = rawService;
       }
     }
 
@@ -67,8 +90,8 @@ export const contactService = {
       phone: data.phone || '',
       company: data.company || '',
       country: data.country || '',
-      service: data.service || undefined,
-      serviceName,
+      service: resolvedServiceId,
+      serviceName: serviceName || '',
       projectType: data.projectType || '',
       budget: data.budget || '',
       timeline: data.timeline || '',
