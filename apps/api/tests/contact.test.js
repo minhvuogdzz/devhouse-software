@@ -56,10 +56,14 @@ describe('Contact Module (M9)', () => {
         locale: 'en',
       };
 
-      const result = await contactService.submitContact(submission, {
-        ip: '127.0.0.1',
-        userAgent: 'TestBrowser',
-      });
+      const result = await contactService.submitContact(
+        submission,
+        {
+          ip: '127.0.0.1',
+          userAgent: 'TestBrowser',
+        },
+        { waitForEmails: true },
+      );
 
       expect(result.success).toBe(true);
       expect(result.id).toBeDefined();

@@ -25,8 +25,56 @@ export function decodeCursor(cursorStr) {
   }
 }
 
+/**
+ * Sends the team notification, then the customer confirmation, and records the notification
+ * outcome on the contact request. Never throws: failures are logged and stored on the document.
+ */
+async function deliverContactEmails(contactDoc, serviceName) {
+  try {
+    const emailData = buildContactNotificationEmail({ contactDoc, serviceName });
+    const notifyResult = await mailer.sendMail({
+      to: config.CONTACT_NOTIFY_TO,
+      replyTo: contactDoc.email,
+      subject: emailData.subject,
+      text: emailData.text,
+      html: emailData.html,
+    });
+
+    contactDoc.notification.status =
+      notifyResult.delivered || notifyResult.simulated ? 'sent' : 'sent';
+    contactDoc.notification.sentAt = new Date();
+    contactDoc.notification.attempts = 1;
+    await contactDoc.save();
+  } catch (err) {
+    logger.error(`Failed to send contact notification: ${err.message}`);
+    contactDoc.notification.status = 'failed';
+    contactDoc.notification.lastError = err.message;
+    contactDoc.notification.attempts = 1;
+    await contactDoc
+      .save()
+      .catch(saveErr =>
+        logger.error(`Could not record contact notification failure: ${saveErr.message}`),
+      );
+  }
+
+  // Send auto-reply confirmation email to customer
+  if (mailer.isConfigured() && contactDoc.email) {
+    try {
+      const clientEmail = buildCustomerConfirmationEmail({ contactDoc, serviceName });
+      await mailer.sendMail({
+        to: contactDoc.email,
+        subject: clientEmail.subject,
+        text: clientEmail.text,
+        html: clientEmail.html,
+      });
+    } catch (clientErr) {
+      logger.warn(`Could not send customer auto-reply email: ${clientErr.message}`);
+    }
+  }
+}
+
 export const contactService = {
-  async submitContact(data, clientMeta = {}) {
+  async submitContact(data, clientMeta = {}, options = {}) {
     const isHoneypotFilled = Boolean(data._hp && data._hp.trim().length > 0);
     let isTooFast = false;
 
@@ -119,44 +167,12 @@ export const contactService = {
       },
     });
 
-    // Notify via email if not spam
+    // Notify via email if not spam. Emails go out in the background so the visitor gets an
+    // answer without waiting on the SMTP server; pass { waitForEmails: true } to wait for them.
     if (!isSpam) {
-      try {
-        const emailData = buildContactNotificationEmail({ contactDoc, serviceName });
-        const notifyResult = await mailer.sendMail({
-          to: config.CONTACT_NOTIFY_TO,
-          replyTo: contactDoc.email,
-          subject: emailData.subject,
-          text: emailData.text,
-          html: emailData.html,
-        });
-
-        contactDoc.notification.status =
-          notifyResult.delivered || notifyResult.simulated ? 'sent' : 'sent';
-        contactDoc.notification.sentAt = new Date();
-        contactDoc.notification.attempts = 1;
-        await contactDoc.save();
-      } catch (err) {
-        logger.error(`Failed to send contact notification: ${err.message}`);
-        contactDoc.notification.status = 'failed';
-        contactDoc.notification.lastError = err.message;
-        contactDoc.notification.attempts = 1;
-        await contactDoc.save();
-      }
-
-      // Send auto-reply confirmation email to customer (non-blocking)
-      if (mailer.isConfigured() && contactDoc.email) {
-        try {
-          const clientEmail = buildCustomerConfirmationEmail({ contactDoc, serviceName });
-          await mailer.sendMail({
-            to: contactDoc.email,
-            subject: clientEmail.subject,
-            text: clientEmail.text,
-            html: clientEmail.html,
-          });
-        } catch (clientErr) {
-          logger.warn(`Could not send customer auto-reply email: ${clientErr.message}`);
-        }
+      const delivery = deliverContactEmails(contactDoc, serviceName);
+      if (options.waitForEmails) {
+        await delivery;
       }
     }
 
