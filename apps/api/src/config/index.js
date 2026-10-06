@@ -33,9 +33,14 @@ const configSchema = z.object({
 
   SMTP_HOST: z.string().optional().default(''),
   SMTP_PORT: z.coerce.number().int().default(587),
+  SMTP_SECURE: z
+    .preprocess(
+      val => (val === 'true' || val === true ? true : val === 'false' || val === false ? false : undefined),
+      z.boolean().optional(),
+    ),
   SMTP_USER: z.string().optional().default(''),
   SMTP_PASSWORD: z.string().optional().default(''),
-  MAIL_FROM: z.string().default('Dev House Software <no-reply@devhouse.example>'),
+  MAIL_FROM: z.string().default('Dev House Software <devhousesoftware.inc@gmail.com>'),
   CONTACT_NOTIFY_TO: z.string().default('devhousesoftware.inc@gmail.com'),
 
   CAPTCHA_PROVIDER: z.enum(['none', 'turnstile']).default('none'),

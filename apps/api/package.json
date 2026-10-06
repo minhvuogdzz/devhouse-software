@@ -8,6 +8,7 @@
     "start": "node src/server.js",
     "seed": "node seeds/index.js",
     "create-admin": "node scripts/create-admin.js",
+    "test-email": "node scripts/test-email.js",
     "test": "vitest run"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "dotenv": "^16.4.7",
     "express": "^5.0.1",
     "mongoose": "^8.9.5",
+    "nodemailer": "^10.0.14",
     "zod": "^3.24.1"
   },
   "devDependencies": {

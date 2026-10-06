@@ -1,6 +1,10 @@
 import { ContactRequestModel } from './contact.model.js';
 import { ServiceModel } from '../services/service.model.js';
-import { mailer } from '../../integrations/mail/index.js';
+import {
+  mailer,
+  buildContactNotificationEmail,
+  buildCustomerConfirmationEmail,
+} from '../../integrations/mail/index.js';
 import { audit } from '../../core/audit/index.js';
 import { config } from '../../config/index.js';
 import { NotFoundError } from '../../core/errors/index.js';
@@ -99,13 +103,17 @@ export const contactService = {
     // Notify via email if not spam
     if (!isSpam) {
       try {
+        const emailData = buildContactNotificationEmail({ contactDoc, serviceName });
         const notifyResult = await mailer.sendMail({
           to: config.CONTACT_NOTIFY_TO,
-          subject: `[Dev House Contact] ${contactDoc.subject || contactDoc.name} (${contactDoc.meta?.locale || 'vi'})`,
-          text: `Name: ${contactDoc.name}\nEmail: ${contactDoc.email}\nPhone: ${contactDoc.phone || 'N/A'}\nCompany: ${contactDoc.company || 'N/A'}\nService: ${serviceName || 'N/A'}\n\nMessage:\n${contactDoc.message}`,
+          replyTo: contactDoc.email,
+          subject: emailData.subject,
+          text: emailData.text,
+          html: emailData.html,
         });
 
-        contactDoc.notification.status = notifyResult.delivered ? 'sent' : 'sent';
+        contactDoc.notification.status =
+          notifyResult.delivered || notifyResult.simulated ? 'sent' : 'sent';
         contactDoc.notification.sentAt = new Date();
         contactDoc.notification.attempts = 1;
         await contactDoc.save();
@@ -115,6 +123,21 @@ export const contactService = {
         contactDoc.notification.lastError = err.message;
         contactDoc.notification.attempts = 1;
         await contactDoc.save();
+      }
+
+      // Send auto-reply confirmation email to customer (non-blocking)
+      if (mailer.isConfigured() && contactDoc.email) {
+        try {
+          const clientEmail = buildCustomerConfirmationEmail({ contactDoc, serviceName });
+          await mailer.sendMail({
+            to: contactDoc.email,
+            subject: clientEmail.subject,
+            text: clientEmail.text,
+            html: clientEmail.html,
+          });
+        } catch (clientErr) {
+          logger.warn(`Could not send customer auto-reply email: ${clientErr.message}`);
+        }
       }
     }
 
