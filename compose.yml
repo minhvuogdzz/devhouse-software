@@ -1,14 +1,114 @@
+# Dev House Software — Local & DevOps Docker Compose Stack
+# Run: docker compose up --build -d
+# Stop: docker compose down
+
+name: devhouse
+
 services:
   mongodb:
     image: mongo:7-jammy
     container_name: devhouse-mongodb
     restart: unless-stopped
     ports:
-      - '27017:27017'
+      - '${MONGO_PORT:-27017}:27017'
     environment:
-      MONGO_INITDB_DATABASE: devhouse_dev
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-devhouse_dev}
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'mongosh', '--eval', 'db.adminCommand("ping")']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: devhouse-api
+    restart: unless-stopped
+    ports:
+      - '${PORT:-4000}:4000'
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 4000
+      TRUST_PROXY: '1'
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017}
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-devhouse_dev}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURE: ${SMTP_SECURE:-true}
+      SMTP_USER: ${SMTP_USER:-devhousesoftware.inc@gmail.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-xmsrcujndnywfjox}
+      MAIL_FROM: ${MAIL_FROM:-Dev House Software <devhousesoftware.inc@gmail.com>}
+      CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
+      WEB_URL: ${WEB_URL:-http://localhost:3000}
+      ADMIN_URL: ${ADMIN_URL:-http://localhost:5173}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'node', 'apps/api/scripts/healthcheck.js']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: devhouse-web
+    restart: unless-stopped
+    ports:
+      - '${WEB_PORT:-3000}:3000'
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      WEB_PORT: 3000
+      API_INTERNAL_URL: http://api:4000/api/v1
+      SITE_URL: ${SITE_URL:-http://localhost:3000}
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'node', 'apps/web/scripts/healthcheck.js']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    container_name: devhouse-admin
+    restart: unless-stopped
+    ports:
+      - '${ADMIN_PORT:-5173}:80'
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '-', 'http://127.0.0.1/healthz']
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+networks:
+  internal:
+    driver: bridge
 
 volumes:
   mongodb_data:
