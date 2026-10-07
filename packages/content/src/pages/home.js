@@ -224,7 +224,8 @@ export const homePackagesIntro = defineSection({
 export const homeProcess = defineSection({
   key: 'process',
   label: 'Quy trình làm việc',
-  summary: 'Các bước làm việc, từ lúc tiếp nhận đến khi kết thúc hợp đồng.',
+  summary:
+    'Các bước làm việc, từ lúc tư vấn đến khi vận hành. Dạng lưới hoặc danh sách hiện thành dòng thời gian.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -232,7 +233,9 @@ export const homeProcess = defineSection({
       of: field.group({
         fields: {
           stepNumber: field.string({ max: 4 }),
+          icon: field.select({ options: ICON_KEYS }),
           title: field.text({ max: 80 }),
+          duration: field.text({ max: 30 }),
           description: field.textarea({ max: 300 }),
         },
       }),
@@ -240,51 +243,65 @@ export const homeProcess = defineSection({
     display: field.display(),
   },
   defaults: {
-    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 5 } }),
-    heading: { vi: 'Năm bước để có website của bạn', en: 'Five steps to your website' },
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 3, desktop: 6 } }),
+    heading: { vi: 'Sáu bước để có website của bạn', en: 'Six steps to your website' },
     subheading: {
-      vi: 'Khách hàng nào cũng đi qua cùng một quy trình, để bạn biết trước mỗi bước sẽ diễn ra thế nào.',
-      en: 'Every customer follows the same process, so you know what to expect at each step.',
+      vi: 'Gói Cửa hàng: khoảng 5–7 ngày làm việc từ khi nhận đủ nội dung.',
+      en: 'Shop package: about 5–7 working days once we have your content.',
     },
     steps: [
       {
         stepNumber: '01',
-        title: { vi: 'Tiếp nhận và chốt gói', en: 'Intake and choosing a package' },
+        icon: 'headset',
+        title: { vi: 'Tư vấn miễn phí', en: 'Free consultation' },
+        duration: { vi: '15–30 phút', en: '15–30 minutes' },
         description: {
-          vi: 'Nắm nhu cầu, chọn gói và ký hợp đồng ghi rõ phạm vi, giờ hỗ trợ, chủ sở hữu tên miền và dữ liệu.',
-          en: 'We learn what you need, you pick a package and we sign a contract that spells out the scope, support hours and who owns the domain and data.',
+          vi: 'Nhận đề xuất gói và máy chủ trong 24 giờ.',
+          en: 'A proposed package and server within 24 hours.',
         },
       },
       {
         stepNumber: '02',
-        title: { vi: 'Dựng website và hạ tầng', en: 'Building the site and hosting' },
-        description: {
-          vi: 'Tạo website từ mẫu chuẩn, cài máy chủ, kết nối an toàn, giám sát, sao lưu và trỏ tên miền.',
-          en: 'We create the site from a proven template and set up the server, secure connection, monitoring, backups and your domain.',
-        },
+        icon: 'file-text',
+        title: { vi: 'Báo giá & hợp đồng', en: 'Quote & contract' },
+        duration: { vi: '1–2 ngày', en: '1–2 days' },
+        description: { vi: 'Giá rõ ràng, trả trước 50%.', en: 'Clear pricing, 50% up front.' },
       },
       {
         stepNumber: '03',
-        title: { vi: 'Bàn giao', en: 'Handover' },
+        icon: 'server',
+        title: { vi: 'Tên miền & máy chủ', en: 'Domain & server' },
+        duration: { vi: '1–2 ngày', en: '1–2 days' },
         description: {
-          vi: 'Bạn duyệt trên bản thử, rồi đưa lên chính thức. Chúng tôi giao tài khoản quản trị nội dung và hướng dẫn ngắn.',
-          en: 'You review a test version and then we go live. You receive a content account and a short guide.',
+          vi: 'Đứng tên bạn, có HTTPS và sao lưu.',
+          en: 'In your name, with HTTPS and backups.',
         },
       },
       {
         stepNumber: '04',
-        title: { vi: 'Vận hành và hỗ trợ', en: 'Running and support' },
-        description: {
-          vi: 'Giám sát và cảnh báo tự động, sao lưu theo lịch, vá bảo mật hằng tháng. Mọi yêu cầu đi qua một kênh duy nhất.',
-          en: 'Automatic monitoring and alerts, scheduled backups and monthly security patches. Every request goes through a single channel.',
-        },
+        icon: 'layout',
+        title: { vi: 'Dựng bản thử', en: 'Test version' },
+        duration: { vi: '3–5 ngày', en: '3–5 days' },
+        description: { vi: 'Xem trước, chỉnh sửa 2 vòng.', en: 'Preview it, 2 rounds of changes.' },
       },
       {
         stepNumber: '05',
-        title: { vi: 'Kết thúc hợp đồng', en: 'Ending the contract' },
+        icon: 'rocket',
+        title: { vi: 'Bàn giao', en: 'Handover' },
+        duration: { vi: '1 ngày', en: '1 day' },
         description: {
-          vi: 'Nếu dừng dịch vụ, bạn nhận lại mã nguồn, bản sao lưu dữ liệu và quyền quản lý tên miền.',
-          en: 'If you stop the service, you receive your source code, a backup of your data and control of your domain.',
+          vi: 'Web chạy thật, tài khoản quản trị. Trả 50% còn lại.',
+          en: 'Site goes live, admin account. Pay the other 50%.',
+        },
+      },
+      {
+        stepNumber: '06',
+        icon: 'shield',
+        title: { vi: 'Vận hành', en: 'Running' },
+        duration: { vi: 'Suốt hợp đồng', en: 'Ongoing' },
+        description: {
+          vi: 'Giám sát 24/7, sao lưu, vá bảo mật hằng tháng.',
+          en: '24/7 monitoring, backups, monthly security patches.',
         },
       },
     ],
