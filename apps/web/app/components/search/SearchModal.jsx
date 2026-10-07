@@ -325,6 +325,25 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                 </button>
               )}
 
+              {mode === 'standard' && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode('ai');
+                    if (query.trim()) {
+                      handleAiSearch();
+                    }
+                  }}
+                  className="shrink-0 px-2.5 py-1 rounded-lg border border-border hover:border-primary/40 bg-surface-raised hover:bg-surface-2 text-fg transition-all cursor-pointer flex items-center gap-1.5 text-xs font-semibold shadow-2xs group"
+                  title={isEn ? 'Switch to DH AI Search' : 'Tìm kiếm bằng DH AI'}
+                >
+                  <DhAiIcon size="sm" />
+                  <span className="text-fg font-medium group-hover:text-primary transition-colors">
+                    DH AI
+                  </span>
+                </button>
+              )}
+
               {mode === 'ai' ? (
                 <button
                   type="button"
