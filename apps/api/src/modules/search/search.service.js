@@ -504,11 +504,12 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
       const candidateModels = Array.from(
         new Set(
           [
+            'gemini-flash-lite-latest',
+            'gemini-3.5-flash-lite',
+            'gemini-3.1-flash-lite',
             aiConfig.model,
-            'gemini-2.5-flash',
-            'gemini-flash-latest',
-            'gemini-3.1-pro-preview',
             'gemini-3.8-flash',
+            'gemini-flash-latest',
           ].filter(Boolean),
         ),
       );
@@ -519,14 +520,17 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
       for (const modelName of candidateModels) {
         try {
           const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${aiConfig.apiKey}`;
-          const response = await fetch(endpoint, {
+          let response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              system_instruction: {
+                parts: [{ text: systemPrompt }],
+              },
               contents: [
                 {
                   role: 'user',
-                  parts: [{ text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` }],
+                  parts: [{ text: `Câu hỏi tìm kiếm của khách hàng: "${rawQuery}"` }],
                 },
               ],
               generationConfig: {
@@ -535,6 +539,26 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
               },
             }),
           });
+
+          // Fallback if model endpoint does not support system_instruction
+          if (!response.ok && response.status === 400) {
+            response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    role: 'user',
+                    parts: [{ text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` }],
+                  },
+                ],
+                generationConfig: {
+                  temperature: 0.4,
+                  maxOutputTokens: 2048,
+                },
+              }),
+            });
+          }
 
           if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
@@ -710,45 +734,54 @@ Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you,
       const candidateModels = Array.from(
         new Set(
           [
+            'gemini-flash-lite-latest',
+            'gemini-3.5-flash-lite',
+            'gemini-3.1-flash-lite',
             aiConfig.model,
-            'gemini-2.5-flash',
-            'gemini-flash-latest',
-            'gemini-3.1-pro-preview',
             'gemini-3.8-flash',
+            'gemini-flash-latest',
           ].filter(Boolean),
         ),
       );
 
-      // Keep last 8 turns of history
-      const formattedHistory = (Array.isArray(history) ? history : [])
-        .slice(-8)
+      // Clean history and build strictly alternating turns starting with user
+      const validHistory = (Array.isArray(history) ? history : [])
         .map(h => ({
           role: h.role === 'assistant' || h.role === 'model' ? 'model' : 'user',
-          parts: [{ text: String(h.text || h.content || '').trim() }],
+          text: String(h.text || h.content || '').trim(),
         }))
-        .filter(h => h.parts[0].text);
+        .filter(h => h.text);
 
-      const contents = [
-        {
-          role: 'user',
-          parts: [{ text: `${systemPrompt}\n\n[Bắt đầu cuộc trò chuyện tư vấn trực tuyến]` }],
-        },
-        {
-          role: 'model',
-          parts: [
-            {
-              text: isEn
-                ? 'Hello! I am DH AI, your dedicated assistant from Dev House Software. How can I help you today?'
-                : 'Dạ em chào anh/chị ạ! Em là DH AI — Chuyên viên tư vấn của Dev House Software. Em rất sẵn lòng hỗ trợ anh/chị về website, máy chủ hoặc giải pháp phần mềm ạ!',
-            },
-          ],
-        },
-        ...formattedHistory,
-        {
-          role: 'user',
-          parts: [{ text: rawMessage }],
-        },
-      ];
+      // If last item in history is identical to current user message, pop it to prevent duplication
+      if (
+        validHistory.length > 0 &&
+        validHistory[validHistory.length - 1].role === 'user' &&
+        validHistory[validHistory.length - 1].text === rawMessage
+      ) {
+        validHistory.pop();
+      }
+
+      const contents = [];
+      for (const item of validHistory) {
+        // Conversation in Gemini contents must start with 'user'. Skip initial greeting if it is model.
+        if (contents.length === 0 && item.role === 'model') {
+          continue;
+        }
+        const prev = contents[contents.length - 1];
+        if (prev && prev.role === item.role) {
+          prev.parts[0].text += '\n' + item.text;
+        } else {
+          contents.push({ role: item.role, parts: [{ text: item.text }] });
+        }
+      }
+
+      // Append current user message
+      const lastTurn = contents[contents.length - 1];
+      if (lastTurn && lastTurn.role === 'user') {
+        lastTurn.parts[0].text += '\n' + rawMessage;
+      } else {
+        contents.push({ role: 'user', parts: [{ text: rawMessage }] });
+      }
 
       let answerText = null;
       let lastError = null;
@@ -756,10 +789,13 @@ Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you,
       for (const modelName of candidateModels) {
         try {
           const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${aiConfig.apiKey}`;
-          const response = await fetch(endpoint, {
+          let response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
+              system_instruction: {
+                parts: [{ text: systemPrompt }],
+              },
               contents,
               generationConfig: {
                 temperature: 0.6,
@@ -767,6 +803,28 @@ Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you,
               },
             }),
           });
+
+          // Fallback if model endpoint does not support system_instruction
+          if (!response.ok && response.status === 400) {
+            const fallbackContents = [
+              {
+                role: 'user',
+                parts: [{ text: `${systemPrompt}\n\n[Bắt đầu cuộc trò chuyện tư vấn]\n\n${contents[0]?.parts?.[0]?.text || ''}` }],
+              },
+              ...contents.slice(1),
+            ];
+            response = await fetch(endpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: fallbackContents,
+                generationConfig: {
+                  temperature: 0.6,
+                  maxOutputTokens: 1500,
+                },
+              }),
+            });
+          }
 
           if (!response.ok) {
             const errData = await response.json().catch(() => ({}));
