@@ -380,7 +380,7 @@ export const searchService = {
     const aiConfig = {
       enabled: overrides.ai?.enabled ?? defaultSettings.ai?.enabled ?? true,
       apiKey: overrides.ai?.apiKey || process.env.GEMINI_API_KEY || '',
-      model: overrides.ai?.model || 'gemini-2.5-pro',
+      model: overrides.ai?.model || 'gemini-2.5-flash',
       companyKnowledge: overrides.ai?.companyKnowledge || '',
     };
 
@@ -489,41 +489,32 @@ NGUYÊN TẮC HOẠT ĐỘNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
 `;
 
     try {
-      const model = aiConfig.model || 'gemini-2.5-pro';
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${aiConfig.apiKey}`;
+      const candidateModels = Array.from(
+        new Set(
+          [
+            aiConfig.model,
+            'gemini-2.5-flash',
+            'gemini-flash-latest',
+            'gemini-3.1-pro-preview',
+            'gemini-3.8-flash',
+          ].filter(Boolean),
+        ),
+      );
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` }],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 2048,
-          },
-        }),
-      });
+      let answerText = null;
+      let lastError = null;
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        // If the strongest model gemini-2.5-pro returns 404 or model not found, try fallback to gemini-2.0-flash
-        if (response.status === 404 && model !== 'gemini-2.0-flash') {
-          const fallbackEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${aiConfig.apiKey}`;
-          const fallbackRes = await fetch(fallbackEndpoint, {
+      for (const modelName of candidateModels) {
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${aiConfig.apiKey}`;
+          const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [
                 {
                   role: 'user',
-                  parts: [
-                    { text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` },
-                  ],
+                  parts: [{ text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` }],
                 },
               ],
               generationConfig: {
@@ -532,33 +523,33 @@ NGUYÊN TẮC HOẠT ĐỘNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
               },
             }),
           });
-          if (fallbackRes.ok) {
-            const fbData = await fallbackRes.json();
-            const text = fbData?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (text) {
-              const searchRes = await searchPromise;
-              return {
-                query: rawQuery,
-                answer: text,
-                relatedResults: searchRes.items,
-                mode: 'ai',
-              };
-            }
-          }
-        }
 
-        throw new Error(errorData?.error?.message || `API error ${response.status}`);
+          if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            lastError = errData?.error?.message || `Model ${modelName} returned status ${response.status}`;
+            continue;
+          }
+
+          const data = await response.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            answerText = text;
+            break;
+          }
+        } catch (fetchErr) {
+          lastError = fetchErr.message;
+        }
       }
 
-      const data = await response.json();
-      const answerText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!answerText) {
+        throw new Error(lastError || 'All candidate AI models failed to generate a response.');
+      }
 
       const searchRes = await searchPromise;
 
       return {
         query: rawQuery,
-        answer:
-          answerText || (isEn ? 'No response generated.' : 'Không nhận được phản hồi từ hệ thống.'),
+        answer: answerText,
         relatedResults: searchRes.items,
         mode: 'ai',
       };

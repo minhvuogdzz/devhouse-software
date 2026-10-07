@@ -44,7 +44,7 @@ export default function SettingsPage() {
     ai: {
       enabled: true,
       apiKey: '',
-      model: 'gemini-2.5-pro',
+      model: 'gemini-2.5-flash',
       companyKnowledge: '',
     },
   });
@@ -70,7 +70,7 @@ export default function SettingsPage() {
         ai: {
           enabled: r.ai?.enabled !== false,
           apiKey: r.ai?.apiKey || '',
-          model: r.ai?.model || 'gemini-2.5-pro',
+          model: r.ai?.model || 'gemini-2.5-flash',
           companyKnowledge: r.ai?.companyKnowledge || '',
         },
       });
@@ -455,20 +455,25 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
                   : 'The most capable model is recommended for comprehensive and accurate advisory.'
               }
             >
-              <option value="gemini-2.5-pro">
+              <option value="gemini-2.5-flash">
                 {locale === 'vi'
-                  ? 'gemini-2.5-pro (Mạnh nhất & Khuyên dùng — Phân tích toàn diện)'
-                  : 'gemini-2.5-pro (Most Capable & Recommended)'}
+                  ? 'gemini-2.5-flash (Khuyên dùng — Phản hồi nhanh & Phân tích thông minh)'
+                  : 'gemini-2.5-flash (Recommended — Fast & Intelligent)'}
               </option>
-              <option value="gemini-2.0-flash">
+              <option value="gemini-flash-latest">
                 {locale === 'vi'
-                  ? 'gemini-2.0-flash (Tốc độ cao — Phản hồi tức thì)'
-                  : 'gemini-2.0-flash (High Speed & Fast Response)'}
+                  ? 'gemini-flash-latest (Bản Flash mới nhất)'
+                  : 'gemini-flash-latest (Latest Flash Edition)'}
               </option>
-              <option value="gemini-1.5-pro">
+              <option value="gemini-3.1-pro-preview">
                 {locale === 'vi'
-                  ? 'gemini-1.5-pro (Bản Pro ổn định cao)'
-                  : 'gemini-1.5-pro (Stable Pro Edition)'}
+                  ? 'gemini-3.1-pro-preview (Thế hệ Pro cao cấp)'
+                  : 'gemini-3.1-pro-preview (Advanced Pro Generation)'}
+              </option>
+              <option value="gemini-pro-latest">
+                {locale === 'vi'
+                  ? 'gemini-pro-latest (Bản Pro mới nhất)'
+                  : 'gemini-pro-latest (Latest Pro Edition)'}
               </option>
             </Select>
           </div>
