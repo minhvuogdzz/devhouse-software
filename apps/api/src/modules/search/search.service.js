@@ -580,6 +580,232 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
       };
     }
   },
+
+  /**
+   * Conversational AI Assistant (DH AI Chatbot)
+   * Persona: "xưng em, gọi anh chị/quý đối tác", warm, respectful, natural conversation flow.
+   */
+  async aiChat({ message, history = [], locale = 'vi' }) {
+    const rawMessage = (message || '').trim();
+    if (!rawMessage) {
+      return {
+        answer:
+          locale === 'en'
+            ? 'Hello! How may I assist you with Dev House Software today?'
+            : 'Dạ em chào anh/chị ạ! Em có thể hỗ trợ thông tin gì cho anh/chị về dịch vụ của Dev House Software hôm nay ạ?',
+      };
+    }
+
+    const isEn = locale === 'en';
+
+    // Retrieve settings (uses the same Gemini key configured in Admin)
+    const settingsDoc = await SettingsModel.findOne({ key: 'global' }).lean();
+    const overrides = settingsDoc?.data || {};
+    const aiConfig = {
+      enabled: overrides.ai?.enabled ?? defaultSettings.ai?.enabled ?? true,
+      apiKey: overrides.ai?.apiKey || process.env.GEMINI_API_KEY || '',
+      model: overrides.ai?.model || 'gemini-2.5-flash',
+      companyKnowledge: overrides.ai?.companyKnowledge || '',
+    };
+
+    if (!aiConfig.enabled || !aiConfig.apiKey) {
+      const fallbackMsg = isEn
+        ? `Hello! I am **DH AI**, the virtual consultant at Dev House Software. The administrator is currently finalizing my connection credentials. If you need any immediate assistance regarding our web design, hosting, or software services, please feel free to reach our team at **0869 528 304** (Hotline) or email **devhousesoftware.inc@gmail.com**. We are always delighted to assist you!`
+        : `Dạ em chào anh/chị ạ! Em là **DH AI** — Chuyên viên tư vấn ảo của Dev House Software. Hiện tại hệ thống trợ lý trực tuyến đang được quản trị viên hoàn tất kết nối. Anh/chị cần tư vấn nhanh về bảng giá thiết kế website, máy chủ đám mây hay quy trình chuyển đổi số, anh/chị có thể liên hệ trực tiếp hotline **0869 528 304** hoặc email **devhousesoftware.inc@gmail.com** để các chuyên viên kỹ thuật của Dev House hỗ trợ anh/chị ngay nhé ạ!`;
+
+      return {
+        answer: fallbackMsg,
+        success: false,
+      };
+    }
+
+    // Retrieve catalog summary
+    const [allServices, allPackages, allSolutions, allProjects] = await Promise.all([
+      ServiceModel.find({ status: 'published', isDeleted: false })
+        .select('name shortDescription billing')
+        .limit(20)
+        .lean()
+        .catch(() => []),
+      PackageModel.find({ status: 'published', isDeleted: false })
+        .select('name setupFee recurringFee recurringPeriod currency shortDescription')
+        .limit(10)
+        .lean()
+        .catch(() => []),
+      SolutionModel.find({ status: 'published', isDeleted: false })
+        .select('name shortDescription')
+        .limit(10)
+        .lean()
+        .catch(() => []),
+      ProjectModel.find({ status: 'published', isDeleted: false })
+        .select('title shortDescription client')
+        .limit(10)
+        .lean()
+        .catch(() => []),
+    ]);
+
+    const servicesSummary = allServices
+      .map(
+        s =>
+          `- ${s.name?.vi || s.name?.en}: ${s.shortDescription?.vi || s.shortDescription?.en || ''}`,
+      )
+      .join('\n');
+    const packagesSummary = allPackages
+      .map(
+        p =>
+          `- Gói ${p.name?.vi || p.name?.en}: Phí cài đặt ${p.setupFee ? p.setupFee.toLocaleString('vi-VN') + ' ' + (p.currency || 'VND') : 'Liên hệ'}, phí duy trì ${p.recurringFee ? p.recurringFee.toLocaleString('vi-VN') + ' ' + (p.currency || 'VND') + '/' + (p.recurringPeriod === 'year' ? 'năm' : 'kỳ') : 'Liên hệ'}. ${p.shortDescription?.vi || ''}`,
+      )
+      .join('\n');
+    const solutionsSummary = allSolutions
+      .map(sol => `- ${sol.name?.vi || sol.name?.en}: ${sol.shortDescription?.vi || ''}`)
+      .join('\n');
+    const projectsSummary = allProjects
+      .map(
+        prj =>
+          `- ${prj.title?.vi || prj.title?.en} (${prj.client?.name || 'Khách hàng'}): ${prj.shortDescription?.vi || ''}`,
+      )
+      .join('\n');
+
+    const systemPrompt = `
+Bạn là **DH AI** — Chuyên viên tư vấn ảo thông minh, chu đáo và tận tâm của **Dev House Software** (thuộc Dev House Group, website chính thức: devhouse.vn).
+
+NGUYÊN TẮC XƯNG HÔ VÀ PHONG THÁI TƯ VẤN (BẮT BUỘC):
+1. Xưng hô:
+   - Luôn xưng là "em" (hoặc "chúng em" khi đại diện cho tập thể Dev House Software).
+   - Luôn gọi người dùng là "anh/chị" hoặc "quý đối tác".
+   - Bắt đầu câu trả lời bằng lời chào hỏi ấm áp, tôn trọng (Ví dụ: "Dạ em chào anh/chị ạ!", "Dạ thưa anh/chị,...").
+2. Ngữ điệu & Khung cảnh câu chuyện:
+   - Trả lời tự nhiên, có ngữ điệu trò chuyện đàm thoại chân thành, chu đáo, hiểu chuyện và khéo léo như một chuyên viên tư vấn khách hàng thực thụ.
+   - Nhớ ngữ cảnh hội thoại của các tin nhắn trước để phản hồi liền mạch, không lặp lại rập khuôn máy móc.
+   - Trả lời đúng trọng tâm câu hỏi của khách hàng, giải thích rõ ràng, súc tích và mạch lạc.
+   - Khi tư vấn xong, khéo léo gợi mở hoặc mời anh/chị liên hệ hotline 0869 528 304 hoặc gửi yêu cầu để được hỗ trợ chuyên sâu hơn.
+3. Nguyên tắc cấm kỵ:
+   - Tuyệt đối KHÔNG BAO GIỜ nhắc đến Google, Gemini, OpenAI hay bất kỳ bên thứ ba nào.
+   - Tuyệt đối KHÔNG viết hoa thị lộn xộn hay dính chùm '***', '* *'.
+   - Trình bày ngắt đoạn rõ ràng, thoáng mắt để khách hàng đọc trên ô chat nhỏ thuận tiện nhất.
+4. Thông tin doanh nghiệp Dev House Software:
+   - Hotline tư vấn: 0869 528 304 (hỗ trợ 24/7)
+   - Email: devhousesoftware.inc@gmail.com
+   - Địa chỉ: Phường Tây Hồ, Thành phố Hà Nội
+   - Dịch vụ chính: Thiết kế website trọn gói chuẩn SEO, phát triển phần mềm theo yêu cầu, hạ tầng máy chủ đám mây, tường lửa bảo mật WAF, tên miền & SSL.
+   - Quy trình 6 bước: 1. Tiếp nhận & tư vấn -> 2. Khảo sát & hợp đồng -> 3. Thiết kế UI/UX độc quyền -> 4. Lập trình tính năng -> 5. Kiểm thử UAT & bảo mật -> 6. Bàn giao & bảo hành trọn đời.
+
+DỊCH VỤ WEBSITE:
+${servicesSummary || '- Dịch vụ thiết kế website doanh nghiệp, cổng thông tin, landing page, giải pháp phần mềm quản lý, máy chủ và bảo mật.'}
+
+BẢNG GIÁ & GÓI CƯỚC:
+${packagesSummary || '- Các gói dịch vụ linh hoạt theo nhu cầu khách hàng.'}
+
+GIẢI PHÁP ĐÃ TRIỂN KHAI:
+${solutionsSummary || '- Giải pháp chuyển đổi số cho doanh nghiệp bán lẻ, giáo dục, bất động sản, logistics...'}
+
+DỰ ÁN TIÊU BIỂU:
+${projectsSummary || '- Nhiều dự án thực tế cho doanh nghiệp vừa và nhỏ.'}
+
+${aiConfig.companyKnowledge ? `DỮ LIỆU TRI THỨC DOANH NGHIỆP CUNG CẤP:\n${aiConfig.companyKnowledge}\n` : ''}
+
+Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you, thân thiện và chuyên nghiệp.' : 'Trả lời bằng tiếng Việt tự nhiên, ấm áp, xưng em, gọi anh/chị.'}
+`;
+
+    try {
+      const candidateModels = Array.from(
+        new Set(
+          [
+            aiConfig.model,
+            'gemini-2.5-flash',
+            'gemini-flash-latest',
+            'gemini-3.1-pro-preview',
+            'gemini-3.8-flash',
+          ].filter(Boolean),
+        ),
+      );
+
+      // Keep last 8 turns of history
+      const formattedHistory = (Array.isArray(history) ? history : [])
+        .slice(-8)
+        .map(h => ({
+          role: h.role === 'assistant' || h.role === 'model' ? 'model' : 'user',
+          parts: [{ text: String(h.text || h.content || '').trim() }],
+        }))
+        .filter(h => h.parts[0].text);
+
+      const contents = [
+        {
+          role: 'user',
+          parts: [{ text: `${systemPrompt}\n\n[Bắt đầu cuộc trò chuyện tư vấn trực tuyến]` }],
+        },
+        {
+          role: 'model',
+          parts: [
+            {
+              text: isEn
+                ? 'Hello! I am DH AI, your dedicated assistant from Dev House Software. How can I help you today?'
+                : 'Dạ em chào anh/chị ạ! Em là DH AI — Chuyên viên tư vấn của Dev House Software. Em rất sẵn lòng hỗ trợ anh/chị về website, máy chủ hoặc giải pháp phần mềm ạ!',
+            },
+          ],
+        },
+        ...formattedHistory,
+        {
+          role: 'user',
+          parts: [{ text: rawMessage }],
+        },
+      ];
+
+      let answerText = null;
+      let lastError = null;
+
+      for (const modelName of candidateModels) {
+        try {
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${aiConfig.apiKey}`;
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents,
+              generationConfig: {
+                temperature: 0.6,
+                maxOutputTokens: 1500,
+              },
+            }),
+          });
+
+          if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            lastError =
+              errData?.error?.message || `Model ${modelName} returned status ${response.status}`;
+            continue;
+          }
+
+          const data = await response.json();
+          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            answerText = text;
+            break;
+          }
+        } catch (fetchErr) {
+          lastError = fetchErr.message;
+        }
+      }
+
+      if (!answerText) {
+        throw new Error(lastError || 'Candidate AI models failed to generate response');
+      }
+
+      return {
+        answer: cleanAndFormatAiMarkdown(answerText),
+        success: true,
+      };
+    } catch (err) {
+      const fallbackMsg = isEn
+        ? `I am sorry, I am currently synchronizing the latest database. Please feel free to reach out directly to our hotline at **0869 528 304** or email **devhousesoftware.inc@gmail.com** for immediate support!`
+        : `Dạ em xin lỗi anh/chị, hệ thống tư vấn của em đang trong giây lát đồng bộ lại dữ liệu. Anh/chị có thể để lại tin nhắn hoặc gọi trực tiếp hotline **0869 528 304** để các bạn chuyên viên kỹ thuật của Dev House hỗ trợ anh/chị ngay lập tức nhé ạ!`;
+
+      return {
+        answer: fallbackMsg,
+        success: false,
+        error: err.message,
+      };
+    }
+  },
 };
 
 /**

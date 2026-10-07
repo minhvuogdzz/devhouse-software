@@ -18,4 +18,13 @@ export const searchController = {
     const result = await searchService.aiSearch({ q, locale });
     return sendSuccess(res, result);
   },
+
+  async aiChat(req, res) {
+    const message = req.body?.message || req.body?.q || '';
+    const history = req.body?.history || [];
+    const locale = req.body?.locale || req.query.locale || 'vi';
+
+    const result = await searchService.aiChat({ message, history, locale });
+    return sendSuccess(res, result);
+  },
 };

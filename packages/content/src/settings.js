@@ -23,6 +23,7 @@ export const defaultSettings = {
   },
   taxCode: '',
   socialLinks: [],
+  floatingContacts: [],
   seo: {
     title: {
       vi: 'Dev House Software — Website trọn gói, an toàn và ổn định',

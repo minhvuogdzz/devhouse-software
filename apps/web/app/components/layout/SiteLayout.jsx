@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 import { Header } from './Header.jsx';
 import { Footer } from './Footer.jsx';
 import { AmbientBackground } from '../sections/AmbientBackground.jsx';
+import { FloatingContactDock } from '../floating/FloatingContactDock.jsx';
 
 export function SiteLayout({ alternateUrl = null }) {
   return (
@@ -12,6 +13,7 @@ export function SiteLayout({ alternateUrl = null }) {
         <Outlet />
       </main>
       <Footer />
+      <FloatingContactDock />
     </div>
   );
 }

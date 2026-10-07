@@ -9,7 +9,23 @@ import { Input, Textarea, Select } from '../../components/ui/Input.jsx';
 import { Tabs } from '../../components/ui/Tabs.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
 import { Toggle } from '../../components/form/Toggle.jsx';
-import { Sparkles, Eye, EyeOff, FileText, Upload } from 'lucide-react';
+import { Sparkles, Eye, EyeOff, FileText, Upload, Share2, PhoneCall, Plus, Trash2, RotateCcw } from 'lucide-react';
+
+const DEFAULT_SOCIAL_TEMPLATES = [
+  { platform: 'facebook', label: 'Facebook', url: 'https://facebook.com/devhousesoftware', enabled: true },
+  { platform: 'zalo', label: 'Zalo', url: 'https://zalo.me/0869528304', enabled: true },
+  { platform: 'telegram', label: 'Telegram', url: 'https://t.me/devhousesoftware', enabled: true },
+  { platform: 'tiktok', label: 'TikTok', url: 'https://tiktok.com/@devhousesoftware', enabled: true },
+  { platform: 'youtube', label: 'YouTube', url: 'https://youtube.com/@devhousesoftware', enabled: true },
+  { platform: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/devhousesoftware', enabled: true },
+  { platform: 'github', label: 'GitHub', url: 'https://github.com/thedevhouse', enabled: true },
+];
+
+const DEFAULT_FLOATING_CONTACTS = [
+  { type: 'zalo', label: 'Zalo tư vấn', value: 'https://zalo.me/0869528304', enabled: true },
+  { type: 'phone', label: 'Hotline 0869 528 304', value: '0869528304', enabled: true },
+  { type: 'messenger', label: 'Messenger', value: 'https://m.me/devhousesoftware', enabled: true },
+];
 
 export default function SettingsPage() {
   const { t, locale } = useI18n();
@@ -35,7 +51,8 @@ export default function SettingsPage() {
     taxCode: '',
     address: { vi: '', en: '' },
     workingHours: { vi: '', en: '' },
-    socialLinks: [],
+    socialLinks: DEFAULT_SOCIAL_TEMPLATES,
+    floatingContacts: DEFAULT_FLOATING_CONTACTS,
     seo: {
       title: { vi: '', en: '' },
       description: { vi: '', en: '' },
@@ -61,7 +78,14 @@ export default function SettingsPage() {
         taxCode: r.taxCode || '',
         address: r.address || { vi: '', en: '' },
         workingHours: r.workingHours || { vi: '', en: '' },
-        socialLinks: r.socialLinks || [],
+        socialLinks:
+          Array.isArray(r.socialLinks) && r.socialLinks.length > 0
+            ? r.socialLinks
+            : DEFAULT_SOCIAL_TEMPLATES,
+        floatingContacts:
+          Array.isArray(r.floatingContacts) && r.floatingContacts.length > 0
+            ? r.floatingContacts
+            : DEFAULT_FLOATING_CONTACTS,
         seo: {
           title: r.seo?.title || { vi: '', en: '' },
           description: r.seo?.description || { vi: '', en: '' },
@@ -95,23 +119,67 @@ export default function SettingsPage() {
   };
 
   const addSocialLink = () => {
-    setFormData({
-      ...formData,
-      socialLinks: [...formData.socialLinks, { platform: 'linkedin', url: 'https://' }],
-    });
+    setFormData(prev => ({
+      ...prev,
+      socialLinks: [
+        ...prev.socialLinks,
+        { platform: 'facebook', label: 'Facebook', url: 'https://', enabled: true },
+      ],
+    }));
   };
 
   const updateSocialLink = (index, field, value) => {
-    const updated = [...formData.socialLinks];
-    updated[index] = { ...updated[index], [field]: value };
-    setFormData({ ...formData, socialLinks: updated });
+    setFormData(prev => {
+      const updated = [...prev.socialLinks];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, socialLinks: updated };
+    });
   };
 
   const removeSocialLink = index => {
-    setFormData({
-      ...formData,
-      socialLinks: formData.socialLinks.filter((_, i) => i !== index),
+    setFormData(prev => ({
+      ...prev,
+      socialLinks: prev.socialLinks.filter((_, i) => i !== index),
+    }));
+  };
+
+  const loadDefaultSocialLinks = () => {
+    setFormData(prev => ({
+      ...prev,
+      socialLinks: DEFAULT_SOCIAL_TEMPLATES,
+    }));
+  };
+
+  const addFloatingContact = () => {
+    setFormData(prev => ({
+      ...prev,
+      floatingContacts: [
+        ...(prev.floatingContacts || []),
+        { type: 'phone', label: 'Hotline', value: '', enabled: true },
+      ],
+    }));
+  };
+
+  const updateFloatingContact = (index, field, value) => {
+    setFormData(prev => {
+      const updated = [...(prev.floatingContacts || [])];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, floatingContacts: updated };
     });
+  };
+
+  const removeFloatingContact = index => {
+    setFormData(prev => ({
+      ...prev,
+      floatingContacts: (prev.floatingContacts || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const loadDefaultFloatingContacts = () => {
+    setFormData(prev => ({
+      ...prev,
+      floatingContacts: DEFAULT_FLOATING_CONTACTS,
+    }));
   };
 
   const handleKnowledgeFileUpload = e => {
@@ -176,7 +244,7 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
   const tabs = [
     { key: 'company', label: locale === 'vi' ? 'Thông tin công ty' : 'Company Info' },
     { key: 'contact', label: locale === 'vi' ? 'Liên hệ & Trụ sở' : 'Contact & Address' },
-    { key: 'social', label: locale === 'vi' ? 'Mạng xã hội' : 'Social Profiles' },
+    { key: 'social', label: locale === 'vi' ? 'Mạng xã hội & Nút nổi' : 'Social & Floating' },
     { key: 'seo', label: locale === 'vi' ? 'SEO mặc định' : 'Default SEO' },
     { key: 'ai', label: locale === 'vi' ? 'Trí tuệ nhân tạo (DH AI)' : 'DH AI Assistant' },
   ];
@@ -269,55 +337,261 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
       )}
 
       {activeTab === 'social' && (
-        <Card className="space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-border">
-            <h2 className="text-sm font-semibold text-fg">
-              {locale === 'vi' ? 'Hồ sơ mạng xã hội' : 'Official Social Links'}
-            </h2>
-            <Button variant="secondary" size="sm" onClick={addSocialLink}>
-              + {locale === 'vi' ? 'Thêm liên kết' : 'Add Profile'}
-            </Button>
-          </div>
-
-          <div className="space-y-3">
-            {formData.socialLinks.map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-col sm:flex-row items-center gap-3 p-3 rounded-lg border border-border bg-surface-raised"
-              >
-                <div className="w-full sm:w-48">
-                  <Input
-                    placeholder="Platform (linkedin, github, ...)"
-                    value={item.platform}
-                    onChange={e => updateSocialLink(index, 'platform', e.target.value)}
-                  />
+        <div className="space-y-6">
+          {/* Section 1: 3 Floating Contacts */}
+          <Card className="space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-border gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                    <PhoneCall className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-base font-semibold text-fg">
+                    {locale === 'vi'
+                      ? '3 Nút liên hệ nổi (Floating Contacts)'
+                      : '3 Floating Action Contacts'}
+                  </h2>
                 </div>
-                <div className="w-full flex-1">
-                  <Input
-                    placeholder="URL (https://...)"
-                    value={item.url}
-                    onChange={e => updateSocialLink(index, 'url', e.target.value)}
-                  />
-                </div>
+                <p className="text-xs text-fg-muted mt-1 max-w-2xl">
+                  {locale === 'vi'
+                    ? 'Xuất hiện ở góc dưới bên phải màn hình. Khi người dùng cuộn xuống chân trang (Footer), 3 nút này sẽ tự động thu xuống dưới và nút Chatbot DH AI sẽ trượt xuống chiếm chỗ trống.'
+                    : 'Fixed at the bottom-right viewport. Retracts smoothly when reaching the footer so the DH AI Chatbot slides down.'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-danger hover:text-danger hover:bg-danger-surface"
-                  onClick={() => removeSocialLink(index)}
+                  onClick={loadDefaultFloatingContacts}
+                  title={locale === 'vi' ? 'Khôi phục 3 nút mẫu' : 'Reset to standard'}
                 >
-                  {t('common.delete')}
+                  <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                  {locale === 'vi' ? 'Mặc định' : 'Defaults'}
+                </Button>
+                <Button variant="secondary" size="sm" onClick={addFloatingContact}>
+                  <Plus className="w-3.5 h-3.5 mr-1" />
+                  {locale === 'vi' ? 'Thêm nút' : 'Add Button'}
                 </Button>
               </div>
-            ))}
-            {formData.socialLinks.length === 0 && (
-              <p className="text-sm text-fg-muted py-4 text-center">
-                {locale === 'vi'
-                  ? 'Chưa có liên kết mạng xã hội nào.'
-                  : 'No social links configured.'}
-              </p>
-            )}
-          </div>
-        </Card>
+            </div>
+
+            <div className="space-y-3">
+              {(formData.floatingContacts || []).map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 p-3.5 rounded-xl border border-border bg-surface-raised"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                      {index + 1}
+                    </span>
+                    <div className="w-44 shrink-0">
+                      <Select
+                        value={item.type || 'phone'}
+                        onChange={e => updateFloatingContact(index, 'type', e.target.value)}
+                      >
+                        <option value="zalo">Zalo Chat</option>
+                        <option value="phone">Hotline / Điện thoại</option>
+                        <option value="messenger">Facebook Messenger</option>
+                        <option value="telegram">Telegram</option>
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="email">Email</option>
+                        <option value="custom">Tùy chỉnh (Link)</option>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input
+                      placeholder={
+                        locale === 'vi' ? 'Nhãn hiển thị (ví dụ: Zalo tư vấn)' : 'Display label'
+                      }
+                      value={item.label || ''}
+                      onChange={e => updateFloatingContact(index, 'label', e.target.value)}
+                    />
+                    <Input
+                      placeholder={
+                        item.type === 'phone'
+                          ? 'Số điện thoại (0869...)'
+                          : 'URL (https://zalo.me/... hoặc https://m.me/...)'
+                      }
+                      value={item.value || ''}
+                      onChange={e => updateFloatingContact(index, 'value', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between lg:justify-end gap-3 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
+                    <div className="flex items-center gap-2">
+                      <Toggle
+                        checked={item.enabled !== false}
+                        onChange={checked => updateFloatingContact(index, 'enabled', checked)}
+                      />
+                      <span className="text-xs text-fg-muted whitespace-nowrap">
+                        {item.enabled !== false
+                          ? locale === 'vi'
+                            ? 'Hiển thị'
+                            : 'Active'
+                          : locale === 'vi'
+                            ? 'Ẩn'
+                            : 'Hidden'}
+                      </span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-danger hover:text-danger hover:bg-danger-surface"
+                      onClick={() => removeFloatingContact(index)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {(formData.floatingContacts || []).length === 0 && (
+                <div className="text-center py-6 border border-dashed border-border rounded-xl">
+                  <p className="text-sm text-fg-muted">
+                    {locale === 'vi'
+                      ? 'Chưa có nút nổi nào được kích hoạt.'
+                      : 'No floating action buttons configured.'}
+                  </p>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="mt-3"
+                    onClick={loadDefaultFloatingContacts}
+                  >
+                    {locale === 'vi' ? 'Khôi phục 3 nút mẫu' : 'Load defaults'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Section 2: Footer Social Channels */}
+          <Card className="space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-border gap-3">
+              <div>
+                <div className="flex items-center gap-2">
+                  <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                    <Share2 className="w-4 h-4" />
+                  </div>
+                  <h2 className="text-base font-semibold text-fg">
+                    {locale === 'vi'
+                      ? 'Mạng xã hội ở Chân trang (Footer Social)'
+                      : 'Footer Official Social Channels'}
+                  </h2>
+                </div>
+                <p className="text-xs text-fg-muted mt-1 max-w-2xl">
+                  {locale === 'vi'
+                    ? 'Hiển thị danh sách đầy đủ các kênh mạng xã hội chính thức của Dev House ở chân trang (Footer).'
+                    : 'All official social network profiles displayed at the bottom footer of the website.'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={loadDefaultSocialLinks}
+                  title={locale === 'vi' ? 'Nạp danh sách chuẩn' : 'Load default channels'}
+                >
+                  <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                  {locale === 'vi' ? 'Nạp 7 kênh chuẩn' : 'Load 7 channels'}
+                </Button>
+                <Button variant="secondary" size="sm" onClick={addSocialLink}>
+                  <Plus className="w-3.5 h-3.5 mr-1" />
+                  {locale === 'vi' ? 'Thêm kênh' : 'Add Channel'}
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {formData.socialLinks.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 p-3.5 rounded-xl border border-border bg-surface-raised"
+                >
+                  <div className="w-full sm:w-48 shrink-0">
+                    <Select
+                      value={item.platform || 'facebook'}
+                      onChange={e => updateSocialLink(index, 'platform', e.target.value)}
+                    >
+                      <option value="facebook">Facebook</option>
+                      <option value="zalo">Zalo</option>
+                      <option value="telegram">Telegram</option>
+                      <option value="tiktok">TikTok</option>
+                      <option value="youtube">YouTube</option>
+                      <option value="linkedin">LinkedIn</option>
+                      <option value="github">GitHub</option>
+                      <option value="x">X (Twitter)</option>
+                      <option value="instagram">Instagram</option>
+                      <option value="whatsapp">WhatsApp</option>
+                      <option value="threads">Threads</option>
+                      <option value="discord">Discord</option>
+                    </Select>
+                  </div>
+
+                  <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Input
+                      placeholder="Tên kênh (Facebook, Zalo, ...)"
+                      value={item.label || ''}
+                      onChange={e => updateSocialLink(index, 'label', e.target.value)}
+                    />
+                    <Input
+                      placeholder="URL (https://...)"
+                      value={item.url || ''}
+                      onChange={e => updateSocialLink(index, 'url', e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between lg:justify-end gap-3 pt-2 lg:pt-0 border-t lg:border-t-0 border-border">
+                    <div className="flex items-center gap-2">
+                      <Toggle
+                        checked={item.enabled !== false}
+                        onChange={checked => updateSocialLink(index, 'enabled', checked)}
+                      />
+                      <span className="text-xs text-fg-muted whitespace-nowrap">
+                        {item.enabled !== false
+                          ? locale === 'vi'
+                            ? 'Bật'
+                            : 'Active'
+                          : locale === 'vi'
+                            ? 'Tắt'
+                            : 'Off'}
+                      </span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-danger hover:text-danger hover:bg-danger-surface"
+                      onClick={() => removeSocialLink(index)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              {formData.socialLinks.length === 0 && (
+                <div className="text-center py-6 border border-dashed border-border rounded-xl">
+                  <p className="text-sm text-fg-muted">
+                    {locale === 'vi'
+                      ? 'Chưa có liên kết mạng xã hội nào.'
+                      : 'No social links configured.'}
+                  </p>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="mt-3"
+                    onClick={loadDefaultSocialLinks}
+                  >
+                    {locale === 'vi' ? 'Nạp 7 kênh chuẩn' : 'Load default channels'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
       )}
 
       {activeTab === 'seo' && (
