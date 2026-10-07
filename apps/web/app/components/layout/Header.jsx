@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useRouteLoaderData } from 'react-router';
-import { Sun, Moon, Menu, X, Globe, Search } from 'lucide-react';
+import { Sun, Moon, Menu, X, Globe } from 'lucide-react';
 import { useTheme } from '../../lib/theme.js';
 import { getTranslation, getLocaleFromUrl, getAlternateLocalePath } from '../../lib/i18n.js';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../../lib/navigation.js';
 import { Button } from '../ui/Button.jsx';
 import { Logo } from '../ui/Logo.jsx';
+import { DhAiIcon } from '../ui/DhAiIcon.jsx';
 import { SearchModal } from '../search/SearchModal.jsx';
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -189,19 +190,36 @@ export function Header({ alternateUrl = null }) {
               )}
             </button>
 
-            {/* Search Icon Button */}
-            <button
-              type="button"
-              onClick={() => setSearchOpen(true)}
-              className="p-2 rounded-md border border-border text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer flex items-center gap-1.5"
-              title={t('header.search')}
-              aria-label={t('header.searchAria')}
-            >
-              <Search className="w-4 h-4 text-fg" />
-              <span className="hidden md:inline-flex text-[10px] font-semibold text-fg-subtle px-1 py-0.2 rounded bg-surface-sunken border border-border-subtle">
-                ⌘K
-              </span>
-            </button>
+            {/* Search Dropdown Anchor */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setSearchOpen(prev => !prev)}
+                className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-2 ${
+                  searchOpen
+                    ? 'border-primary bg-primary/10 text-primary shadow-xs'
+                    : 'border-border text-fg-muted hover:text-fg hover:bg-surface-2'
+                }`}
+                title={t('header.search')}
+                aria-label={t('header.searchAria')}
+                aria-expanded={searchOpen}
+              >
+                <DhAiIcon size="sm" />
+                <span className="hidden sm:inline-flex text-xs font-semibold text-fg">
+                  {locale === 'vi' ? 'Tìm kiếm & DH AI' : 'Search & DH AI'}
+                </span>
+                <span className="hidden md:inline-flex text-[10px] font-semibold text-fg-subtle px-1 py-0.2 rounded bg-surface-sunken border border-border-subtle">
+                  ⌘K
+                </span>
+              </button>
+
+              {/* Dropdown Box flows down right beneath the search button */}
+              <SearchModal
+                isOpen={searchOpen}
+                onClose={() => setSearchOpen(false)}
+                locale={locale}
+              />
+            </div>
 
             {/* Wrapped, because Button sets its own display and would ignore `hidden` */}
             <div className="hidden sm:block">
@@ -277,9 +295,9 @@ export function Header({ alternateUrl = null }) {
               }}
               className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-border bg-surface-raised text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer text-sm"
             >
-              <span className="flex items-center gap-2 font-medium">
-                <Search className="w-4 h-4 text-primary" />
-                <span>{t('header.search')}</span>
+              <span className="flex items-center gap-2.5 font-medium">
+                <DhAiIcon size="sm" />
+                <span>{locale === 'vi' ? 'Tìm kiếm & DH AI' : 'Search & DH AI'}</span>
               </span>
               <span className="text-[10px] font-semibold text-fg-subtle px-1.5 py-0.5 rounded bg-surface border border-border">
                 ⌘K
@@ -311,9 +329,6 @@ export function Header({ alternateUrl = null }) {
           </div>
         </aside>
       </div>
-
-      {/* Global Universal & DH AI Search Dialog */}
-      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} locale={locale} />
     </>
   );
 }
