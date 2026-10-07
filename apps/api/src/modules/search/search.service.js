@@ -476,16 +476,28 @@ ${projectsSummary || '- Nhiều dự án thực tế cho doanh nghiệp vừa v�
 
 ${aiConfig.companyKnowledge ? `DỮ LIỆU TRI THỨC NỘI BỘ DO DOANH NGHIỆP CUNG CẤP:\n${aiConfig.companyKnowledge}\n` : ''}
 
-NGUYÊN TẮC HOẠT ĐỘNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
-1. Danh xưng và nhận diện: Luôn xưng là "DH AI" hoặc "em/tôi" đại diện cho Dev House Software. TUYỆT ĐỐI KHÔNG BAO GIỜ nhắc đến Google, Gemini, OpenAI hay bất kỳ nhà cung cấp AI nào khác. Bạn là DH AI của Dev House Software.
-2. Ngôn ngữ kinh doanh thực tế: Sử dụng từ ngữ rõ ràng, lịch sự, tập trung vào lợi ích kinh doanh, kết quả đạt được, sự an tâm và hiệu quả cho khách hàng (không lạm dụng biệt ngữ kỹ thuật khó hiểu).
-3. Đầy đủ & chính xác: Trả lời đúng trọng tâm câu hỏi của khách hàng dựa trên dữ liệu trên. Nếu khách hàng hỏi giá, nêu rõ các gói cước và đề xuất liên hệ để có báo giá tối ưu nhất.
-4. Trình bày đẹp mắt: Sử dụng định dạng Markdown khoa học:
-   - Các đề mục ngắn gọn
-   - Gạch đầu dòng rõ ràng
-   - Chữ in đậm cho các điểm mấu chốt quan trọng
-5. Ngôn ngữ phản hồi: ${isEn ? 'Trả lời bằng tiếng Anh (English).' : 'Trả lời bằng tiếng Việt chuyên nghiệp, tự nhiên.'}
-6. Lời kêu gọi hành động (CTA): Luôn gợi ý khách hàng liên hệ Hotline 0869 528 304 hoặc gửi yêu cầu tư vấn trên website để được đội ngũ kỹ sư Dev House phục vụ chu đáo nhất.
+QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
+1. Danh xưng: Luôn xưng là "DH AI" hoặc "em/chúng em" đại diện cho Dev House Software. TUYỆT ĐỐI KHÔNG BAO GIỜ nhắc đến Google, Gemini, OpenAI hay bất kỳ bên thứ ba nào.
+2. NGUYÊN TẮC TRÌNH BÀY ĐẸP MẮT, KHOA HỌC, ĐẲNG CẤP DOANH NGHIỆP (CỰC KỲ QUAN TRỌNG):
+   - BẮT BUỘC XUỐNG DÒNG RÕ RÀNG giữa các phần, các câu và các ý.
+   - TUYỆT ĐỐI KHÔNG VIẾT DÍNH NHIỀU Ý HOẶC DÙNG DẤU HOA THỊ TRÊN CÙNG MỘT DÒNG (cấm viết kiểu: "...đoạn văn... * **Ý 1** * **Ý 2**").
+   - CÁC ĐỀ MỤC LỚN: Bắt buộc dùng cú pháp tiêu đề Markdown trên một dòng riêng biệt, ví dụ:
+     ### 1. Tổng quan giải pháp
+     ### 2. Quy trình làm việc 6 bước
+     ### 3. Cam kết chất lượng
+     ### 4. Thông tin liên hệ chính thức
+   - CÁC Ý LIỆT KÊ: Mỗi ý phải nằm trên một dòng riêng biệt bắt đầu bằng dấu gạch ngang:
+     - **Tên ý chính:** Diễn giải chi tiết...
+     - **Tên ý tiếp theo:** Diễn giải chi tiết...
+   - CÁC BƯỚC QUY TRÌNH: Mỗi bước phải nằm trên một dòng riêng biệt có đánh số thứ tự:
+     1. **Bước 1 (Tiếp nhận & Tư vấn):** Lắng nghe nhu cầu...
+     2. **Bước 2 (Lập phương án):** Xây dựng giải pháp...
+   - THÔNG TIN LIÊN HỆ: Cuối câu trả lời, trình bày từng dòng rõ ràng:
+     - **Hotline tư vấn:** 0869 528 304
+     - **Email:** devhousesoftware.inc@gmail.com
+     - **Địa chỉ:** Phường Tây Hồ, Thành phố Hà Nội
+   - TUYỆT ĐỐI KHÔNG dùng dấu hoa thị rác như '***', '* *'. Luôn để một dòng trống giữa các đoạn văn để giao diện thoáng đãng, dễ đọc.
+3. Ngôn ngữ phản hồi: ${isEn ? 'Trả lời bằng tiếng Anh (English).' : 'Trả lời bằng tiếng Việt chuyên nghiệp, tự nhiên, lịch sự, đúng trọng tâm.'}
 `;
 
     try {
@@ -549,7 +561,7 @@ NGUYÊN TẮC HOẠT ĐỘNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
 
       return {
         query: rawQuery,
-        answer: answerText,
+        answer: cleanAndFormatAiMarkdown(answerText),
         relatedResults: searchRes.items,
         mode: 'ai',
       };
@@ -569,3 +581,39 @@ NGUYÊN TẮC HOẠT ĐỘNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
     }
   },
 };
+
+/**
+ * Normalizes messy raw markdown from LLMs into clean, properly spaced lines
+ */
+function cleanAndFormatAiMarkdown(text) {
+  if (!text) return '';
+  let s = text;
+
+  // 1. Remove clumps of multiple asterisks (e.g. **** or ***)
+  s = s.replace(/\*{3,}/g, '**');
+
+  // 2. Fix glued label-value pairs like "**Hotline:** * **0869...**"
+  s = s.replace(/:\*\*\s*\*\s*\*\*/g, ': **');
+
+  // 3. Break inline numbered steps onto their own newlines
+  s = s.replace(/(\s+)(\d+\.\s+\*\*)/g, '\n\n$2');
+
+  // 4. Break inline bullets that were glued with asterisks
+  s = s.replace(/(\s+)\*\s+\*\*/g, '\n- **');
+  s = s.replace(/\*\s*\*\s*\*\*/g, '\n- **');
+
+  // 5. Transform inline pseudo-headings (e.g. "**3. Quy trình...**") to proper markdown headers
+  s = s.replace(/(^|\n)\*\*(\d+\.\s+[^*]+?)\*\*\s*/g, '\n\n### $2\n\n');
+  s = s.replace(/(^|\n)\*\*(Thông tin liên hệ|Contact Information|Lưu ý|Cam kết[^*]*?)\*\*\s*/gi, '\n\n### $2\n\n');
+
+  // 6. Strip trailing or lone asterisks
+  s = s.replace(/(\s+)\*\s*$/gm, '');
+  s = s.replace(/^\s*\*\s*$/gm, '');
+
+  // 7. Normalize double newlines between headings and paragraphs
+  s = s.replace(/(###[^\n]+)\n([^\n#])/g, '$1\n\n$2');
+  s = s.replace(/\n{3,}/g, '\n\n');
+
+  return s.trim();
+}
+

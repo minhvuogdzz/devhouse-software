@@ -423,42 +423,8 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                           <span>{isEn ? 'DH AI Answer' : 'Câu trả lời từ DH AI'}</span>
                         </div>
 
-                        {/* Formatted Answer Rendering */}
-                        <div className="text-xs sm:text-sm leading-relaxed text-fg space-y-2.5 max-w-none">
-                          {aiResponse.answer.split('\n\n').map((paragraph, pIdx) => {
-                            if (paragraph.startsWith('### ')) {
-                              return (
-                                <h4 key={pIdx} className="font-bold text-sm text-fg mt-2 mb-1">
-                                  {paragraph.replace('### ', '')}
-                                </h4>
-                              );
-                            }
-                            if (paragraph.startsWith('## ')) {
-                              return (
-                                <h3 key={pIdx} className="font-bold text-base text-fg mt-2 mb-1">
-                                  {paragraph.replace('## ', '')}
-                                </h3>
-                              );
-                            }
-                            if (paragraph.startsWith('* ') || paragraph.startsWith('- ')) {
-                              const lines = paragraph.split('\n');
-                              return (
-                                <ul key={pIdx} className="space-y-1 pl-4 list-disc text-xs text-fg">
-                                  {lines.map((line, lIdx) => (
-                                    <li key={lIdx}>
-                                      {renderFormattedText(line.replace(/^[-*]\s*/, ''))}
-                                    </li>
-                                  ))}
-                                </ul>
-                              );
-                            }
-                            return (
-                              <p key={pIdx} className="text-xs sm:text-sm text-fg">
-                                {renderFormattedText(paragraph)}
-                              </p>
-                            );
-                          })}
-                        </div>
+                        {/* Formatted Answer Rendering with rich structured layout */}
+                        <DhAiMessageRenderer content={aiResponse.answer} />
                       </div>
 
                       {/* Related Website Cards / Deep Links */}
@@ -674,20 +640,169 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
 }
 
 /**
- * Safe markdown inline formatter returning React elements (no dangerouslySetInnerHTML)
+ * Dedicated, beautiful structured renderer for DH AI responses.
+ * Renders structured headings, step-by-step numbers, bullet lists,
+ * and bold text with zero raw asterisks or smushed content.
  */
-function renderFormattedText(str) {
+function DhAiMessageRenderer({ content }) {
+  if (!content) return null;
+
+  // Pre-process and normalize text
+  const normalized = content
+    .replace(/\*{3,}/g, '**')
+    .replace(/:\*\*\s*\*\s*\*\*/g, ': **')
+    .replace(/(\s+)(\d+\.\s+\*\*)/g, '\n\n$2')
+    .replace(/(\s+)\*\s+\*\*/g, '\n- **')
+    .replace(/\*\s*\*\s*\*\*/g, '\n- **')
+    .replace(/(^|\n)\*\*(\d+\.\s+[^*]+?)\*\*\s*/g, '\n\n### $2\n\n')
+    .replace(/(^|\n)\*\*(Thông tin liên hệ|Contact Information|Lưu ý|Cam kết[^*]*?)\*\*\s*/gi, '\n\n### $2\n\n');
+
+  // Split into paragraphs / blocks
+  const blocks = normalized
+    .split(/\n\s*\n/)
+    .map(b => b.trim())
+    .filter(Boolean);
+
+  return (
+    <div className="space-y-3.5 text-xs sm:text-sm leading-relaxed text-fg">
+      {blocks.map((block, bIdx) => {
+        // Heading / Section Header
+        if (block.startsWith('### ') || block.startsWith('## ') || block.startsWith('# ')) {
+          const title = block.replace(/^#{1,4}\s*/, '').replace(/^\*\*|\*\*$/g, '');
+          return (
+            <div
+              key={bIdx}
+              className="flex items-center gap-2 pt-2 pb-1 border-b border-border-subtle/80 text-primary font-bold text-xs sm:text-sm tracking-tight"
+            >
+              <span className="w-1.5 h-3.5 rounded-full bg-primary shrink-0" />
+              <span>{title}</span>
+            </div>
+          );
+        }
+
+        // List block (lines starting with - or * or numbers)
+        const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+        const isBulletList = lines.every(l => /^[-*•]\s+/.test(l));
+        const isNumberedList = lines.every(l => /^\d+\.\s+/.test(l));
+
+        if (isBulletList) {
+          return (
+            <ul key={bIdx} className="space-y-1.5 pl-1">
+              {lines.map((line, lIdx) => (
+                <li key={lIdx} className="flex items-start gap-2 text-xs sm:text-sm">
+                  <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-1.5 opacity-80" />
+                  <span className="flex-1 leading-relaxed">
+                    {renderFormattedInline(line.replace(/^[-*•]\s+/, ''))}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          );
+        }
+
+        if (isNumberedList) {
+          return (
+            <div key={bIdx} className="space-y-2 pl-0.5">
+              {lines.map((line, lIdx) => {
+                const match = line.match(/^(\d+)\.\s+(.*)$/);
+                const stepNum = match ? match[1] : lIdx + 1;
+                const stepText = match ? match[2] : line;
+                return (
+                  <div
+                    key={lIdx}
+                    className="flex items-start gap-2.5 p-2.5 rounded-xl bg-surface-raised/70 border border-border-subtle/80 text-xs sm:text-sm"
+                  >
+                    <span className="shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-[11px] mt-0.5 border border-primary/20">
+                      {stepNum}
+                    </span>
+                    <span className="flex-1 leading-relaxed text-fg">
+                      {renderFormattedInline(stepText)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // Mixed block (intro line + bullets or steps)
+        if (lines.length > 1 && lines.some(l => /^[-*•]\s+/.test(l) || /^\d+\.\s+/.test(l))) {
+          return (
+            <div key={bIdx} className="space-y-1.5">
+              {lines.map((line, lIdx) => {
+                if (/^[-*•]\s+/.test(line)) {
+                  return (
+                    <div key={lIdx} className="flex items-start gap-2 pl-1 text-xs sm:text-sm">
+                      <span className="shrink-0 w-1.5 h-1.5 rounded-full bg-primary mt-1.5 opacity-80" />
+                      <span className="flex-1 leading-relaxed">
+                        {renderFormattedInline(line.replace(/^[-*•]\s+/, ''))}
+                      </span>
+                    </div>
+                  );
+                }
+                if (/^\d+\.\s+/.test(line)) {
+                  const match = line.match(/^(\d+)\.\s+(.*)$/);
+                  const stepNum = match ? match[1] : lIdx + 1;
+                  const stepText = match ? match[2] : line;
+                  return (
+                    <div
+                      key={lIdx}
+                      className="flex items-start gap-2.5 p-2 rounded-xl bg-surface-raised/70 border border-border-subtle/80 text-xs sm:text-sm my-1"
+                    >
+                      <span className="shrink-0 w-5 h-5 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center text-[11px] mt-0.5 border border-primary/20">
+                        {stepNum}
+                      </span>
+                      <span className="flex-1 leading-relaxed text-fg">
+                        {renderFormattedInline(stepText)}
+                      </span>
+                    </div>
+                  );
+                }
+                return (
+                  <p key={lIdx} className="text-xs sm:text-sm leading-relaxed text-fg">
+                    {renderFormattedInline(line)}
+                  </p>
+                );
+              })}
+            </div>
+          );
+        }
+
+        // Standard paragraph
+        return (
+          <p key={bIdx} className="text-xs sm:text-sm leading-relaxed text-fg">
+            {renderFormattedInline(block)}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Safely parses inline markdown without raw asterisks
+ */
+function renderFormattedInline(str) {
   if (!str) return null;
-  const segments = str.split(/(\*\*.*?\*\*)/g);
+  // Clean raw asterisks like *** or lone *
+  const cleaned = str
+    .replace(/\*{3,}/g, '**')
+    .replace(/^\s*\*\s+/, '')
+    .replace(/\s+\*\s*$/, '');
+
+  const segments = cleaned.split(/(\*\*.*?\*\*)/g);
   return segments.map((seg, idx) => {
     if (seg.startsWith('**') && seg.endsWith('**')) {
+      const boldText = seg.slice(2, -2).trim();
+      if (!boldText) return null;
       return (
         <strong key={idx} className="font-semibold text-fg">
-          {seg.slice(2, -2)}
+          {boldText}
         </strong>
       );
     }
-    return seg;
+    // Clean any stray single * inside segment
+    return seg.replace(/(^|\s)\*(\s|$)/g, '$1•$2');
   });
 }
 
