@@ -31,6 +31,7 @@ import { mediaAdminRoutes } from './modules/media/media.admin.routes.js';
 import { contactPublicRoutes } from './modules/contact/contact.public.routes.js';
 import { contactAdminRoutes } from './modules/contact/contact.admin.routes.js';
 import { seoPublicRoutes } from './modules/seo/seo.public.routes.js';
+import { searchPublicRoutes } from './modules/search/search.public.routes.js';
 import { dashboardAdminRoutes } from './modules/dashboard/dashboard.admin.routes.js';
 import { redirectAdminRoutes } from './modules/redirects/redirect.admin.routes.js';
 import { auditLogAdminRoutes } from './modules/audit-logs/audit-log.admin.routes.js';
@@ -57,6 +58,7 @@ apiRouter.use('/categories', categoryPublicRoutes);
 apiRouter.use('/blog', blogPublicRouter);
 apiRouter.use('/contact', contactPublicRoutes);
 apiRouter.use('/seo', seoPublicRoutes);
+apiRouter.use('/search', searchPublicRoutes);
 
 // Admin routes (requires authentication on all admin endpoints)
 export const adminRouter = Router();

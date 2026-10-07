@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useRouteLoaderData } from 'react-router';
-import { Sun, Moon, Menu, X, Globe } from 'lucide-react';
+import { Sun, Moon, Menu, X, Globe, Search } from 'lucide-react';
 import { useTheme } from '../../lib/theme.js';
 import { getTranslation, getLocaleFromUrl, getAlternateLocalePath } from '../../lib/i18n.js';
 import {
@@ -11,6 +11,7 @@ import {
 } from '../../lib/navigation.js';
 import { Button } from '../ui/Button.jsx';
 import { Logo } from '../ui/Logo.jsx';
+import { SearchModal } from '../search/SearchModal.jsx';
 
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -32,6 +33,7 @@ function NavEntry({ item, className }) {
 
 export function Header({ alternateUrl = null }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const locale = getLocaleFromUrl(location.pathname);
   const t = getTranslation(locale);
@@ -39,6 +41,18 @@ export function Header({ alternateUrl = null }) {
   const openButtonRef = useRef(null);
   const closeButtonRef = useRef(null);
   const drawerRef = useRef(null);
+
+  // Global shortcut Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = e => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setSearchOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const prefix = locale === 'en' ? '/en' : '';
   const homePath = prefix || '/';
@@ -175,6 +189,20 @@ export function Header({ alternateUrl = null }) {
               )}
             </button>
 
+            {/* Search Icon Button */}
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              className="p-2 rounded-md border border-border text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer flex items-center gap-1.5"
+              title={t('header.search')}
+              aria-label={t('header.searchAria')}
+            >
+              <Search className="w-4 h-4 text-fg" />
+              <span className="hidden md:inline-flex text-[10px] font-semibold text-fg-subtle px-1 py-0.2 rounded bg-surface-sunken border border-border-subtle">
+                ⌘K
+              </span>
+            </button>
+
             {/* Wrapped, because Button sets its own display and would ignore `hidden` */}
             <div className="hidden sm:block">
               <Button
@@ -239,7 +267,27 @@ export function Header({ alternateUrl = null }) {
             </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label={t('header.menuLabel')}>
+          {/* Mobile search bar trigger */}
+          <div className="px-3 pt-3 pb-1">
+            <button
+              type="button"
+              onClick={() => {
+                setMenuOpen(false);
+                setSearchOpen(true);
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg border border-border bg-surface-raised text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer text-sm"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <Search className="w-4 h-4 text-primary" />
+                <span>{t('header.search')}</span>
+              </span>
+              <span className="text-[10px] font-semibold text-fg-subtle px-1.5 py-0.5 rounded bg-surface border border-border">
+                ⌘K
+              </span>
+            </button>
+          </div>
+
+          <nav className="flex-1 overflow-y-auto px-3 py-3" aria-label={t('header.menuLabel')}>
             <ul className="space-y-1">
               {navItems.map(item => (
                 <li key={item.id}>
@@ -263,6 +311,9 @@ export function Header({ alternateUrl = null }) {
           </div>
         </aside>
       </div>
+
+      {/* Global Universal & DH AI Search Dialog */}
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} locale={locale} />
     </>
   );
 }

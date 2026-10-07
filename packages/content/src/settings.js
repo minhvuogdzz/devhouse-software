@@ -37,4 +37,10 @@ export const defaultSettings = {
       en: 'website design, cloud hosting, domain name, website security, dev house',
     },
   },
+  ai: {
+    enabled: true,
+    apiKey: '',
+    model: 'gemini-2.5-pro',
+    companyKnowledge: '',
+  },
 };

@@ -5,15 +5,18 @@ import { diffAgainstDefaults } from '../../lib/content-diff.js';
 import { useI18n } from '../../lib/i18n.jsx';
 import { Button } from '../../components/ui/Button.jsx';
 import { Card } from '../../components/ui/Card.jsx';
-import { Input } from '../../components/ui/Input.jsx';
+import { Input, Textarea, Select } from '../../components/ui/Input.jsx';
 import { Tabs } from '../../components/ui/Tabs.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
+import { Toggle } from '../../components/form/Toggle.jsx';
+import { Sparkles, Eye, EyeOff, FileText, Upload } from 'lucide-react';
 
 export default function SettingsPage() {
   const { t, locale } = useI18n();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('company');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showApiKey, setShowApiKey] = useState(false);
 
   const { data: settingsData, isLoading } = useQuery({
     queryKey: ['settings'],
@@ -38,6 +41,12 @@ export default function SettingsPage() {
       description: { vi: '', en: '' },
       keywords: { vi: '', en: '' },
     },
+    ai: {
+      enabled: true,
+      apiKey: '',
+      model: 'gemini-2.5-pro',
+      companyKnowledge: '',
+    },
   });
 
   useEffect(() => {
@@ -57,6 +66,12 @@ export default function SettingsPage() {
           title: r.seo?.title || { vi: '', en: '' },
           description: r.seo?.description || { vi: '', en: '' },
           keywords: r.seo?.keywords || { vi: '', en: '' },
+        },
+        ai: {
+          enabled: r.ai?.enabled !== false,
+          apiKey: r.ai?.apiKey || '',
+          model: r.ai?.model || 'gemini-2.5-pro',
+          companyKnowledge: r.ai?.companyKnowledge || '',
         },
       });
     }
@@ -99,6 +114,61 @@ export default function SettingsPage() {
     });
   };
 
+  const handleKnowledgeFileUpload = e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = event => {
+      const content = event.target?.result;
+      if (typeof content === 'string') {
+        setFormData(prev => ({
+          ...prev,
+          ai: {
+            ...prev.ai,
+            companyKnowledge: prev.ai.companyKnowledge
+              ? `${prev.ai.companyKnowledge}\n\n${content}`
+              : content,
+          },
+        }));
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleFillTemplate = () => {
+    const template = `# TỔNG QUAN NĂNG LỰC & QUY TRÌNH DEV HOUSE SOFTWARE
+
+## 1. Giới thiệu doanh nghiệp
+Dev House Software là đơn vị công nghệ thành viên của Dev House Group, chuyên cung cấp giải pháp chuyển đổi số toàn diện, thiết kế website cao cấp chuẩn doanh nghiệp, hạ tầng máy chủ đám mây tốc độ cao và bảo mật dữ liệu an toàn.
+
+## 2. Các dịch vụ & năng lực cốt lõi
+- Xây dựng website thương mại điện tử, landing page giới thiệu công ty, web app chuyên sâu.
+- Cung cấp hạ tầng máy chủ đám mây, sao lưu tự động hàng ngày, tường lửa WAF chống tấn công DDoS.
+- Đăng ký và quản trị tên miền chính thức, cấp phát chứng chỉ SSL cao cấp.
+- Bảo trì, xử lý sự cố kỹ thuật 24/7 và giám sát uptime 99.9%.
+
+## 3. Quy trình làm việc 6 bước chuẩn mực
+1. Tiếp nhận & Tư vấn giải pháp phù hợp ngân sách.
+2. Lập bản mô tả chức năng & Ký hợp đồng rõ ràng.
+3. Thiết kế giao diện (UI/UX) độc quyền hoặc tinh chỉnh từ mẫu chuẩn.
+4. Lập trình tính năng, tích hợp cổng thanh toán và vận chuyển.
+5. Kiểm thử bảo mật (UAT, bảo mật OWASP, tối ưu PageSpeed).
+6. Bàn giao source code, hướng dẫn sử dụng và hỗ trợ bảo hành trọn đời.
+
+## 4. Cam kết chất lượng & Hỗ trợ kỹ thuật
+- Miễn phí nâng cấp vá lỗi bảo mật định kỳ.
+- Đội ngũ kỹ sư hỗ trợ phản hồi trong vòng 15-30 phút qua hotline và nhóm hỗ trợ riêng.
+- Bàn giao đầy đủ quyền quản trị và cơ sở dữ liệu cho khách hàng.`;
+
+    setFormData(prev => ({
+      ...prev,
+      ai: {
+        ...prev.ai,
+        companyKnowledge: template,
+      },
+    }));
+  };
+
   if (isLoading) {
     return <div className="p-8 text-fg-muted">{t('common.loading')}</div>;
   }
@@ -108,6 +178,7 @@ export default function SettingsPage() {
     { key: 'contact', label: locale === 'vi' ? 'Liên hệ & Trụ sở' : 'Contact & Address' },
     { key: 'social', label: locale === 'vi' ? 'Mạng xã hội' : 'Social Profiles' },
     { key: 'seo', label: locale === 'vi' ? 'SEO mặc định' : 'Default SEO' },
+    { key: 'ai', label: locale === 'vi' ? 'Trí tuệ nhân tạo (DH AI)' : 'DH AI Assistant' },
   ];
 
   return (
@@ -271,6 +342,196 @@ export default function SettingsPage() {
             value={formData.seo.keywords}
             onChange={val => setFormData({ ...formData, seo: { ...formData.seo, keywords: val } })}
           />
+        </Card>
+      )}
+
+      {activeTab === 'ai' && (
+        <Card className="space-y-6">
+          <div className="flex items-start justify-between pb-4 border-b border-border">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-base font-semibold text-fg">
+                  {locale === 'vi' ? 'Hệ thống Trí tuệ Nhân tạo DH AI' : 'DH AI Intelligent System'}
+                </h2>
+                <p className="text-xs text-fg-muted mt-0.5">
+                  {locale === 'vi'
+                    ? 'Cấu hình khóa kết nối, mô hình tính toán và nạp kho dữ liệu tri thức nội bộ cho trợ lý thông minh DH AI.'
+                    : 'Configure authorization key, engine model, and company knowledge base for DH AI assistant.'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <span
+                className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${
+                  formData.ai.enabled
+                    ? 'bg-success/10 text-success border border-success/20'
+                    : 'bg-surface-sunken text-fg-subtle border border-border'
+                }`}
+              >
+                {formData.ai.enabled
+                  ? locale === 'vi'
+                    ? 'Đang kích hoạt'
+                    : 'Active'
+                  : locale === 'vi'
+                    ? 'Tạm tắt'
+                    : 'Disabled'}
+              </span>
+            </div>
+          </div>
+
+          <div className="p-4 rounded-xl border border-border bg-surface-raised space-y-2">
+            <Toggle
+              label={
+                locale === 'vi'
+                  ? 'Kích hoạt trợ lý DH AI trên toàn website'
+                  : 'Enable DH AI Assistant on Website'
+              }
+              hint={
+                locale === 'vi'
+                  ? 'Khi bật, khách hàng có thể mở khung tìm kiếm và chuyển sang chế độ DH AI để hỏi đáp thông minh.'
+                  : 'When enabled, users can switch to DH AI mode in the header search modal for intelligent assistance.'
+              }
+              checked={formData.ai.enabled}
+              onChange={val =>
+                setFormData({
+                  ...formData,
+                  ai: { ...formData.ai, enabled: val },
+                })
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-fg">
+                {locale === 'vi' ? 'Khóa API bảo mật (Secret Key)' : 'Secret API Key'}
+              </label>
+              <div className="relative">
+                <input
+                  type={showApiKey ? 'text' : 'password'}
+                  placeholder={
+                    locale === 'vi' ? 'Nhập khóa API bí mật...' : 'Enter secret API key...'
+                  }
+                  value={formData.ai.apiKey}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      ai: { ...formData.ai, apiKey: e.target.value },
+                    })
+                  }
+                  className="w-full px-3 py-2 pr-10 rounded-lg border border-border bg-surface text-fg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey(!showApiKey)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-fg p-1 cursor-pointer transition-colors"
+                  title={showApiKey ? 'Ẩn khóa' : 'Hiện khóa'}
+                >
+                  {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-xs text-fg-subtle">
+                {locale === 'vi'
+                  ? 'Khóa được mã hóa và lưu trữ an toàn trong cơ sở dữ liệu. Tuyệt đối không để lộ ra ngoài giao diện công khai.'
+                  : 'Encrypted and stored securely in the database. Never exposed to public bundles or responses.'}
+              </p>
+            </div>
+
+            <Select
+              label={locale === 'vi' ? 'Mô hình AI xử lý (Model)' : 'AI Processing Model'}
+              value={formData.ai.model}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  ai: { ...formData.ai, model: e.target.value },
+                })
+              }
+              helperText={
+                locale === 'vi'
+                  ? 'Mô hình mạnh nhất được khuyên dùng để DH AI xử lý tư vấn dịch vụ và báo giá chuẩn xác nhất.'
+                  : 'The most capable model is recommended for comprehensive and accurate advisory.'
+              }
+            >
+              <option value="gemini-2.5-pro">
+                {locale === 'vi'
+                  ? 'gemini-2.5-pro (Mạnh nhất & Khuyên dùng — Phân tích toàn diện)'
+                  : 'gemini-2.5-pro (Most Capable & Recommended)'}
+              </option>
+              <option value="gemini-2.0-flash">
+                {locale === 'vi'
+                  ? 'gemini-2.0-flash (Tốc độ cao — Phản hồi tức thì)'
+                  : 'gemini-2.0-flash (High Speed & Fast Response)'}
+              </option>
+              <option value="gemini-1.5-pro">
+                {locale === 'vi'
+                  ? 'gemini-1.5-pro (Bản Pro ổn định cao)'
+                  : 'gemini-1.5-pro (Stable Pro Edition)'}
+              </option>
+            </Select>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <label className="block text-xs font-semibold text-fg">
+                  {locale === 'vi'
+                    ? 'Dữ liệu tri thức nội bộ công ty (Company Knowledge Base)'
+                    : 'Internal Company Knowledge Base'}
+                </label>
+                <p className="text-xs text-fg-subtle mt-0.5">
+                  {locale === 'vi'
+                    ? 'DH AI sẽ nạp và học toàn bộ dữ liệu này để trả lời khách hàng. Dữ liệu này KHÔNG hiển thị công khai trên web.'
+                    : 'Ingested strictly by DH AI to understand your company nuances. Never exposed to the public UI.'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-2 text-fg text-xs font-medium transition-colors">
+                  <Upload className="w-3.5 h-3.5 text-primary" />
+                  <span>{locale === 'vi' ? 'Tải tệp (.txt, .md)' : 'Upload File'}</span>
+                  <input
+                    type="file"
+                    accept=".txt,.md,.json"
+                    className="sr-only"
+                    onChange={handleKnowledgeFileUpload}
+                  />
+                </label>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  type="button"
+                  onClick={handleFillTemplate}
+                  className="text-xs"
+                >
+                  <FileText className="w-3.5 h-3.5 mr-1" />
+                  {locale === 'vi' ? 'Điền mẫu gợi ý' : 'Pre-fill Template'}
+                </Button>
+              </div>
+            </div>
+
+            <Textarea
+              rows={12}
+              placeholder={
+                locale === 'vi'
+                  ? 'Nhập các thông tin chuyên sâu về công ty, năng lực đội ngũ, quy trình bàn giao, chính sách chiết khấu, cam kết kỹ thuật...'
+                  : 'Provide detailed internal knowledge about company policies, technical competencies, delivery workflows...'
+              }
+              value={formData.ai.companyKnowledge}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  ai: { ...formData.ai, companyKnowledge: e.target.value },
+                })
+              }
+              helperText={
+                locale === 'vi'
+                  ? `Độ dài hiện tại: ${formData.ai.companyKnowledge.length} ký tự. DH AI sẽ tự động phân tích và kết hợp dữ liệu này cùng dữ liệu trực tiếp từ website.`
+                  : `Current length: ${formData.ai.companyKnowledge.length} characters. DH AI automatically merges this with live website data.`
+              }
+            />
+          </div>
         </Card>
       )}
     </div>

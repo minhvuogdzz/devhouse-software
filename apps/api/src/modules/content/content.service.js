@@ -68,6 +68,12 @@ export const contentService = {
 
     const settingsOverrides = settingsDoc?.data || {};
     const resolvedSettings = resolveContent(defaultSettings, settingsOverrides);
+    const sanitizedSettings = { ...resolvedSettings };
+    if (sanitizedSettings.ai) {
+      sanitizedSettings.ai = {
+        enabled: Boolean(sanitizedSettings.ai?.enabled),
+      };
+    }
 
     const navOverrides = {
       header: navDoc?.header || defaultNavigation.header,
@@ -75,13 +81,13 @@ export const contentService = {
     };
 
     let result = {
-      settings: resolvedSettings,
+      settings: sanitizedSettings,
       navigation: navOverrides,
     };
 
     if (locale) {
       result = {
-        settings: localize(resolvedSettings, locale),
+        settings: localize(sanitizedSettings, locale),
         navigation: localize(navOverrides, locale),
       };
     }
