@@ -456,7 +456,7 @@ export function FloatingContactDock() {
             onClick={toggleChat}
             aria-label="Open DH AI Chatbot"
             title={isEn ? 'Chat with DH AI' : 'Trò chuyện cùng DH AI'}
-            className="group relative flex items-center justify-center w-13 h-13 rounded-full bg-surface border border-border shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer text-fg"
+            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-300 hover:scale-108 active:scale-95 cursor-pointer text-fg"
           >
             {/* Subtle sRGB pulsing border aura */}
             <span
@@ -471,22 +471,22 @@ export function FloatingContactDock() {
             <span className="relative w-full h-full rounded-full bg-surface flex flex-col items-center justify-center overflow-visible">
               {/* Cute chat bubble hat perched on the roof */}
               <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none transition-transform duration-300 group-hover:-translate-y-0.5">
-                <div className="relative px-1.5 py-0.5 rounded-full bg-gradient-to-r from-primary to-accent text-primary-fg shadow-xs flex items-center gap-0.5 border border-surface">
-                  <MessageSquare className="w-2.5 h-2.5 fill-current" />
-                  <span className="text-[7.5px] font-black tracking-tighter leading-none">AI</span>
+                <div className="relative px-1 py-0.2 rounded-full bg-gradient-to-r from-primary to-accent text-primary-fg shadow-xs flex items-center gap-0.5 border border-surface">
+                  <MessageSquare className="w-2 h-2 fill-current" />
+                  <span className="text-[6.5px] font-black tracking-tighter leading-none">AI</span>
                   {/* Tail pointing down into the house roof */}
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-x-[3px] border-x-transparent border-t-[3px] border-t-primary" />
+                  <div className="absolute -bottom-0.8 left-1/2 -translate-x-1/2 w-0 h-0 border-x-[2px] border-x-transparent border-t-[2.5px] border-t-primary" />
                 </div>
               </div>
 
               {/* Dev House Brand Mark */}
-              <div className="w-7 h-7 flex items-center justify-center mt-1.5">
-                <Logo variant="mark" className="w-6 h-6 object-contain" alt="Dev House" />
+              <div className="w-5.5 h-5.5 flex items-center justify-center mt-1">
+                <Logo variant="mark" className="w-5 h-5 object-contain" alt="Dev House" />
               </div>
             </span>
 
             {/* Online green indicator badge */}
-            <span className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-success border-2 border-surface shadow-xs" />
+            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-success border-2 border-surface shadow-xs" />
 
             {/* Hover Tooltip (ONLY visible on hover, when popout is closed) */}
             {!isChatOpen && (
