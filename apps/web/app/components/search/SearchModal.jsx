@@ -205,25 +205,13 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
           mode === 'ai' ? 'sm:w-[620px] md:w-[680px]' : 'sm:w-[540px] md:w-[580px]'
         } max-w-[calc(100vw-1.5rem)]`}
       >
-        {/* Soft breathing ambient glow outside the card in AI mode */}
-        {mode === 'ai' && (
-          <div
-            className="absolute -inset-1 rounded-2xl opacity-60 blur-md pointer-events-none -z-10"
-            style={{
-              background:
-                'conic-gradient(from 0deg, #4285F4 0deg, #9B51E0 72deg, #EA4335 144deg, #FBBC05 216deg, #34A853 288deg, #4285F4 360deg)',
-              animation: 'aiSpin 4s linear infinite',
-            }}
-          />
-        )}
-
-        {/* Border Box with rotating sRGB aura when in DH AI mode */}
+        {/* Border Box with rotating sRGB perimeter line strictly clipped to border in DH AI mode */}
         <div
           className={`relative rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 ${
             mode === 'ai' ? 'p-[2px]' : 'border border-border bg-surface'
           }`}
         >
-          {/* THE ROTATING sRGB BORDER: Spin the BACKGROUND DISK ONLY, never the content! */}
+          {/* THE ROTATING sRGB BORDER: Spin strictly inside the 2px perimeter, zero leakage outside */}
           {mode === 'ai' && (
             <div
               className="absolute -top-[150%] -left-[150%] w-[400%] h-[400%] pointer-events-none"
