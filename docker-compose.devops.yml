@@ -1,0 +1,168 @@
+# ─────────────────────────────────────────────────────────────
+# Dev House Software — DevOps Full-Stack Docker Compose
+# ─────────────────────────────────────────────────────────────
+# Stack:
+#   - edge    : Nginx Reverse Proxy (Ports 80, 443) -> TLS, micro-cache, rate limit
+#   - web     : React Router Framework Mode SSR (Port 3000)
+#   - admin   : React SPA Admin Dashboard + Nginx (Port 5173 / 80)
+#   - api     : Express 5 + Mongoose + REST API (Port 4000)
+#   - mongodb : MongoDB 7 Jammy (Port 27017) with persistence & healthcheck
+#
+# Usage:
+#   1. Copy environment template if needed:
+#      cp .env.example .env
+#   2. Build and launch all services:
+#      docker compose -f docker-compose.devops.yml up --build -d
+#   3. Check status & logs:
+#      docker compose -f docker-compose.devops.yml ps
+#      docker compose -f docker-compose.devops.yml logs -f
+#   4. Run database seed (idempotent):
+#      docker compose -f docker-compose.devops.yml exec api node apps/api/src/database/seed/seed.js
+#   5. Stop all services:
+#      docker compose -f docker-compose.devops.yml down
+# ─────────────────────────────────────────────────────────────
+
+name: devhouse-devops
+
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  networks:
+    - internal
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "5"
+
+services:
+  # ──────── 1. MongoDB Database ────────
+  mongodb:
+    <<: *service-defaults
+    image: mongo:7-jammy
+    container_name: devhouse-mongodb
+    ports:
+      - "${MONGO_PORT:-27017}:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-devhouse_dev}
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ──────── 2. Express Backend API ────────
+  api:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: devhouse-api
+    ports:
+      - "${PORT:-4000}:4000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 4000
+      TRUST_PROXY: "1"
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017}
+      MONGODB_DB_NAME: ${MONGODB_DB_NAME:-devhouse_dev}
+      WEB_URL: ${WEB_URL:-http://localhost:3000}
+      ADMIN_URL: ${ADMIN_URL:-http://localhost:5173}
+      DEFAULT_LOCALE: ${DEFAULT_LOCALE:-vi}
+      SUPPORTED_LOCALES: ${SUPPORTED_LOCALES:-vi,en}
+      SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_SECURE: ${SMTP_SECURE:-true}
+      SMTP_USER: ${SMTP_USER:-devhousesoftware.inc@gmail.com}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-xmsrcujndnywfjox}
+      MAIL_FROM: ${MAIL_FROM:-"Dev House Software <devhousesoftware.inc@gmail.com>"}
+      CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "apps/api/scripts/healthcheck.js"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  # ──────── 3. Website SSR Frontend ────────
+  web:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: devhouse-web
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      WEB_PORT: 3000
+      API_INTERNAL_URL: http://api:4000/api/v1
+      SITE_URL: ${SITE_URL:-http://localhost:3000}
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "node", "apps/web/scripts/healthcheck.js"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+
+  # ──────── 4. Admin Management Dashboard ────────
+  admin:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    container_name: devhouse-admin
+    ports:
+      - "${ADMIN_PORT:-5173}:80"
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1/healthz"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+  # ──────── 5. Edge Reverse Proxy (Nginx) ────────
+  edge:
+    <<: *service-defaults
+    build:
+      context: .
+      dockerfile: infra/nginx/Dockerfile
+    container_name: devhouse-edge
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    depends_on:
+      api:
+        condition: service_started
+      web:
+        condition: service_started
+      admin:
+        condition: service_started
+    volumes:
+      - nginx_cache:/var/cache/nginx
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  nginx_cache:

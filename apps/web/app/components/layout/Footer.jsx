@@ -2,10 +2,21 @@ import React from 'react';
 import { Link, useLocation, useRouteLoaderData } from 'react-router';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { Logo } from '../ui/Logo.jsx';
+import { SocialIcon } from '../ui/SocialIcons.jsx';
 import { getTranslation, getLocaleFromUrl } from '../../lib/i18n.js';
 import { isExternalUrl, resolveNavigation, withLocale } from '../../lib/navigation.js';
 
 const linkClass = 'text-fg-muted hover:text-primary transition-colors';
+
+const DEFAULT_FOOTER_SOCIALS = [
+  { platform: 'facebook', label: 'Facebook', url: 'https://facebook.com/devhousesoftware', enabled: true },
+  { platform: 'zalo', label: 'Zalo', url: 'https://zalo.me/0869528304', enabled: true },
+  { platform: 'telegram', label: 'Telegram', url: 'https://t.me/devhousesoftware', enabled: true },
+  { platform: 'tiktok', label: 'TikTok', url: 'https://tiktok.com/@devhousesoftware', enabled: true },
+  { platform: 'youtube', label: 'YouTube', url: 'https://youtube.com/@devhousesoftware', enabled: true },
+  { platform: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com/company/devhousesoftware', enabled: true },
+  { platform: 'github', label: 'GitHub', url: 'https://github.com/thedevhouse', enabled: true },
+];
 
 function FooterLink({ link, locale, className = linkClass }) {
   const path = withLocale(link.path, locale);
@@ -34,8 +45,14 @@ export function Footer() {
   const { columns } = resolveNavigation(site, locale);
   const phoneHref = (settings.hotline || '').replace(/[^+\d]/g, '');
 
+  const rawSocials = Array.isArray(settings.socialLinks) && settings.socialLinks.length > 0
+    ? settings.socialLinks
+    : DEFAULT_FOOTER_SOCIALS;
+
+  const socialLinks = rawSocials.filter(s => s && s.enabled !== false && s.url);
+
   return (
-    <footer className="border-t border-border bg-surface text-fg transition-colors">
+    <footer id="site-footer" className="border-t border-border bg-surface text-fg transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-18">
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
           {/* Company */}
@@ -97,8 +114,42 @@ export function Footer() {
           )}
         </div>
 
+        {/* Social channels section */}
+        {socialLinks.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-border/70">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-semibold text-fg">
+                  {locale === 'en' ? 'Official Social Channels' : 'Kênh mạng xã hội chính thức'}
+                </h3>
+                <p className="text-xs text-fg-muted mt-0.5">
+                  {locale === 'en'
+                    ? 'Connect with Dev House Software across our verified networks.'
+                    : 'Kết nối và theo dõi Dev House Software trên các kênh truyền thông chính thức.'}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {socialLinks.map((item, idx) => (
+                  <a
+                    key={`${item.platform}-${idx}`}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={item.label || item.platform}
+                    title={item.label || item.platform}
+                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-surface-raised hover:bg-surface-2 hover:border-primary/40 text-fg-muted hover:text-primary transition-all duration-200 text-xs font-medium shadow-2xs hover:shadow-xs hover:-translate-y-0.5"
+                  >
+                    <SocialIcon platform={item.platform} className="w-4 h-4 shrink-0 transition-transform group-hover:scale-110" />
+                    <span className="capitalize">{item.label || item.platform}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Bottom bar */}
-        <div className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between text-xs text-fg-subtle gap-4">
+        <div className="mt-8 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between text-xs text-fg-subtle gap-4">
           <p>{t('footer.copyright').replace('{year}', String(currentYear))}</p>
           <div className="flex gap-6">
             <Link to={`${prefix}/privacy`} className="hover:text-fg transition-colors">

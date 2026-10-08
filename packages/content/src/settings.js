@@ -23,6 +23,7 @@ export const defaultSettings = {
   },
   taxCode: '',
   socialLinks: [],
+  floatingContacts: [],
   seo: {
     title: {
       vi: 'Dev House Software — Website trọn gói, an toàn và ổn định',
@@ -36,5 +37,11 @@ export const defaultSettings = {
       vi: 'thiết kế website, máy chủ đám mây, tên miền, bảo mật website, dev house',
       en: 'website design, cloud hosting, domain name, website security, dev house',
     },
+  },
+  ai: {
+    enabled: true,
+    apiKey: '',
+    model: 'gemini-flash-lite-latest',
+    companyKnowledge: '',
   },
 };
