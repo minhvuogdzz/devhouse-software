@@ -193,6 +193,7 @@ export function Header({ alternateUrl = null }) {
             <div className="relative">
               <button
                 type="button"
+                data-search-trigger="true"
                 onClick={() => setSearchOpen(prev => !prev)}
                 className={`p-2 rounded-md border transition-colors cursor-pointer flex items-center gap-1.5 ${
                   searchOpen

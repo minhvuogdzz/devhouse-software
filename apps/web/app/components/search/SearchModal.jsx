@@ -63,16 +63,35 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
     }
   }, [isOpen]);
 
-  // Handle ESC key and outside click
+  // Handle ESC key and outside click anywhere outside the search box
   useEffect(() => {
+    if (!isOpen) return;
+
     const handleKeyDown = e => {
-      if (!isOpen) return;
       if (e.key === 'Escape') {
         onClose();
       }
     };
+
+    const handleClickOutside = e => {
+      if (containerRef.current && containerRef.current.contains(e.target)) {
+        return;
+      }
+      if (e.target.closest && e.target.closest('[data-search-trigger]')) {
+        return;
+      }
+      onClose();
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, [isOpen, onClose]);
 
   // Debounced Standard Search
@@ -188,14 +207,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
 
   return (
     <>
-      {/* Subtle backdrop catcher: clicking anywhere outside closes the search box */}
-      <div
-        className="fixed inset-0 z-40 bg-scrim/30 backdrop-blur-xs transition-opacity duration-200"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-
-      {/* Dropdown panel flowing down right below search button */}
+      {/* Dropdown panel flowing down right below search button — no backdrop blur on header */}
       <div
         ref={containerRef}
         role="dialog"
@@ -300,7 +312,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                       ? 'Search services, projects, pricing, templates...'
                       : 'Tìm kiếm dịch vụ, dự án, bảng giá, mẫu website...'
                 }
-                className="w-full bg-transparent text-fg placeholder:text-fg-subtle text-sm focus:outline-none"
+                className="w-full bg-transparent text-fg placeholder:text-fg-subtle text-base sm:text-sm focus:outline-none"
               />
 
               {query && (

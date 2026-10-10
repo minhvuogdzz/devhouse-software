@@ -8,6 +8,7 @@ import {
   Bot,
   User,
   MessageSquare,
+  Loader2,
 } from 'lucide-react';
 import { Logo } from '../ui/Logo.jsx';
 import { SocialIcon } from '../ui/SocialIcons.jsx';
@@ -34,7 +35,7 @@ function ChatMessageContent({ content }) {
     if (currentList.length > 0) {
       if (listType === 'ol') {
         elements.push(
-          <ol key={`ol-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-decimal text-xs">
+          <ol key={`ol-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-decimal text-sm sm:text-xs">
             {currentList.map((item, i) => (
               <li key={i}>{formatInline(item)}</li>
             ))}
@@ -42,7 +43,7 @@ function ChatMessageContent({ content }) {
         );
       } else {
         elements.push(
-          <ul key={`ul-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-disc text-xs">
+          <ul key={`ul-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-disc text-sm sm:text-xs">
             {currentList.map((item, i) => (
               <li key={i}>{formatInline(item)}</li>
             ))}
@@ -79,7 +80,7 @@ function ChatMessageContent({ content }) {
     if (trimmed.startsWith('### ')) {
       flushList();
       elements.push(
-        <h4 key={`h-${index}`} className="font-semibold text-xs text-primary mt-2 mb-0.5">
+        <h4 key={`h-${index}`} className="font-semibold text-sm sm:text-xs text-primary mt-2 mb-0.5">
           {formatInline(trimmed.replace(/^###\s+/, ''))}
         </h4>
       );
@@ -105,7 +106,7 @@ function ChatMessageContent({ content }) {
 
     flushList();
     elements.push(
-      <p key={`p-${index}`} className="my-0.5 text-xs leading-relaxed">
+      <p key={`p-${index}`} className="my-0.5 text-sm sm:text-xs leading-relaxed">
         {formatInline(trimmed)}
       </p>
     );
@@ -184,7 +185,20 @@ export function FloatingContactDock() {
     return () => window.removeEventListener('scroll', checkFooter);
   }, []);
 
-  // Click outside to close instantly with zero delay
+  // Lock background page scroll on mobile when full-screen chat is open
+  useEffect(() => {
+    if (!isChatOpen) return;
+    const isMobile = window.innerWidth < 640;
+    if (isMobile) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isChatOpen]);
+
+  // Click outside to close instantly on desktop with zero delay
   useEffect(() => {
     const handleDocumentClick = e => {
       if (
@@ -296,61 +310,65 @@ export function FloatingContactDock() {
     >
       <div className="flex flex-col items-end gap-3 transition-all duration-500 ease-in-out">
         {/* ========================================================= */}
-        {/* 1. CHATBOT FLOATING ICON + SNAPPY POPOUT CHAT DRAWER      */}
+        {/* 1. CHATBOT FLOATING ICON + RESPONSIVE CHAT DRAWER         */}
         {/* ========================================================= */}
         <div className="relative pointer-events-auto">
-          {/* Chat popout box: sleek compact size, smooth spring-in animation */}
+          {/* Chat drawer: full-screen overlay on mobile, sleek floating popout on desktop */}
           {isChatOpen && (
             <div
               ref={chatDrawerRef}
-              className="absolute right-full bottom-0 mr-3 w-[calc(100vw-2.5rem)] sm:w-[350px] max-w-[350px] h-[460px] max-h-[calc(100vh-6rem)] rounded-2xl border border-border/80 bg-surface text-fg shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ease-out origin-bottom-right z-50 animate-in fade-in zoom-in-95"
+              className="fixed inset-0 z-[100] w-full h-[100dvh] bg-surface text-fg flex flex-col overflow-hidden pointer-events-auto sm:absolute sm:inset-auto sm:right-full sm:bottom-0 sm:mr-3 sm:w-[360px] sm:max-w-[360px] sm:h-[480px] sm:max-h-[calc(100vh-6rem)] sm:rounded-2xl sm:border sm:border-border/80 sm:shadow-2xl sm:z-50 transition-all duration-200 ease-out sm:origin-bottom-right animate-in fade-in sm:zoom-in-95"
               role="dialog"
               aria-modal="true"
               aria-label="DH AI Chat"
             >
               {/* Header */}
-              <div className="px-3.5 py-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-2">
+              <div className="px-4 py-3 sm:px-3.5 sm:py-2.5 pt-[max(0.75rem,env(safe-area-inset-top,0.75rem))] sm:pt-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2.5 sm:gap-2">
                   {/* Devhouse AI Mini Avatar */}
                   <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-primary via-accent to-primary">
-                    <div className="w-7 h-7 rounded-full bg-surface flex items-center justify-center overflow-hidden">
-                      <Logo variant="mark" className="w-5 h-5 object-contain" alt="DH AI" />
+                    <div className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-surface flex items-center justify-center overflow-hidden">
+                      <Logo variant="mark" className="w-5.5 h-5.5 sm:w-5 sm:h-5 object-contain" alt="DH AI" />
                     </div>
-                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-success border-2 border-surface" />
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-2 sm:h-2 rounded-full bg-success border-2 border-surface" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-fg flex items-center gap-1.5 leading-none">
+                    <h3 className="text-sm sm:text-xs font-bold text-fg flex items-center gap-1.5 leading-none">
                       DH AI Assistant
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-primary/10 text-primary font-medium">
+                      <span className="text-[10px] sm:text-[9px] px-1.5 py-0.5 sm:py-0.2 rounded-full bg-primary/10 text-primary font-medium">
                         Online
                       </span>
                     </h3>
-                    <p className="text-[10.5px] text-fg-muted mt-0.5 leading-none">
+                    <p className="text-xs sm:text-[10.5px] text-fg-muted mt-1 sm:mt-0.5 leading-none">
                       {isEn ? 'Consultant • Devhouse Software' : 'Tư vấn viên ảo Devhouse'}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-1 sm:gap-0.5">
                   <button
+                    type="button"
                     onClick={handleResetChat}
                     title={isEn ? 'Reset chat' : 'Làm mới cuộc trò chuyện'}
-                    className="p-1.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer"
+                    aria-label={isEn ? 'Reset chat' : 'Làm mới cuộc trò chuyện'}
+                    className="p-2 sm:p-1.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
+                    <RotateCcw className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                   </button>
                   <button
+                    type="button"
                     onClick={closeChat}
                     title={isEn ? 'Close' : 'Đóng'}
-                    className="p-1.5 rounded-lg text-fg-muted hover:text-danger hover:bg-danger-surface transition-colors cursor-pointer"
+                    aria-label={isEn ? 'Close' : 'Đóng'}
+                    className="p-2 sm:p-1.5 rounded-lg text-fg-muted hover:text-danger hover:bg-danger-surface transition-colors cursor-pointer"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5 sm:w-4 sm:h-4" />
                   </button>
                 </div>
               </div>
 
               {/* Message List */}
-              <div className="flex-1 overflow-y-auto p-3.5 space-y-3 overscroll-contain">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-3.5 space-y-3.5 sm:space-y-3 overscroll-contain">
                 {messages.map((msg, i) => (
                   <div
                     key={i}
@@ -359,22 +377,26 @@ export function FloatingContactDock() {
                     }`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                        <Bot className="w-3 h-3" />
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                        <Bot className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </div>
                     )}
                     <div
-                      className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-2xs ${
+                      className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 sm:px-3 sm:py-2 shadow-2xs ${
                         msg.role === 'user'
-                          ? 'bg-primary text-primary-fg rounded-br-xs'
+                          ? 'bg-primary text-on-scrim rounded-br-xs'
                           : 'bg-surface-raised border border-border text-fg rounded-bl-xs'
                       }`}
                     >
-                      <ChatMessageContent content={msg.text} />
+                      {msg.role === 'user' ? (
+                        <p className="text-sm sm:text-xs leading-relaxed text-on-scrim">{msg.text}</p>
+                      ) : (
+                        <ChatMessageContent content={msg.text} />
+                      )}
                     </div>
                     {msg.role === 'user' && (
-                      <div className="w-5 h-5 rounded-full bg-primary text-primary-fg flex items-center justify-center shrink-0 mt-0.5 text-xs">
-                        <User className="w-3 h-3" />
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-primary text-on-scrim flex items-center justify-center shrink-0 mt-0.5 text-xs">
+                        <User className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </div>
                     )}
                   </div>
@@ -382,8 +404,8 @@ export function FloatingContactDock() {
 
                 {isLoading && (
                   <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                      <Bot className="w-3 h-3" />
+                    <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <Bot className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                     </div>
                     <div className="rounded-2xl rounded-bl-xs bg-surface-raised border border-border px-3.5 py-2.5 flex items-center gap-1.5 shadow-2xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
@@ -397,7 +419,7 @@ export function FloatingContactDock() {
 
               {/* Quick Prompts */}
               {messages.length <= 2 && (
-                <div className="px-3 py-2 border-t border-border/60 bg-surface-raised/50 shrink-0">
+                <div className="px-4 py-2.5 sm:px-3 sm:py-2 border-t border-border/60 bg-surface-raised/50 shrink-0">
                   <p className="text-[10px] uppercase font-semibold tracking-wider text-fg-subtle mb-1.5">
                     {isEn ? 'Suggested questions' : 'Gợi ý câu hỏi nhanh'}
                   </p>
@@ -405,25 +427,26 @@ export function FloatingContactDock() {
                     {quickPrompts.map((prompt, idx) => (
                       <button
                         key={idx}
+                        type="button"
                         onClick={() => handleSendMessage(prompt)}
-                        className="text-[11px] px-2 py-0.8 rounded-full border border-border bg-surface hover:bg-surface-2 hover:border-primary/40 text-fg-muted hover:text-primary transition-all text-left flex items-center gap-1 cursor-pointer"
+                        className="text-xs sm:text-[11px] px-2.5 py-1 sm:px-2 sm:py-0.8 rounded-full border border-border bg-surface hover:bg-surface-2 hover:border-primary/40 text-fg-muted hover:text-primary transition-all text-left flex items-center gap-1 cursor-pointer"
                       >
                         <span>{prompt}</span>
-                        <ChevronRight className="w-2.5 h-2.5 text-fg-subtle" />
+                        <ChevronRight className="w-3 h-3 sm:w-2.5 sm:h-2.5 text-fg-subtle" />
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Input Area */}
-              <div className="p-2.5 border-t border-border bg-surface shrink-0">
+              {/* Input Area — 16px (text-base) on mobile prevents browser auto-zoom on focus */}
+              <div className="p-3 sm:p-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom,0.75rem))] sm:pb-2.5 border-t border-border bg-surface shrink-0">
                 <form
                   onSubmit={e => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="flex items-center gap-1.5"
+                  className="flex items-center gap-2"
                 >
                   <input
                     type="text"
@@ -434,15 +457,24 @@ export function FloatingContactDock() {
                         ? 'Ask DH AI anything about Devhouse...'
                         : 'Hỏi em bất kỳ điều gì về Devhouse...'
                     }
-                    className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                    className="flex-1 h-10 sm:h-9 px-3.5 text-base sm:text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1.5 focus:ring-primary focus:border-primary transition-colors"
                   />
                   <button
                     type="submit"
                     disabled={!inputMessage.trim() || isLoading}
-                    className="p-1.8 rounded-xl bg-primary text-primary-fg hover:bg-primary-hover disabled:opacity-40 disabled:hover:bg-primary transition-colors cursor-pointer shrink-0 shadow-2xs"
+                    className={`w-10 h-10 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      inputMessage.trim() && !isLoading
+                        ? 'bg-primary text-on-scrim hover:bg-primary-hover shadow-md shadow-primary/25 active:scale-95 cursor-pointer'
+                        : 'bg-primary/15 text-primary/70 border border-primary/25 cursor-not-allowed'
+                    }`}
                     title={isEn ? 'Send' : 'Gửi'}
+                    aria-label={isEn ? 'Send' : 'Gửi'}
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4 -translate-y-[0.5px] translate-x-[0.5px]" />
+                    )}
                   </button>
                 </form>
               </div>
@@ -456,7 +488,9 @@ export function FloatingContactDock() {
             onClick={toggleChat}
             aria-label="Open DH AI Chatbot"
             title={isEn ? 'Chat with DH AI' : 'Trò chuyện cùng DH AI'}
-            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-300 hover:scale-108 active:scale-95 cursor-pointer text-fg"
+            className={`group relative flex items-center justify-center w-11 h-11 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-300 hover:scale-108 active:scale-95 cursor-pointer text-fg ${
+              isChatOpen ? 'max-sm:hidden' : ''
+            }`}
           >
             {/* Subtle sRGB pulsing border aura */}
             <span
@@ -502,6 +536,8 @@ export function FloatingContactDock() {
         {/* ========================================================= */}
         <div
           className={`flex flex-col items-end gap-2.5 transition-all duration-500 ease-in-out ${
+            isChatOpen ? 'max-sm:hidden ' : ''
+          }${
             isAtFooter
               ? 'opacity-0 translate-y-10 max-h-0 pointer-events-none overflow-hidden scale-90 mb-0'
               : 'opacity-100 translate-y-0 max-h-60 pointer-events-auto scale-100'
