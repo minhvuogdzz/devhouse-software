@@ -40,7 +40,7 @@ export async function loader({ params, request }) {
         readingTimeMinutes: 4,
         publishedAt: new Date().toISOString(),
         author: {
-          name: 'Dev House Engineering Team',
+          name: 'Devhouse Engineering Team',
           role: locale === 'en' ? 'Core Architecture Group' : 'Ban Kiến trúc Hệ thống',
           bio:
             locale === 'en'
@@ -61,7 +61,7 @@ export async function loader({ params, request }) {
 export function meta({ data }) {
   if (!data?.post) return [{ title: 'Not Found' }];
   const p = data.post;
-  const title = `${p.title} — Dev House Software`;
+  const title = `${p.title} — Devhouse Software`;
   const description = p.summary || p.excerpt || '';
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -135,7 +135,7 @@ export default function BlogPostPage() {
               </div>
               <div>
                 <span className="font-semibold text-fg block">
-                  {post.author?.name || 'Dev House'}
+                  {post.author?.name || 'Devhouse'}
                 </span>
                 {post.author?.role && (
                   <span className="text-xs text-fg-subtle">{post.author.role}</span>

@@ -8,10 +8,20 @@ import {
   Bot,
   User,
   MessageSquare,
+  Loader2,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { Logo } from '../ui/Logo.jsx';
 import { SocialIcon } from '../ui/SocialIcons.jsx';
 import { getLocaleFromUrl } from '../../lib/i18n.js';
+import {
+  startVoiceRecognition,
+  speakText,
+  stopSpeaking,
+} from '../../lib/voice.js';
 
 const DEFAULT_FLOATING_CONTACTS = [
   { type: 'zalo', label: 'Zalo tư vấn', value: 'https://zalo.me/0869528304', enabled: true },
@@ -34,7 +44,7 @@ function ChatMessageContent({ content }) {
     if (currentList.length > 0) {
       if (listType === 'ol') {
         elements.push(
-          <ol key={`ol-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-decimal text-xs">
+          <ol key={`ol-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-decimal text-sm sm:text-xs">
             {currentList.map((item, i) => (
               <li key={i}>{formatInline(item)}</li>
             ))}
@@ -42,7 +52,7 @@ function ChatMessageContent({ content }) {
         );
       } else {
         elements.push(
-          <ul key={`ul-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-disc text-xs">
+          <ul key={`ul-${elements.length}`} className="my-1.5 space-y-1 pl-4 list-disc text-sm sm:text-xs">
             {currentList.map((item, i) => (
               <li key={i}>{formatInline(item)}</li>
             ))}
@@ -79,7 +89,7 @@ function ChatMessageContent({ content }) {
     if (trimmed.startsWith('### ')) {
       flushList();
       elements.push(
-        <h4 key={`h-${index}`} className="font-semibold text-xs text-primary mt-2 mb-0.5">
+        <h4 key={`h-${index}`} className="font-semibold text-sm sm:text-xs text-primary mt-2 mb-0.5">
           {formatInline(trimmed.replace(/^###\s+/, ''))}
         </h4>
       );
@@ -105,7 +115,7 @@ function ChatMessageContent({ content }) {
 
     flushList();
     elements.push(
-      <p key={`p-${index}`} className="my-0.5 text-xs leading-relaxed">
+      <p key={`p-${index}`} className="my-0.5 text-sm sm:text-xs leading-relaxed">
         {formatInline(trimmed)}
       </p>
     );
@@ -129,14 +139,19 @@ export function FloatingContactDock() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speakingMsgIdx, setSpeakingMsgIdx] = useState(null);
+  const [voiceError, setVoiceError] = useState('');
+
   const messagesEndRef = useRef(null);
   const chatDrawerRef = useRef(null);
   const triggerButtonRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Initial greeting
   const initialGreeting = isEn
-    ? 'Hello! I am DH AI, the virtual consultant at Dev House Software. How may I assist you with website development, hosting, or our process today?'
-    : 'Dạ em chào anh/chị ạ! Em là DH AI — Chuyên viên tư vấn ảo của Dev House Software. Em có thể hỗ trợ thông tin gì về bảng giá thiết kế website, máy chủ hay quy trình phần mềm hôm nay ạ?';
+    ? 'Hello! I am DH AI, the virtual consultant at Devhouse Software. How may I assist you with website development, hosting, or our process today?'
+    : 'Dạ em chào anh/chị ạ! Em là DH AI — Chuyên viên tư vấn ảo của Devhouse Software. Em có thể hỗ trợ thông tin gì về bảng giá thiết kế website, máy chủ hay quy trình phần mềm hôm nay ạ?';
 
   const [messages, setMessages] = useState([
     {
@@ -184,7 +199,26 @@ export function FloatingContactDock() {
     return () => window.removeEventListener('scroll', checkFooter);
   }, []);
 
-  // Click outside to close instantly with zero delay
+  // Lock background page scroll on mobile when chat is open & stop voice on close
+  useEffect(() => {
+    if (!isChatOpen) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      stopSpeaking();
+      setSpeakingMsgIdx(null);
+      return;
+    }
+    const isMobile = window.innerWidth < 640;
+    if (isMobile) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isChatOpen]);
+
+  // Click outside to close instantly on desktop with zero delay
   useEffect(() => {
     const handleDocumentClick = e => {
       if (
@@ -230,8 +264,11 @@ export function FloatingContactDock() {
   };
 
   const handleSendMessage = async textToSend => {
-    const query = (textToSend || inputMessage).trim();
+    const query = (textToSend !== undefined ? textToSend : inputMessage).trim();
     if (!query || isLoading) return;
+
+    recognitionRef.current?.stop();
+    setIsListening(false);
 
     const userMsg = { role: 'user', text: query };
     const updatedHistory = [...messages, userMsg];
@@ -273,7 +310,71 @@ export function FloatingContactDock() {
     }
   };
 
+  const handleToggleVoiceInput = () => {
+    setVoiceError('');
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    stopSpeaking();
+    setSpeakingMsgIdx(null);
+
+    const controller = startVoiceRecognition({
+      locale,
+      onResult: ({ transcript }) => {
+        setInputMessage(transcript);
+      },
+      onEnd: (finalTranscript, hasFinal) => {
+        setIsListening(false);
+        if (hasFinal && finalTranscript && finalTranscript.trim().length > 1) {
+          handleSendMessage(finalTranscript.trim());
+        }
+      },
+      onError: errCode => {
+        setIsListening(false);
+        if (errCode === 'not-supported') {
+          setVoiceError(
+            isEn
+              ? 'Voice input is not supported on this browser.'
+              : 'Trình duyệt này chưa hỗ trợ nhận diện giọng nói.',
+          );
+        } else if (errCode === 'not-allowed') {
+          setVoiceError(
+            isEn
+              ? 'Please allow microphone access to use voice chat.'
+              : 'Vui lòng cấp quyền Micro để trò chuyện bằng giọng nói.',
+          );
+        }
+      },
+    });
+
+    if (controller) {
+      recognitionRef.current = controller;
+      setIsListening(true);
+    }
+  };
+
+  const handleToggleSpeakMessage = (idx, text) => {
+    if (speakingMsgIdx === idx) {
+      stopSpeaking();
+      setSpeakingMsgIdx(null);
+      return;
+    }
+
+    speakText({
+      text,
+      locale,
+      onStart: () => setSpeakingMsgIdx(idx),
+      onEnd: () => setSpeakingMsgIdx(null),
+      onError: () => setSpeakingMsgIdx(null),
+    });
+  };
+
   const handleResetChat = () => {
+    stopSpeaking();
+    setSpeakingMsgIdx(null);
     setMessages([{ role: 'assistant', text: initialGreeting }]);
   };
 
@@ -291,66 +392,82 @@ export function FloatingContactDock() {
 
   return (
     <div
-      className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-40 flex flex-col items-end pointer-events-none"
+      className={`fixed right-4 sm:right-6 bottom-4 sm:bottom-6 ${
+        isChatOpen ? 'z-[70]' : 'z-40'
+      } flex flex-col items-end pointer-events-none`}
       aria-label="Floating Contact & AI Chatbot"
     >
+      {/* Mobile Backdrop: tap outside the chat box anywhere to close */}
+      {isChatOpen && (
+        <div
+          onClick={closeChat}
+          aria-hidden="true"
+          className="fixed inset-0 z-[70] bg-scrim/50 backdrop-blur-[2px] pointer-events-auto sm:hidden animate-in fade-in duration-200"
+        />
+      )}
+
       <div className="flex flex-col items-end gap-3 transition-all duration-500 ease-in-out">
         {/* ========================================================= */}
-        {/* 1. CHATBOT FLOATING ICON + SNAPPY POPOUT CHAT DRAWER      */}
+        {/* 1. CHATBOT FLOATING ICON + RESPONSIVE CHAT DRAWER         */}
         {/* ========================================================= */}
         <div className="relative pointer-events-auto">
-          {/* Chat popout box: sleek compact size, smooth spring-in animation */}
+          {/* Chat drawer: padded floating modal on mobile (above header), sleek side popout on desktop */}
           {isChatOpen && (
             <div
               ref={chatDrawerRef}
-              className="absolute right-full bottom-0 mr-3 w-[calc(100vw-2.5rem)] sm:w-[350px] max-w-[350px] h-[460px] max-h-[calc(100vh-6rem)] rounded-2xl border border-border/80 bg-surface text-fg shadow-2xl flex flex-col overflow-hidden transition-all duration-200 ease-out origin-bottom-right z-50 animate-in fade-in zoom-in-95"
+              className="fixed inset-x-3.5 top-4 bottom-4 z-[80] max-h-[calc(100dvh-2rem)] rounded-2xl border border-border bg-surface text-fg shadow-2xl flex flex-col overflow-hidden pointer-events-auto sm:absolute sm:inset-auto sm:right-full sm:bottom-0 sm:mr-3 sm:w-[370px] sm:max-w-[370px] sm:h-[500px] sm:max-h-[calc(100vh-6rem)] sm:z-50 transition-all duration-200 ease-out sm:origin-bottom-right animate-in fade-in zoom-in-95"
               role="dialog"
               aria-modal="true"
               aria-label="DH AI Chat"
             >
               {/* Header */}
-              <div className="px-3.5 py-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
-                <div className="flex items-center gap-2">
-                  {/* Dev House AI Mini Avatar */}
+              <div className="px-4 py-3 sm:px-3.5 sm:py-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2.5 sm:gap-2">
+                  {/* Devhouse AI Mini Avatar */}
                   <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-primary via-accent to-primary">
-                    <div className="w-7 h-7 rounded-full bg-surface flex items-center justify-center overflow-hidden">
-                      <Logo variant="mark" className="w-5 h-5 object-contain" alt="DH AI" />
+                    <div className="w-8 h-8 sm:w-7 sm:h-7 rounded-full bg-surface flex items-center justify-center overflow-hidden">
+                      <Logo variant="mark" className="w-5.5 h-5.5 sm:w-5 sm:h-5 object-contain" alt="DH AI" />
                     </div>
-                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-success border-2 border-surface" />
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-2 sm:h-2 rounded-full bg-success border-2 border-surface" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-bold text-fg flex items-center gap-1.5 leading-none">
+                    <h3 className="text-sm sm:text-xs font-bold text-fg flex items-center gap-1.5 leading-none">
                       DH AI Assistant
-                      <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-primary/10 text-primary font-medium">
+                      <span className="text-[10px] sm:text-[9px] px-1.5 py-0.5 sm:py-0.2 rounded-full bg-primary/10 text-primary font-medium">
                         Online
                       </span>
                     </h3>
-                    <p className="text-[10.5px] text-fg-muted mt-0.5 leading-none">
-                      {isEn ? 'Consultant • Dev House Software' : 'Tư vấn viên ảo Dev House'}
+                    <p className="text-xs sm:text-[10.5px] text-fg-muted mt-1 sm:mt-0.5 leading-none">
+                      {isEn ? 'Consultant • Devhouse Software' : 'Tư vấn viên ảo Devhouse'}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-0.5">
+                <div className="flex items-center gap-1.5 sm:gap-1">
                   <button
+                    type="button"
                     onClick={handleResetChat}
                     title={isEn ? 'Reset chat' : 'Làm mới cuộc trò chuyện'}
-                    className="p-1.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer"
+                    aria-label={isEn ? 'Reset chat' : 'Làm mới cuộc trò chuyện'}
+                    className="p-2 sm:p-1.5 rounded-lg text-fg-muted hover:text-fg hover:bg-surface-2 transition-colors cursor-pointer"
                   >
-                    <RotateCcw className="w-3.5 h-3.5" />
+                    <RotateCcw className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
                   </button>
                   <button
+                    type="button"
                     onClick={closeChat}
-                    title={isEn ? 'Close' : 'Đóng'}
-                    className="p-1.5 rounded-lg text-fg-muted hover:text-danger hover:bg-danger-surface transition-colors cursor-pointer"
+                    title={isEn ? 'Close' : 'Đóng khung chat'}
+                    aria-label={isEn ? 'Close' : 'Đóng khung chat'}
+                    className="px-2.5 py-1.5 sm:p-1.5 rounded-lg bg-surface-2 sm:bg-transparent border border-border sm:border-transparent text-fg sm:text-fg-muted hover:text-danger hover:bg-danger-surface hover:border-danger/30 transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold"
                   >
+                    <span className="sm:hidden">{isEn ? 'Close' : 'Đóng'}</span>
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
               {/* Message List */}
-              <div className="flex-1 overflow-y-auto p-3.5 space-y-3 overscroll-contain">
+              <div className="flex-1 overflow-y-auto p-4 sm:p-3.5 space-y-3.5 sm:space-y-3 overscroll-contain">
                 {messages.map((msg, i) => (
                   <div
                     key={i}
@@ -359,22 +476,62 @@ export function FloatingContactDock() {
                     }`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                        <Bot className="w-3 h-3" />
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                        <Bot className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </div>
                     )}
-                    <div
-                      className={`max-w-[85%] rounded-2xl px-3 py-2 shadow-2xs ${
-                        msg.role === 'user'
-                          ? 'bg-primary text-primary-fg rounded-br-xs'
-                          : 'bg-surface-raised border border-border text-fg rounded-bl-xs'
-                      }`}
-                    >
-                      <ChatMessageContent content={msg.text} />
+                    <div className="max-w-[85%] flex flex-col items-start gap-1">
+                      <div
+                        className={`rounded-2xl px-3.5 py-2.5 sm:px-3 sm:py-2 shadow-2xs ${
+                          msg.role === 'user'
+                            ? 'bg-primary text-on-scrim rounded-br-xs'
+                            : 'bg-surface-raised border border-border text-fg rounded-bl-xs'
+                        }`}
+                      >
+                        {msg.role === 'user' ? (
+                          <p className="text-sm sm:text-xs leading-relaxed text-on-scrim">{msg.text}</p>
+                        ) : (
+                          <ChatMessageContent content={msg.text} />
+                        )}
+                      </div>
+
+                      {/* Voice Read Aloud (TTS) button for Assistant responses */}
+                      {msg.role === 'assistant' && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSpeakMessage(i, msg.text)}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-medium transition-colors cursor-pointer ${
+                            speakingMsgIdx === i
+                              ? 'bg-primary/15 text-primary border border-primary/30'
+                              : 'text-fg-subtle hover:text-primary hover:bg-surface-2'
+                          }`}
+                          title={
+                            speakingMsgIdx === i
+                              ? isEn
+                                ? 'Stop reading'
+                                : 'Dừng đọc'
+                              : isEn
+                                ? 'Listen to response'
+                                : 'Nghe phản hồi'
+                          }
+                        >
+                          {speakingMsgIdx === i ? (
+                            <>
+                              <VolumeX className="w-3 h-3 animate-pulse" />
+                              <span>{isEn ? 'Stop' : 'Dừng đọc'}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3 h-3" />
+                              <span>{isEn ? 'Listen' : 'Nghe'}</span>
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
                     {msg.role === 'user' && (
-                      <div className="w-5 h-5 rounded-full bg-primary text-primary-fg flex items-center justify-center shrink-0 mt-0.5 text-xs">
-                        <User className="w-3 h-3" />
+                      <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-primary text-on-scrim flex items-center justify-center shrink-0 mt-0.5 text-xs">
+                        <User className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </div>
                     )}
                   </div>
@@ -382,8 +539,8 @@ export function FloatingContactDock() {
 
                 {isLoading && (
                   <div className="flex items-start gap-2">
-                    <div className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-                      <Bot className="w-3 h-3" />
+                    <div className="w-6 h-6 sm:w-5 sm:h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                      <Bot className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                     </div>
                     <div className="rounded-2xl rounded-bl-xs bg-surface-raised border border-border px-3.5 py-2.5 flex items-center gap-1.5 shadow-2xs">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]" />
@@ -397,7 +554,7 @@ export function FloatingContactDock() {
 
               {/* Quick Prompts */}
               {messages.length <= 2 && (
-                <div className="px-3 py-2 border-t border-border/60 bg-surface-raised/50 shrink-0">
+                <div className="px-4 py-2.5 sm:px-3 sm:py-2 border-t border-border/60 bg-surface-raised/50 shrink-0">
                   <p className="text-[10px] uppercase font-semibold tracking-wider text-fg-subtle mb-1.5">
                     {isEn ? 'Suggested questions' : 'Gợi ý câu hỏi nhanh'}
                   </p>
@@ -405,44 +562,114 @@ export function FloatingContactDock() {
                     {quickPrompts.map((prompt, idx) => (
                       <button
                         key={idx}
+                        type="button"
                         onClick={() => handleSendMessage(prompt)}
-                        className="text-[11px] px-2 py-0.8 rounded-full border border-border bg-surface hover:bg-surface-2 hover:border-primary/40 text-fg-muted hover:text-primary transition-all text-left flex items-center gap-1 cursor-pointer"
+                        className="text-xs sm:text-[11px] px-2.5 py-1 sm:px-2 sm:py-0.8 rounded-full border border-border bg-surface hover:bg-surface-2 hover:border-primary/40 text-fg-muted hover:text-primary transition-all text-left flex items-center gap-1 cursor-pointer"
                       >
                         <span>{prompt}</span>
-                        <ChevronRight className="w-2.5 h-2.5 text-fg-subtle" />
+                        <ChevronRight className="w-3 h-3 sm:w-2.5 sm:h-2.5 text-fg-subtle" />
                       </button>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Input Area */}
-              <div className="p-2.5 border-t border-border bg-surface shrink-0">
+              {/* Voice status / error notice */}
+              {(isListening || voiceError) && (
+                <div
+                  className={`px-3.5 py-1.5 text-xs flex items-center justify-between border-t border-border-subtle ${
+                    isListening ? 'bg-primary/10 text-primary font-medium' : 'bg-danger-surface text-danger'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    {isListening && <span className="w-2 h-2 rounded-full bg-danger animate-ping" />}
+                    {isListening
+                      ? isEn
+                        ? 'Listening... Speak now'
+                        : 'Đang nghe anh/chị nói...'
+                      : voiceError}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isListening) {
+                        recognitionRef.current?.stop();
+                        setIsListening(false);
+                      }
+                      setVoiceError('');
+                    }}
+                    className="text-[11px] underline cursor-pointer"
+                  >
+                    {isEn ? 'Dismiss' : 'Đóng'}
+                  </button>
+                </div>
+              )}
+
+              {/* Input Area — 16px (text-base) on mobile prevents browser auto-zoom on focus */}
+              <div className="p-3 sm:p-2.5 border-t border-border bg-surface shrink-0">
                 <form
                   onSubmit={e => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="flex items-center gap-1.5"
+                  className="flex items-center gap-1.5 sm:gap-2"
                 >
                   <input
                     type="text"
                     value={inputMessage}
                     onChange={e => setInputMessage(e.target.value)}
                     placeholder={
-                      isEn
-                        ? 'Ask DH AI anything about Dev House...'
-                        : 'Hỏi em bất kỳ điều gì về Dev House...'
+                      isListening
+                        ? isEn
+                          ? 'Listening to your voice...'
+                          : 'Đang nghe giọng nói...'
+                        : isEn
+                          ? 'Ask DH AI anything...'
+                          : 'Hỏi em bất kỳ điều gì về Devhouse...'
                     }
-                    className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
+                    className="flex-1 min-w-0 h-10 sm:h-9 px-3.5 text-base sm:text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1.5 focus:ring-primary focus:border-primary transition-colors"
                   />
+
+                  {/* Voice Microphone Button */}
+                  <button
+                    type="button"
+                    onClick={handleToggleVoiceInput}
+                    className={`w-10 h-10 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer ${
+                      isListening
+                        ? 'bg-danger text-on-scrim shadow-md animate-pulse'
+                        : 'bg-surface-raised text-fg-muted hover:text-primary hover:border-primary/40 border border-border'
+                    }`}
+                    title={
+                      isListening
+                        ? isEn
+                          ? 'Stop voice input'
+                          : 'Dừng thu âm'
+                        : isEn
+                          ? 'Voice chat'
+                          : 'Nhập bằng giọng nói'
+                    }
+                    aria-label={isEn ? 'Voice input' : 'Nhập bằng giọng nói'}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </button>
+
+                  {/* Send Button */}
                   <button
                     type="submit"
                     disabled={!inputMessage.trim() || isLoading}
-                    className="p-1.8 rounded-xl bg-primary text-primary-fg hover:bg-primary-hover disabled:opacity-40 disabled:hover:bg-primary transition-colors cursor-pointer shrink-0 shadow-2xs"
+                    className={`w-10 h-10 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      inputMessage.trim() && !isLoading
+                        ? 'bg-primary text-on-scrim hover:bg-primary-hover shadow-md shadow-primary/25 active:scale-95 cursor-pointer'
+                        : 'bg-primary/15 text-primary/70 border border-primary/25 cursor-not-allowed'
+                    }`}
                     title={isEn ? 'Send' : 'Gửi'}
+                    aria-label={isEn ? 'Send' : 'Gửi'}
                   >
-                    <Send className="w-3.5 h-3.5" />
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4 -translate-y-[0.5px] translate-x-[0.5px]" />
+                    )}
                   </button>
                 </form>
               </div>
@@ -450,13 +677,15 @@ export function FloatingContactDock() {
           )}
 
           {/* Chatbot Action Trigger Button */}
-          {/* Custom Dev House Icon wearing a chat balloon hat on roof */}
+          {/* Custom Devhouse Icon wearing a chat balloon hat on roof */}
           <button
             ref={triggerButtonRef}
             onClick={toggleChat}
             aria-label="Open DH AI Chatbot"
             title={isEn ? 'Chat with DH AI' : 'Trò chuyện cùng DH AI'}
-            className="group relative flex items-center justify-center w-11 h-11 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-300 hover:scale-108 active:scale-95 cursor-pointer text-fg"
+            className={`group relative flex items-center justify-center w-11 h-11 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-300 hover:scale-108 active:scale-95 cursor-pointer text-fg ${
+              isChatOpen ? 'max-sm:hidden' : ''
+            }`}
           >
             {/* Subtle sRGB pulsing border aura */}
             <span
@@ -479,9 +708,9 @@ export function FloatingContactDock() {
                 </div>
               </div>
 
-              {/* Dev House Brand Mark */}
+              {/* Devhouse Brand Mark */}
               <div className="w-5.5 h-5.5 flex items-center justify-center mt-1">
-                <Logo variant="mark" className="w-5 h-5 object-contain" alt="Dev House" />
+                <Logo variant="mark" className="w-5 h-5 object-contain" alt="Devhouse" />
               </div>
             </span>
 
@@ -502,6 +731,8 @@ export function FloatingContactDock() {
         {/* ========================================================= */}
         <div
           className={`flex flex-col items-end gap-2.5 transition-all duration-500 ease-in-out ${
+            isChatOpen ? 'max-sm:hidden ' : ''
+          }${
             isAtFooter
               ? 'opacity-0 translate-y-10 max-h-0 pointer-events-none overflow-hidden scale-90 mb-0'
               : 'opacity-100 translate-y-0 max-h-60 pointer-events-auto scale-100'

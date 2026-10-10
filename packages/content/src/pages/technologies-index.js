@@ -40,11 +40,11 @@ export const technologiesIndexPage = {
   sections: [technologiesHero, technologiesList],
   seo: {
     title: {
-      vi: 'Năng lực Công nghệ — Dev House Software',
-      en: 'Technology Stack — Dev House Software',
+      vi: 'Năng lực Công nghệ — Devhouse Software',
+      en: 'Technology Stack — Devhouse Software',
     },
     description: {
-      vi: 'Danh mục công nghệ lập trình, cơ sở dữ liệu, điện toán đám mây và công cụ được sử dụng tại Dev House Software.',
+      vi: 'Danh mục công nghệ lập trình, cơ sở dữ liệu, điện toán đám mây và công cụ được sử dụng tại Devhouse Software.',
       en: 'Explore the modern engineering frameworks, cloud stacks, and databases powering our solutions.',
     },
   },

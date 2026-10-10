@@ -35,8 +35,8 @@ export const homeHero = defineSection({
       en: 'A safe, stable website, with no technical worries',
     },
     subheading: {
-      vi: 'Dev House dựng website từ mẫu chuẩn, chạy trên máy chủ đám mây, lo tên miền, bảo mật và xử lý sự cố. Bạn chỉ cần tập trung vào việc kinh doanh.',
-      en: 'Dev House builds your website from proven templates, runs it on cloud servers and takes care of your domain, security and fixes. You focus on your business.',
+      vi: 'Devhouse dựng website từ mẫu chuẩn, chạy trên máy chủ đám mây, lo tên miền, bảo mật và xử lý sự cố. Bạn chỉ cần tập trung vào việc kinh doanh.',
+      en: 'Devhouse builds your website from proven templates, runs it on cloud servers and takes care of your domain, security and fixes. You focus on your business.',
     },
     primaryCta: {
       label: { vi: 'Xem gói dịch vụ', en: 'See our packages' },
@@ -145,8 +145,8 @@ export const homeProductsIntro = defineSection({
   defaults: {
     display: makeDisplay({
       layout: 'slide',
-      columns: { mobile: 2, tablet: 3, desktop: 5 },
-      slide: { motion: 'smooth', interval: 5, dots: 'none' },
+      columns: { mobile: 1, tablet: 2, desktop: 4 },
+      slide: { motion: 'step', autoplay: true, interval: 4, dots: 'progress', arrows: true },
     }),
     heading: { vi: 'Mẫu website có sẵn', en: 'Ready-made website templates' },
     subheading: {
@@ -354,12 +354,12 @@ export const homePage = {
   ],
   seo: {
     title: {
-      vi: 'Dev House Software — Website trọn gói, an toàn và ổn định',
-      en: 'Dev House Software — Complete, safe and stable websites',
+      vi: 'Devhouse Software — Website trọn gói, an toàn và ổn định',
+      en: 'Devhouse Software — Complete, safe and stable websites',
     },
     description: {
-      vi: 'Dev House dựng website từ mẫu chuẩn, lo máy chủ, tên miền, bảo mật và xử lý sự cố. Bạn chỉ cần tập trung kinh doanh.',
-      en: 'Dev House builds your website from proven templates and takes care of hosting, domain, security and fixes, so you can focus on your business.',
+      vi: 'Devhouse dựng website từ mẫu chuẩn, lo máy chủ, tên miền, bảo mật và xử lý sự cố. Bạn chỉ cần tập trung kinh doanh.',
+      en: 'Devhouse builds your website from proven templates and takes care of hosting, domain, security and fixes, so you can focus on your business.',
     },
   },
 };

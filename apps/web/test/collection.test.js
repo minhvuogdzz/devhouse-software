@@ -82,6 +82,56 @@ describe('Collection', () => {
     ).toBe('');
     expect(render({ layout: 'carousel', columns: { mobile: 99 } })).toContain('collection-grid');
   });
+
+  it('caps grid items at 2 rows and renders show more button when items exceed limit', () => {
+    const manyItems = Array.from({ length: 10 }, (_, i) => ({ id: i, name: `Mục ${i + 1}` }));
+    const html = renderToStaticMarkup(
+      React.createElement(
+        MemoryRouter,
+        null,
+        React.createElement(Collection, {
+          items: manyItems,
+          display: {
+            layout: 'grid',
+            columns: { mobile: 1, tablet: 2, desktop: 3 },
+            showMore: { enabled: true, type: 'expand', maxRows: 2 },
+          },
+          label: 'Danh sách nhiều mục',
+          renderItem: (item, _index, { layout }) =>
+            React.createElement('div', { 'data-layout': layout }, item.name),
+        }),
+      ),
+    );
+    // 3 columns * 2 rows = 6 items shown initially
+    expect(html.match(/<li/g)).toHaveLength(6);
+    expect(html).toContain('Xem thêm');
+    expect(html).toContain('4 mục');
+  });
+
+  it('renders link button when showMore type is link with seeAllHref', () => {
+    const manyItems = Array.from({ length: 8 }, (_, i) => ({ id: i, name: `Mục ${i + 1}` }));
+    const html = renderToStaticMarkup(
+      React.createElement(
+        MemoryRouter,
+        null,
+        React.createElement(Collection, {
+          items: manyItems,
+          seeAllHref: '/products',
+          display: {
+            layout: 'grid',
+            columns: { mobile: 1, tablet: 2, desktop: 2 },
+            showMore: { enabled: true, type: 'link', maxRows: 2 },
+          },
+          label: 'Danh sách liên kết',
+          renderItem: (item, _index, { layout }) =>
+            React.createElement('div', { 'data-layout': layout }, item.name),
+        }),
+      ),
+    );
+    // 2 columns * 2 rows = 4 items
+    expect(html.match(/<li/g)).toHaveLength(4);
+    expect(html).toContain('href="/products"');
+  });
 });
 
 describe('SliderDots', () => {

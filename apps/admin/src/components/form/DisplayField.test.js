@@ -48,4 +48,13 @@ describe('DisplayField', () => {
     expect(html).not.toContain('Kiểu chấm');
     expect(html).toContain('Thời gian mỗi mục đi qua');
   });
+
+  it('offers show more options for grid layout', () => {
+    const html = draw(makeDisplay({ layout: 'grid' }));
+    expect(html).toContain('Giới hạn số hàng &amp; Nút xem thêm');
+    expect(html).toContain('Số hàng tối đa ban đầu');
+    expect(html).toContain('Mở rộng tại chỗ');
+    expect(html).toContain('Tải thêm từng đợt');
+    expect(html).toContain('Dẫn sang trang đầy đủ');
+  });
 });

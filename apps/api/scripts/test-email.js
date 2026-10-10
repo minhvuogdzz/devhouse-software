@@ -12,7 +12,7 @@ import { mailer } from '../src/integrations/mail/index.js';
 
 async function main() {
   console.log('\n======================================================');
-  console.log('   Dev House Software — SMTP Email Verification Tool  ');
+  console.log('   Devhouse Software — SMTP Email Verification Tool  ');
   console.log('======================================================\n');
 
   console.log('Current SMTP Configuration:');
@@ -38,7 +38,7 @@ async function main() {
     console.error('     4. Set SMTP_PORT=465 (hoặc 587)');
     console.error('     5. Set SMTP_USER=devhousesoftware.inc@gmail.com');
     console.error('     6. Set SMTP_PASSWORD=<16-char-app-password>');
-    console.error('     7. Set MAIL_FROM="Dev House Software <devhousesoftware.inc@gmail.com>"\n');
+    console.error('     7. Set MAIL_FROM="Devhouse Software <devhousesoftware.inc@gmail.com>"\n');
     process.exit(1);
   }
 
@@ -66,13 +66,13 @@ async function main() {
   try {
     const result = await mailer.sendMail({
       to: targetEmail,
-      subject: `[Dev House] Kiểm tra hệ thống gửi Mail (${now})`,
-      text: `Chào bạn,\n\nĐây là email kiểm tra từ hệ thống Dev House Software gửi qua SMTP lúc ${now}.\nHệ thống đã sẵn sàng tiếp nhận thông tin khách hàng liên hệ tư vấn!\n\nTrân trọng,\nDev House Software`,
+      subject: `[Devhouse] Kiểm tra hệ thống gửi Mail (${now})`,
+      text: `Chào bạn,\n\nĐây là email kiểm tra từ hệ thống Devhouse Software gửi qua SMTP lúc ${now}.\nHệ thống đã sẵn sàng tiếp nhận thông tin khách hàng liên hệ tư vấn!\n\nTrân trọng,\nDevhouse Software`,
       html: `
         <div style="font-family: sans-serif; max-width: 500px; padding: 20px; border: 1px solid #e2e8f0; border-radius: 8px;">
-          <h2 style="color: #2563eb; margin-top: 0;">Dev House Software — Test Email</h2>
+          <h2 style="color: #2563eb; margin-top: 0;">Devhouse Software — Test Email</h2>
           <p>Xin chào,</p>
-          <p>Email này xác nhận hệ thống gửi mail SMTP của <strong>Dev House Software</strong> đã hoạt động hoàn toàn chính xác.</p>
+          <p>Email này xác nhận hệ thống gửi mail SMTP của <strong>Devhouse Software</strong> đã hoạt động hoàn toàn chính xác.</p>
           <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; font-size: 14px; margin: 16px 0;">
             <strong>Thời gian gửi:</strong> ${now}<br>
             <strong>Tài khoản gửi:</strong> ${config.SMTP_USER}<br>

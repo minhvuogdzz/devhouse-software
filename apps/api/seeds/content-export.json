@@ -739,8 +739,8 @@
         "publishedAt": { "$date": { "$numberLong": "1767225600000" } },
         "seo": {
           "title": {
-            "vi": "Thiết kế website từ mẫu chuẩn — Dev House Software",
-            "en": "Website design from proven templates — Dev House Software"
+            "vi": "Thiết kế website từ mẫu chuẩn — Devhouse Software",
+            "en": "Website design from proven templates — Devhouse Software"
           },
           "description": {
             "vi": "Website giới thiệu, landing page và web bán hàng nhỏ, dựng nhanh và giá hợp lý.",
@@ -849,8 +849,8 @@
         "publishedAt": { "$date": { "$numberLong": "1767225600000" } },
         "seo": {
           "title": {
-            "vi": "Máy chủ và hạ tầng đám mây cho website — Dev House Software",
-            "en": "Cloud hosting for your website — Dev House Software"
+            "vi": "Máy chủ và hạ tầng đám mây cho website — Devhouse Software",
+            "en": "Cloud hosting for your website — Devhouse Software"
           },
           "description": {
             "vi": "Máy chủ đám mây an toàn, có giám sát, sao lưu và cập nhật bảo mật định kỳ.",
@@ -962,8 +962,8 @@
         "publishedAt": { "$date": { "$numberLong": "1767225600000" } },
         "seo": {
           "title": {
-            "vi": "Tên miền và DNS — Dev House Software",
-            "en": "Domain and DNS — Dev House Software"
+            "vi": "Tên miền và DNS — Devhouse Software",
+            "en": "Domain and DNS — Devhouse Software"
           },
           "description": {
             "vi": "Đăng ký, gia hạn tên miền, cấu hình DNS và email theo tên miền.",
@@ -1078,8 +1078,8 @@
         "publishedAt": { "$date": { "$numberLong": "1767225600000" } },
         "seo": {
           "title": {
-            "vi": "Bảo mật và hỗ trợ website — Dev House Software",
-            "en": "Website security and support — Dev House Software"
+            "vi": "Bảo mật và hỗ trợ website — Devhouse Software",
+            "en": "Website security and support — Devhouse Software"
           },
           "description": {
             "vi": "Tường lửa, chống tấn công cơ bản, xử lý sự cố và vá bảo mật hằng tháng.",
@@ -2986,8 +2986,8 @@
         "publishedAt": { "$date": { "$numberLong": "1767225600000" } },
         "seo": {
           "title": {
-            "vi": "Giải pháp Quản trị & Vận hành Doanh nghiệp — Dev House Software",
-            "en": "Enterprise Operations & ERP Solutions — Dev House Software"
+            "vi": "Giải pháp Quản trị & Vận hành Doanh nghiệp — Devhouse Software",
+            "en": "Enterprise Operations & ERP Solutions — Devhouse Software"
           },
           "description": {
             "vi": "Hệ thống phần mềm quản lý nội bộ, số hóa quy trình và tổng hợp báo cáo điều hành chuyên nghiệp.",
@@ -3030,8 +3030,8 @@
         "publishedAt": { "$date": { "$numberLong": "1767225600000" } },
         "seo": {
           "title": {
-            "vi": "Nền tảng Tương tác Khách hàng Toàn diện — Dev House Software",
-            "en": "Customer Experience & Client Portal Suite — Dev House Software"
+            "vi": "Nền tảng Tương tác Khách hàng Toàn diện — Devhouse Software",
+            "en": "Customer Experience & Client Portal Suite — Devhouse Software"
           },
           "description": {
             "vi": "Giải pháp cổng thông tin khách hàng, số hóa quy trình chăm sóc và tương tác trực tuyến.",
@@ -3078,8 +3078,8 @@
         },
         "seo": {
           "title": {
-            "vi": "Dev House Software — Phát triển Phần mềm Doanh nghiệp & Giải pháp AI",
-            "en": "Dev House Software — Enterprise Engineering & AI Solutions"
+            "vi": "Devhouse Software — Phát triển Phần mềm Doanh nghiệp & Giải pháp AI",
+            "en": "Devhouse Software — Enterprise Engineering & AI Solutions"
           },
           "description": {
             "vi": "Tư vấn và phát triển phần mềm theo yêu cầu, hệ thống quản trị doanh nghiệp và giải pháp số chuyên sâu.",
@@ -3096,11 +3096,11 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Giới thiệu về Dev House Software — Đội ngũ Kỹ sư Công nghệ Chuyên nghiệp",
-            "en": "About Dev House Software — Enterprise Engineering & Consulting"
+            "vi": "Giới thiệu về Devhouse Software — Đội ngũ Kỹ sư Công nghệ Chuyên nghiệp",
+            "en": "About Devhouse Software — Enterprise Engineering & Consulting"
           },
           "description": {
-            "vi": "Tìm hiểu về văn hóa, sứ mệnh và năng lực triển khai các dự án phần mềm quy mô lớn của Dev House Software.",
+            "vi": "Tìm hiểu về văn hóa, sứ mệnh và năng lực triển khai các dự án phần mềm quy mô lớn của Devhouse Software.",
             "en": "Learn about our mission, culture, and track record in delivering high-assurance software systems."
           }
         },
@@ -3114,8 +3114,8 @@
         "sections": { "list": { "display": { "layout": "slide", "slide": { "dots": "slide" } } } },
         "seo": {
           "title": {
-            "vi": "Dịch vụ Kỹ thuật Phần mềm — Dev House Software",
-            "en": "Software Engineering Services — Dev House Software"
+            "vi": "Dịch vụ Kỹ thuật Phần mềm — Devhouse Software",
+            "en": "Software Engineering Services — Devhouse Software"
           },
           "description": {
             "vi": "Danh mục dịch vụ phát triển phần mềm theo yêu cầu, ứng dụng di động, kiến trúc đám mây và tự động hóa AI.",
@@ -3132,8 +3132,8 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Giải pháp Số & Tự động hóa Doanh nghiệp — Dev House Software",
-            "en": "Enterprise Digital Solutions & Automation — Dev House Software"
+            "vi": "Giải pháp Số & Tự động hóa Doanh nghiệp — Devhouse Software",
+            "en": "Enterprise Digital Solutions & Automation — Devhouse Software"
           },
           "description": {
             "vi": "Các gói giải pháp chuyển đổi số, ERP nội bộ và hệ thống tự động hóa thông minh cho doanh nghiệp vừa và lớn.",
@@ -3159,11 +3159,11 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Năng lực Công nghệ — Dev House Software",
-            "en": "Technology Stack — Dev House Software"
+            "vi": "Năng lực Công nghệ — Devhouse Software",
+            "en": "Technology Stack — Devhouse Software"
           },
           "description": {
-            "vi": "Danh mục công nghệ lập trình, cơ sở dữ liệu, điện toán đám mây và công cụ được sử dụng tại Dev House Software.",
+            "vi": "Danh mục công nghệ lập trình, cơ sở dữ liệu, điện toán đám mây và công cụ được sử dụng tại Devhouse Software.",
             "en": "Explore the modern engineering frameworks, cloud stacks, and databases powering our solutions."
           }
         },
@@ -3177,8 +3177,8 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Bài viết & Kiến thức Kỹ thuật — Dev House Software",
-            "en": "Articles & Insights — Dev House Software"
+            "vi": "Bài viết & Kiến thức Kỹ thuật — Devhouse Software",
+            "en": "Articles & Insights — Devhouse Software"
           },
           "description": {
             "vi": "Khám phá các bài viết chia sẻ kinh nghiệm phát triển phần mềm, kiến trúc hệ thống và chuyển đổi số cho doanh nghiệp.",
@@ -3195,12 +3195,12 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Cơ hội Nghề nghiệp — Dev House Software",
-            "en": "Careers & Opportunities — Dev House Software"
+            "vi": "Cơ hội Nghề nghiệp — Devhouse Software",
+            "en": "Careers & Opportunities — Devhouse Software"
           },
           "description": {
-            "vi": "Khám phá các vị trí tuyển dụng kỹ sư phần mềm, kiến trúc sư hệ thống tại Dev House Software.",
-            "en": "Discover open software engineering and technical roles at Dev House Software."
+            "vi": "Khám phá các vị trí tuyển dụng kỹ sư phần mềm, kiến trúc sư hệ thống tại Devhouse Software.",
+            "en": "Discover open software engineering and technical roles at Devhouse Software."
           }
         },
         "updatedAt": { "$date": { "$numberLong": "1791174536780" } }
@@ -3213,12 +3213,12 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Liên hệ Tư vấn Phần mềm — Dev House Software",
-            "en": "Contact Us — Dev House Software"
+            "vi": "Liên hệ Tư vấn Phần mềm — Devhouse Software",
+            "en": "Contact Us — Devhouse Software"
           },
           "description": {
-            "vi": "Liên hệ với Dev House Software để nhận tư vấn kỹ thuật chuyên sâu và dự toán kinh phí cho dự án phần mềm của bạn.",
-            "en": "Get in touch with Dev House Software for dedicated software consulting and project estimates."
+            "vi": "Liên hệ với Devhouse Software để nhận tư vấn kỹ thuật chuyên sâu và dự toán kinh phí cho dự án phần mềm của bạn.",
+            "en": "Get in touch with Devhouse Software for dedicated software consulting and project estimates."
           }
         },
         "updatedAt": { "$date": { "$numberLong": "1791174536814" } }
@@ -3231,11 +3231,11 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Chính sách Bảo mật Thông tin — Dev House Software",
-            "en": "Privacy Policy — Dev House Software"
+            "vi": "Chính sách Bảo mật Thông tin — Devhouse Software",
+            "en": "Privacy Policy — Devhouse Software"
           },
           "description": {
-            "vi": "Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Dev House Software.",
+            "vi": "Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Devhouse Software.",
             "en": "Read our commitments and guidelines on safeguarding your personal and business data."
           }
         },
@@ -3249,12 +3249,12 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "Điều khoản Dịch vụ — Dev House Software",
-            "en": "Terms of Service — Dev House Software"
+            "vi": "Điều khoản Dịch vụ — Devhouse Software",
+            "en": "Terms of Service — Devhouse Software"
           },
           "description": {
-            "vi": "Các điều khoản và điều kiện pháp lý khi truy cập website và sử dụng dịch vụ của Dev House Software.",
-            "en": "Review the operational and legal terms governing the use of Dev House Software services."
+            "vi": "Các điều khoản và điều kiện pháp lý khi truy cập website và sử dụng dịch vụ của Devhouse Software.",
+            "en": "Review the operational and legal terms governing the use of Devhouse Software services."
           }
         },
         "updatedAt": { "$date": { "$numberLong": "1791174536907" } }
@@ -3267,8 +3267,8 @@
         "sections": {},
         "seo": {
           "title": {
-            "vi": "404 — Không tìm thấy trang — Dev House Software",
-            "en": "404 — Page Not Found — Dev House Software"
+            "vi": "404 — Không tìm thấy trang — Devhouse Software",
+            "en": "404 — Page Not Found — Devhouse Software"
           },
           "description": {
             "vi": "Trang bạn yêu cầu không tồn tại trên hệ thống.",
@@ -3372,7 +3372,7 @@
               ]
             },
             {
-              "title": { "vi": "Về Dev House", "en": "Company" },
+              "title": { "vi": "Về Devhouse", "en": "Company" },
               "links": [
                 { "label": { "vi": "Về chúng tôi", "en": "About Us" }, "path": "/about" },
                 { "label": { "vi": "Góc nhìn công nghệ", "en": "Tech Blog" }, "path": "/blog" },
@@ -3433,7 +3433,7 @@
           },
           {
             "id": "about",
-            "label": { "vi": "Về Dev House", "en": "About Dev House" },
+            "label": { "vi": "Về Devhouse", "en": "About Devhouse" },
             "path": "/about",
             "order": { "$numberInt": "6" },
             "visible": true
@@ -3457,7 +3457,7 @@
         "createdAt": { "$date": { "$numberLong": "1790920196000" } },
         "data": {
           "address": {
-            "vi": "Trung tâm dữ liệu số Dev House Big Data Center - Phường Tây Hồ, Thành phố Hà Nội",
+            "vi": "Trung tâm dữ liệu số Devhouse Big Data Center - Phường Tây Hồ, Thành phố Hà Nội",
             "en": "Tay Ho Ward, Hanoi, Vietnam"
           }
         },

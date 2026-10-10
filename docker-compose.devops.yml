@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────
-# Dev House Software — DevOps Full-Stack Docker Compose
+# Devhouse Software — DevOps Full-Stack Docker Compose
 # ─────────────────────────────────────────────────────────────
 # Stack:
 #   - edge    : Nginx Reverse Proxy (Ports 80, 443) -> TLS, micro-cache, rate limit
@@ -80,7 +80,7 @@ services:
       SMTP_SECURE: ${SMTP_SECURE:-true}
       SMTP_USER: ${SMTP_USER:-devhousesoftware.inc@gmail.com}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-xmsrcujndnywfjox}
-      MAIL_FROM: ${MAIL_FROM:-"Dev House Software <devhousesoftware.inc@gmail.com>"}
+      MAIL_FROM: ${MAIL_FROM:-"Devhouse Software <devhousesoftware.inc@gmail.com>"}
       CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
     depends_on:
       mongodb:

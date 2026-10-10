@@ -71,8 +71,8 @@ describe('Blog Module', () => {
     });
 
     it('derives excerpt accurately up to max chars', () => {
-      const text = 'Dev House Software is a reliable engineering partner.';
-      expect(deriveExcerpt(text, 20)).toBe('Dev House Software...');
+      const text = 'Devhouse Software is a reliable engineering partner.';
+      expect(deriveExcerpt(text, 20)).toBe('Devhouse Software...');
       expect(deriveExcerpt(text, 100)).toBe(text);
     });
   });

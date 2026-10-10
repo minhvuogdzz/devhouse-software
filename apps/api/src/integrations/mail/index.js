@@ -63,8 +63,8 @@ export const mailer = {
       from ||
       config.MAIL_FROM ||
       (config.SMTP_USER
-        ? `Dev House Software <${config.SMTP_USER}>`
-        : 'Dev House Software <devhousesoftware.inc@gmail.com>');
+        ? `Devhouse Software <${config.SMTP_USER}>`
+        : 'Devhouse Software <devhousesoftware.inc@gmail.com>');
 
     if (!this.isConfigured()) {
       logger.info(`[MAIL NOT CONFIGURED] Would send email:`, {

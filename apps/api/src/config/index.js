@@ -40,7 +40,7 @@ const configSchema = z.object({
   ),
   SMTP_USER: z.string().optional().default(''),
   SMTP_PASSWORD: z.string().optional().default(''),
-  MAIL_FROM: z.string().default('Dev House Software <devhousesoftware.inc@gmail.com>'),
+  MAIL_FROM: z.string().default('Devhouse Software <devhousesoftware.inc@gmail.com>'),
   CONTACT_NOTIFY_TO: z.string().default('devhousesoftware.inc@gmail.com'),
 
   CAPTCHA_PROVIDER: z.enum(['none', 'turnstile']).default('none'),

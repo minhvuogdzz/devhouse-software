@@ -180,8 +180,8 @@ export default function AccountPage() {
         </h2>
         <p className="text-xs text-fg-muted">
           {locale === 'vi'
-            ? 'Đăng xuất khỏi bảng điều khiển quản trị Dev House CMS.'
-            : 'Sign out of the current Dev House administration session.'}
+            ? 'Đăng xuất khỏi bảng điều khiển quản trị Devhouse CMS.'
+            : 'Sign out of the current Devhouse administration session.'}
         </p>
         <div>
           <Button variant="danger" onClick={logout}>

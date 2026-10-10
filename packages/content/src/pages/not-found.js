@@ -31,8 +31,8 @@ export const notFoundPage = {
   sections: [notFoundHero],
   seo: {
     title: {
-      vi: '404 — Không tìm thấy trang — Dev House Software',
-      en: '404 — Page Not Found — Dev House Software',
+      vi: '404 — Không tìm thấy trang — Devhouse Software',
+      en: '404 — Page Not Found — Devhouse Software',
     },
     description: {
       vi: 'Trang bạn yêu cầu không tồn tại trên hệ thống.',

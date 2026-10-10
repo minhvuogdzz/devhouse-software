@@ -19,7 +19,7 @@ export const blogHero = defineSection({
       en: 'Practical advice on software tools, operations, and technical strategy',
     },
     subheading: {
-      vi: 'Các bài viết chia sẻ từ đội ngũ Dev House về kinh nghiệm triển khai phần mềm giúp doanh nghiệp tối ưu chi phí và quy trình.',
+      vi: 'Các bài viết chia sẻ từ đội ngũ Devhouse về kinh nghiệm triển khai phần mềm giúp doanh nghiệp tối ưu chi phí và quy trình.',
       en: 'Read articles from our team on building better tools and planning a clear digital strategy for your business.',
     },
   },
@@ -40,8 +40,8 @@ export const blogIndexPage = {
   sections: [blogHero, blogList],
   seo: {
     title: {
-      vi: 'Bài viết & Chia sẻ kinh nghiệm — Dev House Software',
-      en: 'Articles & Insights — Dev House Software',
+      vi: 'Bài viết & Chia sẻ kinh nghiệm — Devhouse Software',
+      en: 'Articles & Insights — Devhouse Software',
     },
     description: {
       vi: 'Khám phá các bài viết chia sẻ kinh nghiệm phát triển phần mềm và tối ưu hóa hệ thống vận hành cho doanh nghiệp.',

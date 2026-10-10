@@ -89,7 +89,7 @@ export default function LoginPage() {
           <div className="w-12 h-12 rounded-xl bg-primary text-primary-fg font-black text-xl flex items-center justify-center font-display mx-auto shadow-md">
             D
           </div>
-          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Dev House CMS</h1>
+          <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Devhouse CMS</h1>
           <p className="text-xs text-fg-muted">{t('auth.loginTitle')}</p>
         </div>
 

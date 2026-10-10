@@ -10,7 +10,7 @@ async function startServer() {
     await connectDB();
 
     server = app.listen(config.PORT, () => {
-      logger.info(`Dev House API server running on port ${config.PORT} [${config.NODE_ENV}]`);
+      logger.info(`Devhouse API server running on port ${config.PORT} [${config.NODE_ENV}]`);
     });
 
     const shutdown = async signal => {

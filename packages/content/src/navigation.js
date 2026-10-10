@@ -40,7 +40,7 @@ export const defaultNavigation = {
     },
     {
       id: 'about',
-      label: { vi: 'Về Dev House', en: 'About Dev House' },
+      label: { vi: 'Về Devhouse', en: 'About Devhouse' },
       path: '/about',
       order: 6,
       visible: true,
@@ -86,7 +86,7 @@ export const defaultNavigation = {
         ],
       },
       {
-        title: { vi: 'Về Dev House', en: 'Company' },
+        title: { vi: 'Về Devhouse', en: 'Company' },
         links: [
           { label: { vi: 'Về chúng tôi', en: 'About Us' }, path: '/about' },
           { label: { vi: 'Góc nhìn công nghệ', en: 'Tech Blog' }, path: '/blog' },

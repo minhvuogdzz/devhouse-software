@@ -74,6 +74,12 @@ function DotPreview({ style }) {
   );
 }
 
+const SHOW_MORE_TYPE_OPTIONS = [
+  { id: 'expand', label: 'Mở rộng tại chỗ', hint: 'Bung toàn bộ và hiện nút Thu gọn' },
+  { id: 'loadMore', label: 'Tải thêm từng đợt', hint: 'Mở thêm hàng mới mỗi lần bấm' },
+  { id: 'link', label: 'Dẫn sang trang đầy đủ', hint: 'Chuyển hướng đến trang danh mục chi tiết' },
+];
+
 /**
  * Chooses how a list is shown on the website: grid, list or slide, how many items are visible on
  * each device, and for a slide how it moves and which dots it has.
@@ -90,6 +96,7 @@ export function DisplayField({ label = 'Cách hiển thị danh sách', value, o
   const updateColumns = (key, number) =>
     update({ columns: { ...display.columns, [key]: Number(number) } });
   const updateSlide = patch => update({ slide: { ...display.slide, ...patch } });
+  const updateShowMore = patch => update({ showMore: { ...display.showMore, ...patch } });
 
   const isSlide = display.layout === 'slide';
   const isStep = display.slide.motion === 'step';
@@ -145,6 +152,63 @@ export function DisplayField({ label = 'Cách hiển thị danh sách', value, o
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {display.layout === 'grid' && (
+        <div className="space-y-3 border-t border-border/70 pt-4">
+          <Toggle
+            label="Giới hạn số hàng & Nút xem thêm (Show more)"
+            hint="Chỉ hiện tối đa số hàng quy định (mặc định 2 hàng) và cung cấp nút xem thêm cho người dùng."
+            checked={display.showMore?.enabled ?? true}
+            onChange={enabled => updateShowMore({ enabled })}
+          />
+
+          {(display.showMore?.enabled ?? true) && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Select
+                label="Số hàng tối đa ban đầu"
+                value={display.showMore?.maxRows ?? 2}
+                onChange={event => updateShowMore({ maxRows: Number(event.target.value) })}
+              >
+                {[1, 2, 3, 4, 5, 6].map(rows => (
+                  <option key={rows} value={rows}>
+                    {rows} hàng {rows === 2 ? '(mặc định 2 hàng)' : ''}
+                  </option>
+                ))}
+              </Select>
+
+              <div className="space-y-1.5">
+                <p className="text-xs font-semibold text-fg">Kiểu nút Xem thêm (Type of Show more)</p>
+                <div
+                  role="radiogroup"
+                  aria-label="Kiểu nút Xem thêm"
+                  className="space-y-1.5"
+                >
+                  {SHOW_MORE_TYPE_OPTIONS.map(({ id, label: typeName, hint }) => {
+                    const active = (display.showMore?.type ?? 'expand') === id;
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        role="radio"
+                        aria-checked={active}
+                        onClick={() => updateShowMore({ type: id })}
+                        className={`w-full flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors cursor-pointer ${
+                          active
+                            ? 'border-primary bg-primary-subtle text-primary'
+                            : 'border-border bg-surface text-fg-muted hover:border-primary/40 hover:text-fg'
+                        }`}
+                      >
+                        <span className="text-xs font-semibold">{typeName}</span>
+                        <span className="text-[11px] opacity-80">{hint}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

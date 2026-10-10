@@ -145,7 +145,7 @@ describe('Contact Module (M9)', () => {
       const request = await ContactRequestModel.create({
         name: 'Customer X',
         email: 'customerx@example.com',
-        message: 'Looking for a partnership with Dev House.',
+        message: 'Looking for a partnership with Devhouse.',
         status: 'new',
       });
 

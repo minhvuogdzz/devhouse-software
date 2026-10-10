@@ -61,6 +61,7 @@ export default function SettingsPage() {
     ai: {
       enabled: true,
       apiKey: '',
+      apiKeys: [{ key: '', label: 'Key #1', enabled: true }],
       model: 'gemini-flash-lite-latest',
       companyKnowledge: '',
     },
@@ -69,6 +70,21 @@ export default function SettingsPage() {
   useEffect(() => {
     if (settingsData) {
       const r = settingsData.resolved || settingsData;
+      const loadedApiKeys =
+        Array.isArray(r.ai?.apiKeys) && r.ai.apiKeys.length > 0
+          ? r.ai.apiKeys.map((item, idx) =>
+              typeof item === 'string'
+                ? { key: item, label: `Key #${idx + 1}`, enabled: true }
+                : {
+                    key: item?.key || '',
+                    label: item?.label || `Key #${idx + 1}`,
+                    enabled: item?.enabled !== false,
+                  },
+            )
+          : r.ai?.apiKey
+            ? [{ key: r.ai.apiKey, label: 'Key #1 (Chính)', enabled: true }]
+            : [{ key: '', label: 'Key #1', enabled: true }];
+
       setFormData({
         companyName: r.companyName || { vi: '', en: '' },
         legalName: r.legalName || { vi: '', en: '' },
@@ -93,7 +109,8 @@ export default function SettingsPage() {
         },
         ai: {
           enabled: r.ai?.enabled !== false,
-          apiKey: r.ai?.apiKey || '',
+          apiKey: r.ai?.apiKey || loadedApiKeys.find(k => k.enabled !== false && k.key)?.key || '',
+          apiKeys: loadedApiKeys,
           model: r.ai?.model || 'gemini-flash-lite-latest',
           companyKnowledge: r.ai?.companyKnowledge || '',
         },
@@ -113,9 +130,105 @@ export default function SettingsPage() {
   });
 
   const handleSave = () => {
+    const cleanedKeys = (formData.ai?.apiKeys || [])
+      .map((item, idx) => ({
+        key: (item.key || '').trim(),
+        label: (item.label || `Key #${idx + 1}`).trim(),
+        enabled: item.enabled !== false,
+      }))
+      .filter(item => item.key.length > 0);
+
+    const primaryKey =
+      cleanedKeys.find(item => item.enabled && item.key)?.key ||
+      cleanedKeys[0]?.key ||
+      (formData.ai?.apiKey || '').trim();
+
+    const normalizedFormData = {
+      ...formData,
+      ai: {
+        ...formData.ai,
+        apiKey: primaryKey,
+        apiKeys: cleanedKeys,
+      },
+    };
+
     // Only what differs from the built-in defaults is stored.
     const defaults = settingsData?.defaults || {};
-    saveMutation.mutate(diffAgainstDefaults(formData, defaults) || {});
+    saveMutation.mutate(diffAgainstDefaults(normalizedFormData, defaults) || {});
+  };
+
+  const addApiKey = () => {
+    setFormData(prev => {
+      const current = Array.isArray(prev.ai?.apiKeys) ? prev.ai.apiKeys : [];
+      return {
+        ...prev,
+        ai: {
+          ...prev.ai,
+          apiKeys: [
+            ...current,
+            { key: '', label: `Key #${current.length + 1}`, enabled: true },
+          ],
+        },
+      };
+    });
+  };
+
+  const updateApiKey = (index, field, value) => {
+    setFormData(prev => {
+      const current = [...(prev.ai?.apiKeys || [])];
+      // Support pasting multiple keys separated by newline, comma, or semicolon
+      if (field === 'key' && typeof value === 'string' && /[\n,;]/.test(value)) {
+        const parts = value
+          .split(/[\n,;]+/)
+          .map(s => s.trim())
+          .filter(Boolean);
+        if (parts.length > 1) {
+          const newEntries = parts.map((k, idx) => ({
+            key: k,
+            label: idx === 0 && current[index]?.label ? current[index].label : `Key #${index + idx + 1}`,
+            enabled: true,
+          }));
+          current.splice(index, 1, ...newEntries);
+          const firstEnabled = current.find(item => item.enabled !== false && item.key)?.key || '';
+          return {
+            ...prev,
+            ai: {
+              ...prev.ai,
+              apiKey: firstEnabled,
+              apiKeys: current,
+            },
+          };
+        }
+      }
+
+      current[index] = { ...current[index], [field]: value };
+      const firstEnabled = current.find(item => item.enabled !== false && item.key)?.key || '';
+      return {
+        ...prev,
+        ai: {
+          ...prev.ai,
+          apiKey: firstEnabled,
+          apiKeys: current,
+        },
+      };
+    });
+  };
+
+  const removeApiKey = index => {
+    setFormData(prev => {
+      const filtered = (prev.ai?.apiKeys || []).filter((_, i) => i !== index);
+      const nextKeys =
+        filtered.length > 0 ? filtered : [{ key: '', label: 'Key #1', enabled: true }];
+      const firstEnabled = nextKeys.find(item => item.enabled !== false && item.key)?.key || '';
+      return {
+        ...prev,
+        ai: {
+          ...prev.ai,
+          apiKey: firstEnabled,
+          apiKeys: nextKeys,
+        },
+      };
+    });
   };
 
   const addSocialLink = () => {
@@ -204,10 +317,10 @@ export default function SettingsPage() {
   };
 
   const handleFillTemplate = () => {
-    const template = `# TỔNG QUAN NĂNG LỰC & QUY TRÌNH DEV HOUSE SOFTWARE
+    const template = `# TỔNG QUAN NĂNG LỰC & QUY TRÌNH DEVHOUSE SOFTWARE
 
 ## 1. Giới thiệu doanh nghiệp
-Dev House Software là đơn vị công nghệ thành viên của Dev House Group, chuyên cung cấp giải pháp chuyển đổi số toàn diện, thiết kế website cao cấp chuẩn doanh nghiệp, hạ tầng máy chủ đám mây tốc độ cao và bảo mật dữ liệu an toàn.
+Devhouse Software là đơn vị công nghệ thành viên của Devhouse Group, chuyên cung cấp giải pháp chuyển đổi số toàn diện, thiết kế website cao cấp chuẩn doanh nghiệp, hạ tầng máy chủ đám mây tốc độ cao và bảo mật dữ liệu an toàn.
 
 ## 2. Các dịch vụ & năng lực cốt lõi
 - Xây dựng website thương mại điện tử, landing page giới thiệu công ty, web app chuyên sâu.
@@ -484,7 +597,7 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
                 </div>
                 <p className="text-xs text-fg-muted mt-1 max-w-2xl">
                   {locale === 'vi'
-                    ? 'Hiển thị danh sách đầy đủ các kênh mạng xã hội chính thức của Dev House ở chân trang (Footer).'
+                    ? 'Hiển thị danh sách đầy đủ các kênh mạng xã hội chính thức của Devhouse ở chân trang (Footer).'
                     : 'All official social network profiles displayed at the bottom footer of the website.'}
                 </p>
               </div>
@@ -678,44 +791,124 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-fg">
-                {locale === 'vi' ? 'Khóa API bảo mật (Secret Key)' : 'Secret API Key'}
-              </label>
-              <div className="relative">
-                <input
-                  type={showApiKey ? 'text' : 'password'}
-                  placeholder={
-                    locale === 'vi' ? 'Nhập khóa API bí mật...' : 'Enter secret API key...'
-                  }
-                  value={formData.ai.apiKey}
-                  onChange={e =>
-                    setFormData({
-                      ...formData,
-                      ai: { ...formData.ai, apiKey: e.target.value },
-                    })
-                  }
-                  className="w-full px-3 py-2 pr-10 rounded-lg border border-border bg-surface text-fg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-                />
+          {/* Multi-API Key Pool Manager (Auto-Failover & Loop) */}
+          <div className="p-4 sm:p-5 rounded-xl border border-border bg-surface-raised space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3 border-b border-border-subtle">
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-fg">
+                    {locale === 'vi'
+                      ? 'Danh sách Khóa API Gemini (Tự động xoay vòng & Chuyển tiếp)'
+                      : 'Gemini API Key Pool (Auto-Failover & Loop)'}
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
+                    {(formData.ai.apiKeys || []).filter(k => k.enabled !== false && (k.key || '').trim()).length}{' '}
+                    {locale === 'vi' ? 'Key hoạt động' : 'Active'}
+                  </span>
+                </div>
+                <p className="text-xs text-fg-subtle mt-1">
+                  {locale === 'vi'
+                    ? 'Thêm nhiều API Key để hệ thống tự động xoay vòng (Loop) và chuyển ngay sang Key kế tiếp khi có Key hết lượt request (Quota 429). Bạn có thể dán nhiều key cùng lúc (ngăn cách bởi dấu phẩy hoặc xuống dòng).'
+                    : 'Add multiple Gemini API keys. The system automatically loops and fails over to the next key if a key hits rate limits (429) or quota exhaustion.'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowApiKey(!showApiKey)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-fg-subtle hover:text-fg p-1 cursor-pointer transition-colors"
-                  title={showApiKey ? 'Ẩn khóa' : 'Hiện khóa'}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-surface-2 text-fg text-xs font-medium transition-colors cursor-pointer"
+                  title={showApiKey ? 'Ẩn tất cả khóa' : 'Hiện tất cả khóa'}
                 >
-                  {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showApiKey ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  <span>{showApiKey ? (locale === 'vi' ? 'Ẩn key' : 'Hide') : (locale === 'vi' ? 'Hiện key' : 'Show')}</span>
                 </button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  onClick={addApiKey}
+                  className="text-xs"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" />
+                  {locale === 'vi' ? 'Thêm API Key' : 'Add API Key'}
+                </Button>
               </div>
-              <p className="text-xs text-fg-subtle">
-                {locale === 'vi'
-                  ? 'Khóa được mã hóa và lưu trữ an toàn trong cơ sở dữ liệu. Tuyệt đối không để lộ ra ngoài giao diện công khai.'
-                  : 'Encrypted and stored securely in the database. Never exposed to public bundles or responses.'}
-              </p>
             </div>
 
+            <div className="space-y-2.5">
+              {(formData.ai.apiKeys || []).map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`flex flex-col sm:flex-row sm:items-center gap-2.5 p-2.5 rounded-lg border transition-colors ${
+                    item.enabled !== false
+                      ? 'border-border bg-surface'
+                      : 'border-border-subtle bg-surface-sunken opacity-60'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 sm:w-48 shrink-0">
+                    <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">
+                      #{idx + 1}
+                    </span>
+                    <input
+                      type="text"
+                      value={item.label || ''}
+                      onChange={e => updateApiKey(idx, 'label', e.target.value)}
+                      placeholder={locale === 'vi' ? `Tên gợi nhớ #${idx + 1}` : `Key label #${idx + 1}`}
+                      className="w-full px-2.5 py-1.5 rounded-md border border-border bg-surface-raised text-fg text-xs font-medium focus:outline-none focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="relative flex-1">
+                    <input
+                      type={showApiKey ? 'text' : 'password'}
+                      value={item.key || ''}
+                      onChange={e => updateApiKey(idx, 'key', e.target.value)}
+                      placeholder={
+                        locale === 'vi'
+                          ? 'Nhập hoặc dán khóa API Gemini (AIza... hoặc AQ....)...'
+                          : 'Enter or paste Gemini API key...'
+                      }
+                      className="w-full px-3 py-1.5 rounded-md border border-border bg-surface text-fg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => updateApiKey(idx, 'enabled', item.enabled === false)}
+                      className={`px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer ${
+                        item.enabled !== false
+                          ? 'bg-success/10 text-success border-success/30'
+                          : 'bg-surface-2 text-fg-subtle border-border'
+                      }`}
+                    >
+                      {item.enabled !== false
+                        ? locale === 'vi'
+                          ? 'Đang bật'
+                          : 'Enabled'
+                        : locale === 'vi'
+                          ? 'Tạm tắt'
+                          : 'Paused'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => removeApiKey(idx)}
+                      className="p-1.5 rounded-md text-fg-subtle hover:text-danger hover:bg-danger-surface transition-colors cursor-pointer"
+                      title={locale === 'vi' ? 'Xóa khóa này' : 'Remove key'}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Select
-              label={locale === 'vi' ? 'Mô hình AI xử lý (Model)' : 'AI Processing Model'}
+              label={locale === 'vi' ? 'Mô hình AI xử lý ưu tiên (Model)' : 'Preferred AI Processing Model'}
               value={formData.ai.model}
               onChange={e =>
                 setFormData({
@@ -725,8 +918,8 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
               }
               helperText={
                 locale === 'vi'
-                  ? 'Mô hình mạnh nhất được khuyên dùng để DH AI xử lý tư vấn dịch vụ và báo giá chuẩn xác nhất.'
-                  : 'The most capable model is recommended for comprehensive and accurate advisory.'
+                  ? 'Hệ thống tự động ưu tiên mô hình này và dự phòng sang các mô hình Flash-Lite khác nếu quá tải.'
+                  : 'The system prioritizes this model and automatically falls back to other Flash-Lite models if busy.'
               }
             >
               <option value="gemini-flash-lite-latest">

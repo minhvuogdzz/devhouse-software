@@ -1,4 +1,4 @@
-# Dev House Software — Local & DevOps Docker Compose Stack
+# Devhouse Software — Local & DevOps Docker Compose Stack
 # Run: docker compose up --build -d
 # Stop: docker compose down
 
@@ -46,8 +46,9 @@ services:
       SMTP_SECURE: ${SMTP_SECURE:-true}
       SMTP_USER: ${SMTP_USER:-devhousesoftware.inc@gmail.com}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-xmsrcujndnywfjox}
-      MAIL_FROM: ${MAIL_FROM:-Dev House Software <devhousesoftware.inc@gmail.com>}
+      MAIL_FROM: ${MAIL_FROM:-Devhouse Software <devhousesoftware.inc@gmail.com>}
       CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       ADMIN_URL: ${ADMIN_URL:-http://localhost:5173}
     depends_on:

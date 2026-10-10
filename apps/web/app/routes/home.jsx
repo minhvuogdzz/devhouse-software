@@ -48,12 +48,12 @@ export function meta({ data }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Dev House Software',
+    name: 'Devhouse Software',
     url: origin,
     logo: `${origin}/brand/logo-light.png`,
   };
   return generateSeoMeta({
-    title: data?.seo?.title || 'Dev House Software',
+    title: data?.seo?.title || 'Devhouse Software',
     description: data?.seo?.description || '',
     url: data?.url,
     locale: data?.locale,
@@ -117,6 +117,7 @@ export default function HomePage() {
               items={services}
               display={servicesIntro.display}
               label={servicesIntro.heading}
+              seeAllHref={`${prefix}/services`}
               getKey={service => service._id || service.slug}
               renderItem={(service, _index, { layout }) => (
                 <ServiceCard service={service} prefix={prefix} t={t} layout={layout} />
@@ -141,6 +142,7 @@ export default function HomePage() {
               prefix={prefix}
               t={t}
               display={productsIntro.display}
+              seeAllHref={`${prefix}/products`}
             />
           </div>
         </section>

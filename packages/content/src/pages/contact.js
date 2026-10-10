@@ -30,12 +30,12 @@ export const contactPage = {
   sections: [contactHero],
   seo: {
     title: {
-      vi: 'Liên hệ tư vấn — Dev House Software',
-      en: 'Talk to us — Dev House Software',
+      vi: 'Liên hệ tư vấn — Devhouse Software',
+      en: 'Talk to us — Devhouse Software',
     },
     description: {
-      vi: 'Cho Dev House Software biết nhu cầu website của bạn để được gợi ý gói dịch vụ phù hợp.',
-      en: 'Tell Dev House Software what kind of website you need and get a suggestion for the right package.',
+      vi: 'Cho Devhouse Software biết nhu cầu website của bạn để được gợi ý gói dịch vụ phù hợp.',
+      en: 'Tell Devhouse Software what kind of website you need and get a suggestion for the right package.',
     },
   },
 };

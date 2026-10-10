@@ -54,7 +54,7 @@ export const serviceDetailPage = {
   title: { vi: 'Trang chi tiết dịch vụ', en: 'Service page' },
   sections: [serviceTypes, serviceFeatures, serviceProcess],
   seo: {
-    title: { vi: 'Dịch vụ — Dev House Software', en: 'Services — Dev House Software' },
+    title: { vi: 'Dịch vụ — Devhouse Software', en: 'Services — Devhouse Software' },
     description: { vi: '', en: '' },
   },
 };

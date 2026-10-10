@@ -25,8 +25,8 @@ export const defaultSolutions = [
     publishedAt: new Date('2026-01-01T00:00:00.000Z'),
     seo: {
       title: {
-        vi: 'Giải pháp Quản trị & Vận hành Doanh nghiệp — Dev House Software',
-        en: 'Enterprise Operations & ERP Solutions — Dev House Software',
+        vi: 'Giải pháp Quản trị & Vận hành Doanh nghiệp — Devhouse Software',
+        en: 'Enterprise Operations & ERP Solutions — Devhouse Software',
       },
       description: {
         vi: 'Hệ thống phần mềm quản lý nội bộ, số hóa quy trình và tổng hợp báo cáo điều hành chuyên nghiệp.',
@@ -60,8 +60,8 @@ export const defaultSolutions = [
     publishedAt: new Date('2026-01-01T00:00:00.000Z'),
     seo: {
       title: {
-        vi: 'Nền tảng Tương tác Khách hàng Toàn diện — Dev House Software',
-        en: 'Customer Experience & Client Portal Suite — Dev House Software',
+        vi: 'Nền tảng Tương tác Khách hàng Toàn diện — Devhouse Software',
+        en: 'Customer Experience & Client Portal Suite — Devhouse Software',
       },
       description: {
         vi: 'Giải pháp cổng thông tin khách hàng, số hóa quy trình chăm sóc và tương tác trực tuyến.',

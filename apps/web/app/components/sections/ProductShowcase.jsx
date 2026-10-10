@@ -66,6 +66,7 @@ export function ProductShowcase({
   // Optional: where a card's own page is, for items that have one (projects do)
   detailPath = null,
   detailLabel = '',
+  seeAllHref = null,
 }) {
   const [params, setParams] = useSearchParams();
   const [activeDemo, setActiveDemo] = useState(null);
@@ -137,6 +138,7 @@ export function ProductShowcase({
           items={visible}
           display={display}
           gap="sm"
+          seeAllHref={seeAllHref}
           label={t(`${textKey}.listLabel`)}
           getKey={product => product._id || product.slug}
           renderItem={(product, _index, { layout }) => (

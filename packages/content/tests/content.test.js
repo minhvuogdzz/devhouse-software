@@ -75,8 +75,8 @@ describe('@devhouse/content', () => {
 
   describe('Settings and Navigation defaults', () => {
     it('provides bilingual defaults for settings and navigation', () => {
-      expect(defaultSettings.companyName.vi).toBe('Dev House Software');
-      expect(defaultSettings.companyName.en).toBe('Dev House Software');
+      expect(defaultSettings.companyName.vi).toBe('Devhouse Software');
+      expect(defaultSettings.companyName.en).toBe('Devhouse Software');
       expect(defaultNavigation.header.length).toBeGreaterThan(0);
       expect(defaultNavigation.footer.columns.length).toBeGreaterThan(0);
       expect(defaultCategories.length).toBeGreaterThan(0);

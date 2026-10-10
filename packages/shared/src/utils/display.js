@@ -12,6 +12,7 @@
 export const DISPLAY_LAYOUTS = ['grid', 'list', 'slide'];
 export const SLIDE_MOTIONS = ['step', 'smooth'];
 export const DOT_STYLES = ['none', 'dot', 'progress', 'slide'];
+export const SHOW_MORE_TYPES = ['expand', 'link', 'loadMore'];
 export const DISPLAY_MAX_COLUMNS = 6;
 export const SLIDE_INTERVAL_MIN = 2;
 export const SLIDE_INTERVAL_MAX = 20;
@@ -19,6 +20,11 @@ export const SLIDE_INTERVAL_MAX = 20;
 export const DEFAULT_DISPLAY = Object.freeze({
   layout: 'grid',
   columns: Object.freeze({ mobile: 1, tablet: 2, desktop: 3 }),
+  showMore: Object.freeze({
+    enabled: true,
+    type: 'expand',
+    maxRows: 2,
+  }),
   slide: Object.freeze({
     motion: 'step',
     autoplay: true,
@@ -47,6 +53,7 @@ export function normalizeDisplay(input, fallback = DEFAULT_DISPLAY) {
   const source = isObject(input) ? input : {};
   const columns = isObject(source.columns) ? source.columns : {};
   const slide = isObject(source.slide) ? source.slide : {};
+  const showMore = isObject(source.showMore) ? source.showMore : {};
 
   return {
     layout: pick(source.layout, DISPLAY_LAYOUTS, base.layout),
@@ -54,6 +61,11 @@ export function normalizeDisplay(input, fallback = DEFAULT_DISPLAY) {
       mobile: whole(columns.mobile, 1, DISPLAY_MAX_COLUMNS, base.columns.mobile),
       tablet: whole(columns.tablet, 1, DISPLAY_MAX_COLUMNS, base.columns.tablet),
       desktop: whole(columns.desktop, 1, DISPLAY_MAX_COLUMNS, base.columns.desktop),
+    },
+    showMore: {
+      enabled: bool(showMore.enabled, base.showMore?.enabled ?? true),
+      type: pick(showMore.type, SHOW_MORE_TYPES, base.showMore?.type ?? 'expand'),
+      maxRows: whole(showMore.maxRows, 1, 10, base.showMore?.maxRows ?? 2),
     },
     slide: {
       motion: pick(slide.motion, SLIDE_MOTIONS, base.slide.motion),

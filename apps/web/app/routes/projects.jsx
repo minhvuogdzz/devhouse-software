@@ -19,7 +19,7 @@ export async function loader({ request }) {
 
 export function meta({ data }) {
   return generateSeoMeta({
-    title: data?.seo?.title || 'Dev House Software',
+    title: data?.seo?.title || 'Devhouse Software',
     description: data?.seo?.description || '',
     url: data?.url,
     locale: data?.locale,

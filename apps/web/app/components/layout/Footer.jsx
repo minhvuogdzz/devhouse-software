@@ -57,8 +57,8 @@ export function Footer() {
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
           {/* Company */}
           <div className="space-y-4 lg:w-80 lg:shrink-0">
-            <Link to={prefix || '/'} className="inline-block" aria-label="Dev House Software">
-              <Logo variant="full" alt="Dev House Software" className="h-28 w-auto" />
+            <Link to={prefix || '/'} className="inline-block" aria-label="Devhouse Software">
+              <Logo variant="full" alt="Devhouse Software" className="h-28 w-auto" />
             </Link>
             {settings.tagline && (
               <p className="text-sm text-fg-muted leading-relaxed max-w-sm">{settings.tagline}</p>
@@ -124,8 +124,8 @@ export function Footer() {
                 </h3>
                 <p className="text-xs text-fg-muted mt-0.5">
                   {locale === 'en'
-                    ? 'Connect with Dev House Software across our verified networks.'
-                    : 'Kết nối và theo dõi Dev House Software trên các kênh truyền thông chính thức.'}
+                    ? 'Connect with Devhouse Software across our verified networks.'
+                    : 'Kết nối và theo dõi Devhouse Software trên các kênh truyền thông chính thức.'}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">

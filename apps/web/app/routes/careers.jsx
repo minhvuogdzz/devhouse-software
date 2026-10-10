@@ -32,11 +32,11 @@ export async function loader({ request }) {
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
   const title = isEn
-    ? 'Careers & Engineering Opportunities — Dev House Software'
-    : 'Cơ hội Nghề nghiệp & Gia nhập Đội ngũ — Dev House Software';
+    ? 'Careers & Engineering Opportunities — Devhouse Software'
+    : 'Cơ hội Nghề nghiệp & Gia nhập Đội ngũ — Devhouse Software';
   const description = isEn
-    ? 'Discover software engineering and systems roles at Dev House Software.'
-    : 'Khám phá các vị trí kỹ sư phần mềm và kiến trúc sư hệ thống tại Dev House Software.';
+    ? 'Discover software engineering and systems roles at Devhouse Software.'
+    : 'Khám phá các vị trí kỹ sư phần mềm và kiến trúc sư hệ thống tại Devhouse Software.';
 
   return generateSeoMeta({
     title,
@@ -101,7 +101,7 @@ export default function CareersPage() {
         {/* Hero */}
         <div className="max-w-3xl space-y-6">
           <Badge variant="default">
-            {locale === 'en' ? 'Careers at Dev House' : 'Cơ hội Nghề nghiệp'}
+            {locale === 'en' ? 'Careers at Devhouse' : 'Cơ hội Nghề nghiệp'}
           </Badge>
           <h1 className="text-4xl sm:text-5xl font-extrabold font-display text-fg tracking-tight leading-tight">
             {hero.heading}
@@ -146,7 +146,7 @@ export default function CareersPage() {
             <p className="text-sm sm:text-base text-fg-muted leading-relaxed">
               {locale === 'en'
                 ? 'We are always interested in connecting with passionate software engineers, system architects, and technical leads who share our commitment to engineering excellence.'
-                : 'Chúng tôi luôn chào đón các kỹ sư phần mềm, kiến trúc sư hệ thống giàu năng lực và tâm huyết gia nhập đội ngũ Dev House.'}
+                : 'Chúng tôi luôn chào đón các kỹ sư phần mềm, kiến trúc sư hệ thống giàu năng lực và tâm huyết gia nhập đội ngũ Devhouse.'}
             </p>
           </div>
 

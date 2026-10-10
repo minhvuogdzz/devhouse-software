@@ -72,8 +72,8 @@ export const productsIndexPage = {
   sections: [productsHero, productsList, productsEmpty, productsCta],
   seo: {
     title: {
-      vi: 'Mẫu website có sẵn — Dev House Software',
-      en: 'Ready-made website templates — Dev House Software',
+      vi: 'Mẫu website có sẵn — Devhouse Software',
+      en: 'Ready-made website templates — Devhouse Software',
     },
     description: {
       vi: 'Xem thử các mẫu website bán hàng, landing page, giới thiệu doanh nghiệp và nhiều hơn nữa.',

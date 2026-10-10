@@ -56,7 +56,7 @@ const PAGE_META = {
   },
   about: {
     group: 'menu',
-    menuLabel: 'Tab: Về Dev House',
+    menuLabel: 'Tab: Về Devhouse',
     publicUrl: '/about',
     icon: Building2,
     summary:
@@ -269,7 +269,7 @@ export default function PageListPage() {
             Tất cả các Tab trên thanh Menu website đều có thể chỉnh sửa nội dung tại đây:
           </p>
           <p className="text-fg-muted">
-            Chọn tab tương ứng (Mẫu website, Bảng Giá & Gói Cước, Dự án, Dịch vụ, Về Dev House, Liên
+            Chọn tab tương ứng (Mẫu website, Bảng Giá & Gói Cước, Dự án, Dịch vụ, Về Devhouse, Liên
             hệ) rồi bấm <strong>"Sửa Heading & Text"</strong> để thay đổi chữ hiển thị ngoài trang
             web theo ý bạn.
           </p>

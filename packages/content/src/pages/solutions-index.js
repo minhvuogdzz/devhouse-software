@@ -44,8 +44,8 @@ export const solutionsIndexPage = {
   sections: [solutionsHero, solutionsList],
   seo: {
     title: {
-      vi: 'Giải pháp & Phần mềm doanh nghiệp — Dev House Software',
-      en: 'Business Software & Solutions — Dev House Software',
+      vi: 'Giải pháp & Phần mềm doanh nghiệp — Devhouse Software',
+      en: 'Business Software & Solutions — Devhouse Software',
     },
     description: {
       vi: 'Các giải pháp phần mềm quản lý, bán hàng và hệ thống tự động hóa cho doanh nghiệp.',

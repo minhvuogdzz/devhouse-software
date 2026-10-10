@@ -1,5 +1,5 @@
 /**
- * The service groups Dev House sells (see the company direction document).
+ * The service groups Devhouse sells (see the company direction document).
  * Prices live in packages, not here. Everything is plain language, in Vietnamese and English.
  */
 const PUBLISHED_AT = new Date('2026-01-01T00:00:00.000Z');
@@ -69,8 +69,8 @@ const serviceGroups = [
     ],
     seo: {
       title: {
-        vi: 'Thiết kế website từ mẫu chuẩn — Dev House Software',
-        en: 'Website design from proven templates — Dev House Software',
+        vi: 'Thiết kế website từ mẫu chuẩn — Devhouse Software',
+        en: 'Website design from proven templates — Devhouse Software',
       },
       description: {
         vi: 'Website giới thiệu, landing page và web bán hàng nhỏ, dựng nhanh và giá hợp lý.',
@@ -135,8 +135,8 @@ const serviceGroups = [
     ],
     seo: {
       title: {
-        vi: 'Máy chủ và hạ tầng đám mây cho website — Dev House Software',
-        en: 'Cloud hosting for your website — Dev House Software',
+        vi: 'Máy chủ và hạ tầng đám mây cho website — Devhouse Software',
+        en: 'Cloud hosting for your website — Devhouse Software',
       },
       description: {
         vi: 'Máy chủ đám mây an toàn, có giám sát, sao lưu và cập nhật bảo mật định kỳ.',
@@ -201,8 +201,8 @@ const serviceGroups = [
     ],
     seo: {
       title: {
-        vi: 'Tên miền và DNS — Dev House Software',
-        en: 'Domain and DNS — Dev House Software',
+        vi: 'Tên miền và DNS — Devhouse Software',
+        en: 'Domain and DNS — Devhouse Software',
       },
       description: {
         vi: 'Đăng ký, gia hạn tên miền, cấu hình DNS và email theo tên miền.',
@@ -273,8 +273,8 @@ const serviceGroups = [
     ],
     seo: {
       title: {
-        vi: 'Bảo mật và hỗ trợ website — Dev House Software',
-        en: 'Website security and support — Dev House Software',
+        vi: 'Bảo mật và hỗ trợ website — Devhouse Software',
+        en: 'Website security and support — Devhouse Software',
       },
       description: {
         vi: 'Tường lửa, chống tấn công cơ bản, xử lý sự cố và vá bảo mật hằng tháng.',

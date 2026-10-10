@@ -15,8 +15,8 @@ export const termsHero = defineSection({
       en: 'Last updated: October 2026',
     },
     content: {
-      vi: 'Trang này tóm tắt cách Dev House Software làm việc với khách hàng. Điều khoản chính thức của từng khách hàng nằm trong hợp đồng hai bên cùng ký.',
-      en: 'This page summarises how Dev House Software works with customers. The binding terms for each customer are in the contract both sides sign.',
+      vi: 'Trang này tóm tắt cách Devhouse Software làm việc với khách hàng. Điều khoản chính thức của từng khách hàng nằm trong hợp đồng hai bên cùng ký.',
+      en: 'This page summarises how Devhouse Software works with customers. The binding terms for each customer are in the contract both sides sign.',
     },
   },
 });
@@ -71,22 +71,22 @@ export const termsClauses = defineSection({
       {
         title: { vi: '6. Công việc ngoài phạm vi', en: '6. Work outside the scope' },
         body: {
-          vi: 'Khi công việc vượt số giờ hỗ trợ của gói, Dev House báo giá riêng và chỉ thực hiện khi khách hàng đồng ý.',
-          en: 'When work goes beyond the support hours of the package, Dev House quotes it separately and only starts once the customer agrees.',
+          vi: 'Khi công việc vượt số giờ hỗ trợ của gói, Devhouse báo giá riêng và chỉ thực hiện khi khách hàng đồng ý.',
+          en: 'When work goes beyond the support hours of the package, Devhouse quotes it separately and only starts once the customer agrees.',
         },
       },
       {
         title: { vi: '7. Bảo mật thông tin', en: '7. Confidentiality' },
         body: {
-          vi: 'Thông tin của khách hàng được giữ kín. Dev House sẵn sàng ký thỏa thuận bảo mật (NDA) theo yêu cầu.',
-          en: 'Customer information is kept confidential. Dev House is happy to sign a non-disclosure agreement (NDA) on request.',
+          vi: 'Thông tin của khách hàng được giữ kín. Devhouse sẵn sàng ký thỏa thuận bảo mật (NDA) theo yêu cầu.',
+          en: 'Customer information is kept confidential. Devhouse is happy to sign a non-disclosure agreement (NDA) on request.',
         },
       },
       {
         title: { vi: '8. Kết thúc hợp đồng', en: '8. Ending the contract' },
         body: {
-          vi: 'Khi hợp đồng kết thúc, Dev House bàn giao lại mã nguồn, bản sao lưu dữ liệu và quyền quản lý tên miền cho khách hàng. Hạ tầng được xóa sau thời hạn hai bên thống nhất.',
-          en: 'When the contract ends, Dev House hands back the source code, a backup of the data and control of the domain name. The hosting is removed after a period agreed by both sides.',
+          vi: 'Khi hợp đồng kết thúc, Devhouse bàn giao lại mã nguồn, bản sao lưu dữ liệu và quyền quản lý tên miền cho khách hàng. Hạ tầng được xóa sau thời hạn hai bên thống nhất.',
+          en: 'When the contract ends, Devhouse hands back the source code, a backup of the data and control of the domain name. The hosting is removed after a period agreed by both sides.',
         },
       },
     ],
@@ -99,12 +99,12 @@ export const termsPage = {
   sections: [termsHero, termsClauses],
   seo: {
     title: {
-      vi: 'Điều khoản dịch vụ — Dev House Software',
-      en: 'Terms of service — Dev House Software',
+      vi: 'Điều khoản dịch vụ — Devhouse Software',
+      en: 'Terms of service — Devhouse Software',
     },
     description: {
-      vi: 'Cách Dev House Software làm việc với khách hàng: thanh toán, tên miền, hỗ trợ và kết thúc hợp đồng.',
-      en: 'How Dev House Software works with customers: payments, domains, support and ending a contract.',
+      vi: 'Cách Devhouse Software làm việc với khách hàng: thanh toán, tên miền, hỗ trợ và kết thúc hợp đồng.',
+      en: 'How Devhouse Software works with customers: payments, domains, support and ending a contract.',
     },
   },
 };
