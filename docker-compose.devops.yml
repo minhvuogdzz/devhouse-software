@@ -82,6 +82,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-xmsrcujndnywfjox}
       MAIL_FROM: ${MAIL_FROM:-"Devhouse Software <devhousesoftware.inc@gmail.com>"}
       CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
     depends_on:
       mongodb:
         condition: service_healthy
