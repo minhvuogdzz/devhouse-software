@@ -73,9 +73,22 @@ for (const name of CONTENT_COLLECTIONS) {
   for (const doc of docs) {
     const id = idMap.get(String(doc._id));
     const { _id, ...rest } = doc;
+    const remapped = remap(rest);
+    if (name === 'site_settings') {
+      const current = await db.collection(name).findOne({ _id: id });
+      if (current?.data) {
+        remapped.data = {
+          ...current.data,
+          ...remapped.data,
+          ai: remapped.data?.ai || current.data.ai,
+          socialLinks: remapped.data?.socialLinks || current.data.socialLinks,
+          floatingContacts: remapped.data?.floatingContacts || current.data.floatingContacts,
+        };
+      }
+    }
     await db
       .collection(name)
-      .replaceOne({ _id: id }, { ...remap(rest), _id: id }, { upsert: true });
+      .replaceOne({ _id: id }, { ...remapped, _id: id }, { upsert: true });
   }
 }
 

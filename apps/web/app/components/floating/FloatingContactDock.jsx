@@ -9,10 +9,19 @@ import {
   User,
   MessageSquare,
   Loader2,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { Logo } from '../ui/Logo.jsx';
 import { SocialIcon } from '../ui/SocialIcons.jsx';
 import { getLocaleFromUrl } from '../../lib/i18n.js';
+import {
+  startVoiceRecognition,
+  speakText,
+  stopSpeaking,
+} from '../../lib/voice.js';
 
 const DEFAULT_FLOATING_CONTACTS = [
   { type: 'zalo', label: 'Zalo tư vấn', value: 'https://zalo.me/0869528304', enabled: true },
@@ -130,9 +139,14 @@ export function FloatingContactDock() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speakingMsgIdx, setSpeakingMsgIdx] = useState(null);
+  const [voiceError, setVoiceError] = useState('');
+
   const messagesEndRef = useRef(null);
   const chatDrawerRef = useRef(null);
   const triggerButtonRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   // Initial greeting
   const initialGreeting = isEn
@@ -185,9 +199,15 @@ export function FloatingContactDock() {
     return () => window.removeEventListener('scroll', checkFooter);
   }, []);
 
-  // Lock background page scroll on mobile when full-screen chat is open
+  // Lock background page scroll on mobile when chat is open & stop voice on close
   useEffect(() => {
-    if (!isChatOpen) return;
+    if (!isChatOpen) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      stopSpeaking();
+      setSpeakingMsgIdx(null);
+      return;
+    }
     const isMobile = window.innerWidth < 640;
     if (isMobile) {
       const previousOverflow = document.body.style.overflow;
@@ -244,8 +264,11 @@ export function FloatingContactDock() {
   };
 
   const handleSendMessage = async textToSend => {
-    const query = (textToSend || inputMessage).trim();
+    const query = (textToSend !== undefined ? textToSend : inputMessage).trim();
     if (!query || isLoading) return;
+
+    recognitionRef.current?.stop();
+    setIsListening(false);
 
     const userMsg = { role: 'user', text: query };
     const updatedHistory = [...messages, userMsg];
@@ -287,7 +310,71 @@ export function FloatingContactDock() {
     }
   };
 
+  const handleToggleVoiceInput = () => {
+    setVoiceError('');
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    stopSpeaking();
+    setSpeakingMsgIdx(null);
+
+    const controller = startVoiceRecognition({
+      locale,
+      onResult: ({ transcript }) => {
+        setInputMessage(transcript);
+      },
+      onEnd: (finalTranscript, hasFinal) => {
+        setIsListening(false);
+        if (hasFinal && finalTranscript && finalTranscript.trim().length > 1) {
+          handleSendMessage(finalTranscript.trim());
+        }
+      },
+      onError: errCode => {
+        setIsListening(false);
+        if (errCode === 'not-supported') {
+          setVoiceError(
+            isEn
+              ? 'Voice input is not supported on this browser.'
+              : 'Trình duyệt này chưa hỗ trợ nhận diện giọng nói.',
+          );
+        } else if (errCode === 'not-allowed') {
+          setVoiceError(
+            isEn
+              ? 'Please allow microphone access to use voice chat.'
+              : 'Vui lòng cấp quyền Micro để trò chuyện bằng giọng nói.',
+          );
+        }
+      },
+    });
+
+    if (controller) {
+      recognitionRef.current = controller;
+      setIsListening(true);
+    }
+  };
+
+  const handleToggleSpeakMessage = (idx, text) => {
+    if (speakingMsgIdx === idx) {
+      stopSpeaking();
+      setSpeakingMsgIdx(null);
+      return;
+    }
+
+    speakText({
+      text,
+      locale,
+      onStart: () => setSpeakingMsgIdx(idx),
+      onEnd: () => setSpeakingMsgIdx(null),
+      onError: () => setSpeakingMsgIdx(null),
+    });
+  };
+
   const handleResetChat = () => {
+    stopSpeaking();
+    setSpeakingMsgIdx(null);
     setMessages([{ role: 'assistant', text: initialGreeting }]);
   };
 
@@ -305,25 +392,36 @@ export function FloatingContactDock() {
 
   return (
     <div
-      className="fixed right-4 sm:right-6 bottom-4 sm:bottom-6 z-40 flex flex-col items-end pointer-events-none"
+      className={`fixed right-4 sm:right-6 bottom-4 sm:bottom-6 ${
+        isChatOpen ? 'z-[70]' : 'z-40'
+      } flex flex-col items-end pointer-events-none`}
       aria-label="Floating Contact & AI Chatbot"
     >
+      {/* Mobile Backdrop: tap outside the chat box anywhere to close */}
+      {isChatOpen && (
+        <div
+          onClick={closeChat}
+          aria-hidden="true"
+          className="fixed inset-0 z-[70] bg-scrim/50 backdrop-blur-[2px] pointer-events-auto sm:hidden animate-in fade-in duration-200"
+        />
+      )}
+
       <div className="flex flex-col items-end gap-3 transition-all duration-500 ease-in-out">
         {/* ========================================================= */}
         {/* 1. CHATBOT FLOATING ICON + RESPONSIVE CHAT DRAWER         */}
         {/* ========================================================= */}
         <div className="relative pointer-events-auto">
-          {/* Chat drawer: full-screen overlay on mobile, sleek floating popout on desktop */}
+          {/* Chat drawer: padded floating modal on mobile (above header), sleek side popout on desktop */}
           {isChatOpen && (
             <div
               ref={chatDrawerRef}
-              className="fixed inset-0 z-[100] w-full h-[100dvh] bg-surface text-fg flex flex-col overflow-hidden pointer-events-auto sm:absolute sm:inset-auto sm:right-full sm:bottom-0 sm:mr-3 sm:w-[360px] sm:max-w-[360px] sm:h-[480px] sm:max-h-[calc(100vh-6rem)] sm:rounded-2xl sm:border sm:border-border/80 sm:shadow-2xl sm:z-50 transition-all duration-200 ease-out sm:origin-bottom-right animate-in fade-in sm:zoom-in-95"
+              className="fixed inset-x-3.5 top-4 bottom-4 z-[80] max-h-[calc(100dvh-2rem)] rounded-2xl border border-border bg-surface text-fg shadow-2xl flex flex-col overflow-hidden pointer-events-auto sm:absolute sm:inset-auto sm:right-full sm:bottom-0 sm:mr-3 sm:w-[370px] sm:max-w-[370px] sm:h-[500px] sm:max-h-[calc(100vh-6rem)] sm:z-50 transition-all duration-200 ease-out sm:origin-bottom-right animate-in fade-in zoom-in-95"
               role="dialog"
               aria-modal="true"
               aria-label="DH AI Chat"
             >
               {/* Header */}
-              <div className="px-4 py-3 sm:px-3.5 sm:py-2.5 pt-[max(0.75rem,env(safe-area-inset-top,0.75rem))] sm:pt-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
+              <div className="px-4 py-3 sm:px-3.5 sm:py-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2.5 sm:gap-2">
                   {/* Devhouse AI Mini Avatar */}
                   <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-primary via-accent to-primary">
@@ -345,7 +443,7 @@ export function FloatingContactDock() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 sm:gap-0.5">
+                <div className="flex items-center gap-1.5 sm:gap-1">
                   <button
                     type="button"
                     onClick={handleResetChat}
@@ -358,11 +456,12 @@ export function FloatingContactDock() {
                   <button
                     type="button"
                     onClick={closeChat}
-                    title={isEn ? 'Close' : 'Đóng'}
-                    aria-label={isEn ? 'Close' : 'Đóng'}
-                    className="p-2 sm:p-1.5 rounded-lg text-fg-muted hover:text-danger hover:bg-danger-surface transition-colors cursor-pointer"
+                    title={isEn ? 'Close' : 'Đóng khung chat'}
+                    aria-label={isEn ? 'Close' : 'Đóng khung chat'}
+                    className="px-2.5 py-1.5 sm:p-1.5 rounded-lg bg-surface-2 sm:bg-transparent border border-border sm:border-transparent text-fg sm:text-fg-muted hover:text-danger hover:bg-danger-surface hover:border-danger/30 transition-colors cursor-pointer flex items-center gap-1 text-xs font-semibold"
                   >
-                    <X className="w-5 h-5 sm:w-4 sm:h-4" />
+                    <span className="sm:hidden">{isEn ? 'Close' : 'Đóng'}</span>
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -381,17 +480,53 @@ export function FloatingContactDock() {
                         <Bot className="w-3.5 h-3.5 sm:w-3 sm:h-3" />
                       </div>
                     )}
-                    <div
-                      className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 sm:px-3 sm:py-2 shadow-2xs ${
-                        msg.role === 'user'
-                          ? 'bg-primary text-on-scrim rounded-br-xs'
-                          : 'bg-surface-raised border border-border text-fg rounded-bl-xs'
-                      }`}
-                    >
-                      {msg.role === 'user' ? (
-                        <p className="text-sm sm:text-xs leading-relaxed text-on-scrim">{msg.text}</p>
-                      ) : (
-                        <ChatMessageContent content={msg.text} />
+                    <div className="max-w-[85%] flex flex-col items-start gap-1">
+                      <div
+                        className={`rounded-2xl px-3.5 py-2.5 sm:px-3 sm:py-2 shadow-2xs ${
+                          msg.role === 'user'
+                            ? 'bg-primary text-on-scrim rounded-br-xs'
+                            : 'bg-surface-raised border border-border text-fg rounded-bl-xs'
+                        }`}
+                      >
+                        {msg.role === 'user' ? (
+                          <p className="text-sm sm:text-xs leading-relaxed text-on-scrim">{msg.text}</p>
+                        ) : (
+                          <ChatMessageContent content={msg.text} />
+                        )}
+                      </div>
+
+                      {/* Voice Read Aloud (TTS) button for Assistant responses */}
+                      {msg.role === 'assistant' && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleSpeakMessage(i, msg.text)}
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-medium transition-colors cursor-pointer ${
+                            speakingMsgIdx === i
+                              ? 'bg-primary/15 text-primary border border-primary/30'
+                              : 'text-fg-subtle hover:text-primary hover:bg-surface-2'
+                          }`}
+                          title={
+                            speakingMsgIdx === i
+                              ? isEn
+                                ? 'Stop reading'
+                                : 'Dừng đọc'
+                              : isEn
+                                ? 'Listen to response'
+                                : 'Nghe phản hồi'
+                          }
+                        >
+                          {speakingMsgIdx === i ? (
+                            <>
+                              <VolumeX className="w-3 h-3 animate-pulse" />
+                              <span>{isEn ? 'Stop' : 'Dừng đọc'}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Volume2 className="w-3 h-3" />
+                              <span>{isEn ? 'Listen' : 'Nghe'}</span>
+                            </>
+                          )}
+                        </button>
                       )}
                     </div>
                     {msg.role === 'user' && (
@@ -439,26 +574,86 @@ export function FloatingContactDock() {
                 </div>
               )}
 
+              {/* Voice status / error notice */}
+              {(isListening || voiceError) && (
+                <div
+                  className={`px-3.5 py-1.5 text-xs flex items-center justify-between border-t border-border-subtle ${
+                    isListening ? 'bg-primary/10 text-primary font-medium' : 'bg-danger-surface text-danger'
+                  }`}
+                >
+                  <span className="flex items-center gap-1.5">
+                    {isListening && <span className="w-2 h-2 rounded-full bg-danger animate-ping" />}
+                    {isListening
+                      ? isEn
+                        ? 'Listening... Speak now'
+                        : 'Đang nghe anh/chị nói...'
+                      : voiceError}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isListening) {
+                        recognitionRef.current?.stop();
+                        setIsListening(false);
+                      }
+                      setVoiceError('');
+                    }}
+                    className="text-[11px] underline cursor-pointer"
+                  >
+                    {isEn ? 'Dismiss' : 'Đóng'}
+                  </button>
+                </div>
+              )}
+
               {/* Input Area — 16px (text-base) on mobile prevents browser auto-zoom on focus */}
-              <div className="p-3 sm:p-2.5 pb-[max(0.75rem,env(safe-area-inset-bottom,0.75rem))] sm:pb-2.5 border-t border-border bg-surface shrink-0">
+              <div className="p-3 sm:p-2.5 border-t border-border bg-surface shrink-0">
                 <form
                   onSubmit={e => {
                     e.preventDefault();
                     handleSendMessage();
                   }}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-1.5 sm:gap-2"
                 >
                   <input
                     type="text"
                     value={inputMessage}
                     onChange={e => setInputMessage(e.target.value)}
                     placeholder={
-                      isEn
-                        ? 'Ask DH AI anything about Devhouse...'
-                        : 'Hỏi em bất kỳ điều gì về Devhouse...'
+                      isListening
+                        ? isEn
+                          ? 'Listening to your voice...'
+                          : 'Đang nghe giọng nói...'
+                        : isEn
+                          ? 'Ask DH AI anything...'
+                          : 'Hỏi em bất kỳ điều gì về Devhouse...'
                     }
-                    className="flex-1 h-10 sm:h-9 px-3.5 text-base sm:text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1.5 focus:ring-primary focus:border-primary transition-colors"
+                    className="flex-1 min-w-0 h-10 sm:h-9 px-3.5 text-base sm:text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1.5 focus:ring-primary focus:border-primary transition-colors"
                   />
+
+                  {/* Voice Microphone Button */}
+                  <button
+                    type="button"
+                    onClick={handleToggleVoiceInput}
+                    className={`w-10 h-10 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 cursor-pointer ${
+                      isListening
+                        ? 'bg-danger text-on-scrim shadow-md animate-pulse'
+                        : 'bg-surface-raised text-fg-muted hover:text-primary hover:border-primary/40 border border-border'
+                    }`}
+                    title={
+                      isListening
+                        ? isEn
+                          ? 'Stop voice input'
+                          : 'Dừng thu âm'
+                        : isEn
+                          ? 'Voice chat'
+                          : 'Nhập bằng giọng nói'
+                    }
+                    aria-label={isEn ? 'Voice input' : 'Nhập bằng giọng nói'}
+                  >
+                    {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </button>
+
+                  {/* Send Button */}
                   <button
                     type="submit"
                     disabled={!inputMessage.trim() || isLoading}

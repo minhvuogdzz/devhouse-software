@@ -355,7 +355,7 @@ export const searchService = {
 
   /**
    * AI Search powered by DH AI assistant.
-   * Leverages Gemini model under the hood using admin-configured key.
+   * Leverages Gemini model under the hood using admin-configured key pool with automatic failover & loop.
    */
   async aiSearch({ q, locale = 'vi' }) {
     const rawQuery = (q || '').trim();
@@ -377,18 +377,19 @@ export const searchService = {
       .lean()
       .catch(() => null);
     const overrides = settingsDoc?.data || {};
+    const keyPool = resolveApiKeyPool(overrides.ai);
     const aiConfig = {
       enabled: overrides.ai?.enabled ?? defaultSettings.ai?.enabled ?? true,
-      apiKey: overrides.ai?.apiKey || process.env.GEMINI_API_KEY || '',
-      model: overrides.ai?.model || 'gemini-2.5-flash',
+      keys: keyPool,
+      model: overrides.ai?.model || 'gemini-flash-lite-latest',
       companyKnowledge: overrides.ai?.companyKnowledge || '',
     };
 
     // Parallel fetch related search results to enrich response
     const searchPromise = this.universalSearch({ q: rawQuery, locale, limit: 6 });
 
-    // If AI is disabled or API key not yet set in Admin:
-    if (!aiConfig.enabled || !aiConfig.apiKey) {
+    // If AI is disabled or no API key in pool:
+    if (!aiConfig.enabled || aiConfig.keys.length === 0) {
       const searchRes = await searchPromise;
       const noKeyMessage = isEn
         ? `### Welcome to **DH AI**\n\nThe intelligent assistant is currently being configured with authorization credentials by the system administrator.\n\nHere are the most relevant resources found across **Devhouse Software** for your query:\n\n* **Official Contact**: Hotline **0869 528 304** | Email **devhousesoftware.inc@gmail.com**\n* You can explore the direct links below to find what you need immediately.`
@@ -471,7 +472,7 @@ ${packagesSummary || '- Các gói dịch vụ linh hoạt, thanh toán trọn g�
 GIẢI PHÁP ĐÃ TRIỂN KHAI:
 ${solutionsSummary || '- Giải pháp chuyển đổi số cho doanh nghiệp bán lẻ, giáo dục, bất động sản, logistics...'}
 
-DỰ ÁN TIÊU BIỂU:
+DỰ ÁN TIỂU BIỂU:
 ${projectsSummary || '- Nhiều dự án thực tế cho doanh nghiệp vừa và nhỏ.'}
 
 ${aiConfig.companyKnowledge ? `DỮ LIỆU TRI THỨC NỘI BỘ DO DOANH NGHIỆP CUNG CẤP:\n${aiConfig.companyKnowledge}\n` : ''}
@@ -514,72 +515,37 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
         ),
       );
 
-      let answerText = null;
-      let lastError = null;
-
-      for (const modelName of candidateModels) {
-        try {
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${aiConfig.apiKey}`;
-          let response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              system_instruction: {
-                parts: [{ text: systemPrompt }],
-              },
-              contents: [
-                {
-                  role: 'user',
-                  parts: [{ text: `Câu hỏi tìm kiếm của khách hàng: "${rawQuery}"` }],
-                },
-              ],
-              generationConfig: {
-                temperature: 0.4,
-                maxOutputTokens: 2048,
-              },
-            }),
-          });
-
-          // Fallback if model endpoint does not support system_instruction
-          if (!response.ok && response.status === 400) {
-            response = await fetch(endpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    role: 'user',
-                    parts: [{ text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` }],
-                  },
-                ],
-                generationConfig: {
-                  temperature: 0.4,
-                  maxOutputTokens: 2048,
-                },
-              }),
-            });
-          }
-
-          if (!response.ok) {
-            const errData = await response.json().catch(() => ({}));
-            lastError = errData?.error?.message || `Model ${modelName} returned status ${response.status}`;
-            continue;
-          }
-
-          const data = await response.json();
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            answerText = text;
-            break;
-          }
-        } catch (fetchErr) {
-          lastError = fetchErr.message;
-        }
-      }
-
-      if (!answerText) {
-        throw new Error(lastError || 'All candidate AI models failed to generate a response.');
-      }
+      const answerText = await callGeminiWithKeyRotation({
+        keys: aiConfig.keys,
+        candidateModels,
+        buildPrimaryBody: () => ({
+          system_instruction: {
+            parts: [{ text: systemPrompt }],
+          },
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `Câu hỏi tìm kiếm của khách hàng: "${rawQuery}"` }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 2048,
+          },
+        }),
+        buildFallbackBody: () => ({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: `${systemPrompt}\n\n---\n\nCâu hỏi của khách hàng: "${rawQuery}"` }],
+            },
+          ],
+          generationConfig: {
+            temperature: 0.4,
+            maxOutputTokens: 2048,
+          },
+        }),
+      });
 
       const searchRes = await searchPromise;
 
@@ -622,17 +588,18 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
 
     const isEn = locale === 'en';
 
-    // Retrieve settings (uses the same Gemini key configured in Admin)
+    // Retrieve settings (uses the same Gemini key pool configured in Admin)
     const settingsDoc = await SettingsModel.findOne({ key: 'global' }).lean();
     const overrides = settingsDoc?.data || {};
+    const keyPool = resolveApiKeyPool(overrides.ai);
     const aiConfig = {
       enabled: overrides.ai?.enabled ?? defaultSettings.ai?.enabled ?? true,
-      apiKey: overrides.ai?.apiKey || process.env.GEMINI_API_KEY || '',
-      model: overrides.ai?.model || 'gemini-2.5-flash',
+      keys: keyPool,
+      model: overrides.ai?.model || 'gemini-flash-lite-latest',
       companyKnowledge: overrides.ai?.companyKnowledge || '',
     };
 
-    if (!aiConfig.enabled || !aiConfig.apiKey) {
+    if (!aiConfig.enabled || aiConfig.keys.length === 0) {
       const fallbackMsg = isEn
         ? `Hello! I am **DH AI**, the virtual consultant at Devhouse Software. The administrator is currently finalizing my connection credentials. If you need any immediate assistance regarding our web design, hosting, or software services, please feel free to reach our team at **0869 528 304** (Hotline) or email **devhousesoftware.inc@gmail.com**. We are always delighted to assist you!`
         : `Dạ em chào anh/chị ạ! Em là **DH AI** — Chuyên viên tư vấn ảo của Devhouse Software. Hiện tại hệ thống trợ lý trực tuyến đang được quản trị viên hoàn tất kết nối. Anh/chị cần tư vấn nhanh về bảng giá thiết kế website, máy chủ đám mây hay quy trình chuyển đổi số, anh/chị có thể liên hệ trực tiếp hotline **0869 528 304** hoặc email **devhousesoftware.inc@gmail.com** để các chuyên viên kỹ thuật của Devhouse hỗ trợ anh/chị ngay nhé ạ!`;
@@ -783,70 +750,37 @@ Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you,
         contents.push({ role: 'user', parts: [{ text: rawMessage }] });
       }
 
-      let answerText = null;
-      let lastError = null;
-
-      for (const modelName of candidateModels) {
-        try {
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${aiConfig.apiKey}`;
-          let response = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              system_instruction: {
-                parts: [{ text: systemPrompt }],
-              },
-              contents,
-              generationConfig: {
-                temperature: 0.6,
-                maxOutputTokens: 1500,
-              },
-            }),
-          });
-
-          // Fallback if model endpoint does not support system_instruction
-          if (!response.ok && response.status === 400) {
-            const fallbackContents = [
-              {
-                role: 'user',
-                parts: [{ text: `${systemPrompt}\n\n[Bắt đầu cuộc trò chuyện tư vấn]\n\n${contents[0]?.parts?.[0]?.text || ''}` }],
-              },
-              ...contents.slice(1),
-            ];
-            response = await fetch(endpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                contents: fallbackContents,
-                generationConfig: {
-                  temperature: 0.6,
-                  maxOutputTokens: 1500,
+      const answerText = await callGeminiWithKeyRotation({
+        keys: aiConfig.keys,
+        candidateModels,
+        buildPrimaryBody: () => ({
+          system_instruction: {
+            parts: [{ text: systemPrompt }],
+          },
+          contents,
+          generationConfig: {
+            temperature: 0.6,
+            maxOutputTokens: 1500,
+          },
+        }),
+        buildFallbackBody: () => ({
+          contents: [
+            {
+              role: 'user',
+              parts: [
+                {
+                  text: `${systemPrompt}\n\n[Bắt đầu cuộc trò chuyện tư vấn]\n\n${contents[0]?.parts?.[0]?.text || ''}`,
                 },
-              }),
-            });
-          }
-
-          if (!response.ok) {
-            const errData = await response.json().catch(() => ({}));
-            lastError =
-              errData?.error?.message || `Model ${modelName} returned status ${response.status}`;
-            continue;
-          }
-
-          const data = await response.json();
-          const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            answerText = text;
-            break;
-          }
-        } catch (fetchErr) {
-          lastError = fetchErr.message;
-        }
-      }
-
-      if (!answerText) {
-        throw new Error(lastError || 'Candidate AI models failed to generate response');
-      }
+              ],
+            },
+            ...contents.slice(1),
+          ],
+          generationConfig: {
+            temperature: 0.6,
+            maxOutputTokens: 1500,
+          },
+        }),
+      });
 
       return {
         answer: cleanAndFormatAiMarkdown(answerText),
@@ -865,6 +799,178 @@ Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you,
     }
   },
 };
+
+/**
+ * Module-level state for Gemini API Key Pool Rotation & Cooldown Tracking
+ */
+let keyLoopPointer = 0;
+const keyCooldownUntil = new Map();
+
+/**
+ * Extracts and deduplicates all enabled Gemini API keys from settings overrides and environment.
+ * Supports:
+ * - ai.apiKeys: Array<{ key: string, label?: string, enabled?: boolean } | string>
+ * - ai.apiKey: string (single key or comma/newline-separated keys)
+ * - process.env.GEMINI_API_KEY: string (single key or comma/newline-separated keys)
+ */
+export function resolveApiKeyPool(aiOverrides = {}) {
+  const pool = [];
+  const seen = new Set();
+
+  const pushRawString = raw => {
+    if (!raw || typeof raw !== 'string') return;
+    const parts = raw
+      .split(/[\n,;]+/)
+      .map(s => s.trim())
+      .filter(Boolean);
+    for (const k of parts) {
+      if (!seen.has(k)) {
+        seen.add(k);
+        pool.push(k);
+      }
+    }
+  };
+
+  if (Array.isArray(aiOverrides?.apiKeys)) {
+    for (const item of aiOverrides.apiKeys) {
+      if (typeof item === 'string') {
+        pushRawString(item);
+      } else if (item && typeof item === 'object' && item.enabled !== false) {
+        pushRawString(item.key);
+      }
+    }
+  }
+
+  if (aiOverrides?.apiKey) {
+    pushRawString(aiOverrides.apiKey);
+  }
+
+  if (process.env.GEMINI_API_KEY) {
+    pushRawString(process.env.GEMINI_API_KEY);
+  }
+
+  return pool;
+}
+
+/**
+ * Executes a Gemini generation request across a pool of API keys and candidate models.
+ * - Loops circularly through the key pool starting from `keyLoopPointer`.
+ * - Automatically detects quota exhaustion (HTTP 429 / RESOURCE_EXHAUSTED) or invalid/blocked keys (401/403),
+ *   places the exhausted key in temporary cooldown, and immediately fails over to the next key in the pool.
+ */
+async function callGeminiWithKeyRotation({
+  keys,
+  candidateModels,
+  buildPrimaryBody,
+  buildFallbackBody,
+}) {
+  const totalKeys = keys.length;
+  if (totalKeys === 0) {
+    throw new Error('No Gemini API keys available in pool.');
+  }
+
+  const now = Date.now();
+  const startIdx = keyLoopPointer % totalKeys;
+
+  // Build circular order starting at startIdx: healthy keys first, cooled-down keys as fallback
+  const healthyIndices = [];
+  const cooldownIndices = [];
+  for (let offset = 0; offset < totalKeys; offset++) {
+    const idx = (startIdx + offset) % totalKeys;
+    const k = keys[idx];
+    const until = keyCooldownUntil.get(k) || 0;
+    if (until > now) {
+      cooldownIndices.push(idx);
+    } else {
+      healthyIndices.push(idx);
+    }
+  }
+
+  const orderedIndices = [...healthyIndices, ...cooldownIndices];
+  let lastError = null;
+
+  for (const keyIdx of orderedIndices) {
+    const apiKey = keys[keyIdx];
+
+    for (const modelName of candidateModels) {
+      try {
+        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        let response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(buildPrimaryBody()),
+        });
+
+        // Fallback if model endpoint does not support system_instruction (400 Bad Request, not key invalid)
+        if (!response.ok && response.status === 400 && buildFallbackBody) {
+          const errProbe = await response
+            .clone()
+            .json()
+            .catch(() => ({}));
+          const errMsg = String(errProbe?.error?.message || '');
+          const isInvalidKey =
+            errMsg.toLowerCase().includes('api key') ||
+            errProbe?.error?.status === 'INVALID_ARGUMENT';
+          if (isInvalidKey && errMsg.toLowerCase().includes('key')) {
+            // Key itself is invalid -> mark cooldown and jump to next key immediately
+            keyCooldownUntil.set(apiKey, Date.now() + 10 * 60 * 1000);
+            lastError = errMsg || 'Invalid Gemini API key';
+            break;
+          }
+
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(buildFallbackBody()),
+          });
+        }
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          const errMessage =
+            errData?.error?.message || `Model ${modelName} returned status ${response.status}`;
+          lastError = errMessage;
+
+          // Detect quota exhaustion (429) or auth failure (401/403)
+          if (response.status === 401 || response.status === 403) {
+            // Key unauthorized or disabled -> cooldown 10m and switch to next key immediately
+            keyCooldownUntil.set(apiKey, Date.now() + 10 * 60 * 1000);
+            break;
+          }
+
+          if (
+            response.status === 429 ||
+            errMessage.toLowerCase().includes('quota') ||
+            errMessage.toLowerCase().includes('resource_exhausted') ||
+            errMessage.toLowerCase().includes('rate limit')
+          ) {
+            // Key quota exhausted -> cooldown 60s
+            keyCooldownUntil.set(apiKey, Date.now() + 60 * 1000);
+            // If we have other keys in the pool, immediately switch to the next key!
+            if (totalKeys > 1) {
+              break;
+            }
+          }
+
+          continue;
+        }
+
+        const data = await response.json();
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          // Key succeeded! Clear any cooldown and advance the loop pointer for round-robin balance
+          keyCooldownUntil.delete(apiKey);
+          keyLoopPointer = (keyIdx + 1) % totalKeys;
+          return text;
+        }
+      } catch (fetchErr) {
+        lastError = fetchErr.message;
+      }
+    }
+  }
+
+  throw new Error(lastError || 'All API keys and candidate AI models failed to generate a response.');
+}
 
 /**
  * Normalizes messy raw markdown from LLMs into clean, properly spaced lines
@@ -900,4 +1006,5 @@ function cleanAndFormatAiMarkdown(text) {
 
   return s.trim();
 }
+
 

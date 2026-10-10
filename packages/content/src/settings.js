@@ -41,6 +41,7 @@ export const defaultSettings = {
   ai: {
     enabled: true,
     apiKey: '',
+    apiKeys: [],
     model: 'gemini-flash-lite-latest',
     companyKnowledge: '',
   },

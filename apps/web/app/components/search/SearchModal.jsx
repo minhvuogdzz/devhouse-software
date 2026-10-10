@@ -14,9 +14,14 @@ import {
   HelpCircle,
   Compass,
   Send,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { apiClient } from '../../lib/api-client.js';
 import { DhAiIcon } from '../ui/DhAiIcon.jsx';
+import { startVoiceRecognition, speakText, stopSpeaking } from '../../lib/voice.js';
 
 export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
   const navigate = useNavigate();
@@ -27,10 +32,14 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
   const [totalResults, setTotalResults] = useState(0);
   const [aiResponse, setAiResponse] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [voiceError, setVoiceError] = useState('');
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const inputRef = useRef(null);
   const containerRef = useRef(null);
   const debounceTimerRef = useRef(null);
+  const recognitionRef = useRef(null);
 
   const isEn = locale === 'en';
 
@@ -49,7 +58,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
         'Devhouse có những mẫu website và giải pháp nào?',
       ];
 
-  // Focus input when opened
+  // Focus input when opened, clean up voice when closed
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
@@ -60,8 +69,25 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
       setResults([]);
       setAiResponse(null);
       setHasSearched(false);
+      setVoiceError('');
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      }
+      setIsListening(false);
+      stopSpeaking();
+      setIsSpeaking(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      stopSpeaking();
+    };
+  }, []);
 
   // Handle ESC key and outside click anywhere outside the search box
   useEffect(() => {
@@ -139,6 +165,14 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
       setQuery(searchPrompt);
     }
 
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+      setIsListening(false);
+    }
+    stopSpeaking();
+    setIsSpeaking(false);
+
     setMode('ai');
     setIsLoading(true);
     setHasSearched(true);
@@ -165,6 +199,71 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Toggle Voice Input (Speech-to-Text)
+  const toggleVoiceInput = () => {
+    setVoiceError('');
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+      setIsListening(false);
+      return;
+    }
+
+    stopSpeaking();
+    setIsSpeaking(false);
+    const baseText = query.trim();
+
+    recognitionRef.current = startVoiceRecognition({
+      locale,
+      onStart: () => setIsListening(true),
+      onResult: (transcript, isFinal) => {
+        const nextVal = baseText ? `${baseText} ${transcript}` : transcript;
+        setQuery(nextVal);
+        if (isFinal && mode === 'ai' && nextVal.trim()) {
+          handleAiSearch(nextVal.trim());
+        }
+      },
+      onEnd: () => {
+        setIsListening(false);
+        recognitionRef.current = null;
+      },
+      onError: errCode => {
+        setIsListening(false);
+        recognitionRef.current = null;
+        if (errCode === 'unsupported') {
+          setVoiceError(
+            isEn
+              ? 'Browser does not support voice input.'
+              : 'Trình duyệt không hỗ trợ nhập giọng nói.',
+          );
+        } else if (errCode === 'not-allowed') {
+          setVoiceError(
+            isEn
+              ? 'Please allow microphone access.'
+              : 'Vui lòng cấp quyền Micro cho trình duyệt.',
+          );
+        }
+      },
+    });
+  };
+
+  // Toggle Voice Output (Text-to-Speech) for DH AI Answer
+  const toggleSpeakAiAnswer = text => {
+    if (isSpeaking) {
+      stopSpeaking();
+      setIsSpeaking(false);
+      return;
+    }
+    setIsSpeaking(true);
+    speakText({
+      text,
+      locale,
+      onStart: () => setIsSpeaking(true),
+      onEnd: () => setIsSpeaking(false),
+      onError: () => setIsSpeaking(false),
+    });
   };
 
   const handleKeyDownInput = e => {
@@ -288,7 +387,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
             </div>
 
             {/* Input Bar */}
-            <div className="flex items-center px-3.5 py-3 border-b border-border gap-2.5 bg-surface">
+            <div className="flex items-center px-3.5 py-3 border-b border-border gap-2 bg-surface">
               <div className="shrink-0 flex items-center justify-center">
                 {mode === 'ai' ? (
                   <DhAiIcon size="md" />
@@ -304,13 +403,17 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                 onChange={e => setQuery(e.target.value)}
                 onKeyDown={handleKeyDownInput}
                 placeholder={
-                  mode === 'ai'
+                  isListening
                     ? isEn
-                      ? 'Ask DH AI about services, delivery process, pricing...'
-                      : 'Hỏi DH AI về dịch vụ, báo giá, quy trình làm việc...'
-                    : isEn
-                      ? 'Search services, projects, pricing, templates...'
-                      : 'Tìm kiếm dịch vụ, dự án, bảng giá, mẫu website...'
+                      ? 'Listening... speak now'
+                      : 'Đang lắng nghe giọng nói của bạn...'
+                    : mode === 'ai'
+                      ? isEn
+                        ? 'Ask DH AI about services, delivery process, pricing...'
+                        : 'Hỏi DH AI về dịch vụ, báo giá, quy trình làm việc...'
+                      : isEn
+                        ? 'Search services, projects, pricing, templates...'
+                        : 'Tìm kiếm dịch vụ, dự án, bảng giá, mẫu website...'
                 }
                 className="w-full bg-transparent text-fg placeholder:text-fg-subtle text-base sm:text-sm focus:outline-none"
               />
@@ -324,6 +427,34 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                   <X className="w-4 h-4" />
                 </button>
               )}
+
+              {/* Voice Input (Microphone) Button */}
+              <button
+                type="button"
+                onClick={toggleVoiceInput}
+                disabled={isLoading}
+                className={`shrink-0 w-8 h-8 rounded-lg flex items-center justify-center transition-all cursor-pointer disabled:opacity-40 ${
+                  isListening
+                    ? 'bg-danger text-on-scrim animate-pulse shadow-xs'
+                    : 'text-fg-muted hover:text-primary hover:bg-surface-2 border border-border-subtle'
+                }`}
+                title={
+                  isListening
+                    ? isEn
+                      ? 'Stop voice input'
+                      : 'Dừng thu âm'
+                    : isEn
+                      ? 'Voice search'
+                      : 'Tìm kiếm bằng giọng nói'
+                }
+                aria-label={isEn ? 'Voice search' : 'Tìm kiếm bằng giọng nói'}
+              >
+                {isListening ? (
+                  <MicOff className="w-4 h-4" />
+                ) : (
+                  <Mic className="w-4 h-4" />
+                )}
+              </button>
 
               {mode === 'standard' && (
                 <button
@@ -364,6 +495,12 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                 isLoading && <Loader2 className="w-4 h-4 text-fg-subtle animate-spin" />
               )}
             </div>
+
+            {voiceError && (
+              <div className="px-3.5 py-1.5 bg-danger/10 border-b border-danger/20 text-[11px] text-danger font-medium">
+                {voiceError}
+              </div>
+            )}
 
             {/* Content / Interaction Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -430,9 +567,41 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                     <div className="space-y-4">
                       {/* Answer Box */}
                       <div className="p-4 rounded-xl border border-border bg-surface-raised space-y-3 shadow-2xs">
-                        <div className="flex items-center gap-2 text-primary font-semibold text-xs pb-2 border-b border-border-subtle">
-                          <DhAiIcon size="sm" />
-                          <span>{isEn ? 'DH AI Answer' : 'Câu trả lời từ DH AI'}</span>
+                        <div className="flex items-center justify-between gap-2 pb-2 border-b border-border-subtle">
+                          <div className="flex items-center gap-2 text-primary font-semibold text-xs">
+                            <DhAiIcon size="sm" />
+                            <span>{isEn ? 'DH AI Answer' : 'Câu trả lời từ DH AI'}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => toggleSpeakAiAnswer(aiResponse.answer)}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium transition-colors cursor-pointer ${
+                              isSpeaking
+                                ? 'bg-primary/15 text-primary border border-primary/30'
+                                : 'bg-surface border border-border-subtle text-fg-muted hover:text-primary hover:border-primary/40'
+                            }`}
+                            title={
+                              isSpeaking
+                                ? isEn
+                                  ? 'Stop reading'
+                                  : 'Dừng đọc'
+                                : isEn
+                                  ? 'Read aloud'
+                                  : 'Đọc câu trả lời'
+                            }
+                          >
+                            {isSpeaking ? (
+                              <>
+                                <VolumeX className="w-3.5 h-3.5 animate-pulse" />
+                                <span>{isEn ? 'Stop' : 'Dừng đọc'}</span>
+                              </>
+                            ) : (
+                              <>
+                                <Volume2 className="w-3.5 h-3.5" />
+                                <span>{isEn ? 'Listen' : 'Nghe phản hồi'}</span>
+                              </>
+                            )}
+                          </button>
                         </div>
 
                         {/* Formatted Answer Rendering with rich structured layout */}
