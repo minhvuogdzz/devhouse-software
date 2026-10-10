@@ -17,10 +17,12 @@ describe('normalizeDisplay', () => {
     const result = normalizeDisplay({
       layout: 'slide',
       columns: { mobile: 2, tablet: 99, desktop: 'x' },
+      showMore: { enabled: false, type: 'invalidType', maxRows: 99 },
       slide: { motion: 'teleport', autoplay: false, interval: 1, dots: 'progress', arrows: 'yes' },
     });
     expect(result.layout).toBe('slide');
     expect(result.columns).toEqual({ mobile: 2, tablet: 6, desktop: 3 });
+    expect(result.showMore).toEqual({ enabled: false, type: 'expand', maxRows: 10 });
     expect(result.slide).toEqual({
       motion: 'step',
       autoplay: false,
@@ -32,16 +34,22 @@ describe('normalizeDisplay', () => {
   });
 
   it('uses the list own defaults for whatever the admin has not changed', () => {
-    const own = makeDisplay({ layout: 'slide', columns: { mobile: 2, tablet: 3, desktop: 5 } });
+    const own = makeDisplay({
+      layout: 'slide',
+      columns: { mobile: 2, tablet: 3, desktop: 5 },
+      showMore: { enabled: true, type: 'loadMore', maxRows: 3 },
+    });
     const result = normalizeDisplay({ columns: { desktop: 4 } }, own);
     expect(result.layout).toBe('slide');
     expect(result.columns).toEqual({ mobile: 2, tablet: 3, desktop: 4 });
+    expect(result.showMore).toEqual({ enabled: true, type: 'loadMore', maxRows: 3 });
   });
 
   it('never changes the shared default', () => {
     normalizeDisplay({ layout: 'list', columns: { mobile: 5 } });
     expect(DEFAULT_DISPLAY.layout).toBe('grid');
     expect(DEFAULT_DISPLAY.columns.mobile).toBe(1);
+    expect(DEFAULT_DISPLAY.showMore.maxRows).toBe(2);
   });
 });
 

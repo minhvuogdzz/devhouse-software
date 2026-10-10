@@ -36,7 +36,7 @@ export function generateSeoMeta({
     { property: 'og:title', content: title },
     { property: 'og:description', content: description },
     { property: 'og:url', content: currentUrl },
-    { property: 'og:site_name', content: 'Dev House Software' },
+    { property: 'og:site_name', content: 'Devhouse Software' },
     { property: 'og:locale', content: isEn ? 'en_US' : 'vi_VN' },
     { property: 'og:type', content: type },
   ];

@@ -65,7 +65,7 @@ export async function loader({ request, params }) {
 
 export function meta({ data }) {
   return generateSeoMeta({
-    title: data?.seo?.title || 'Dev House Software',
+    title: data?.seo?.title || 'Devhouse Software',
     description: data?.seo?.description || '',
     url: data?.url,
     locale: data?.locale,
@@ -192,7 +192,7 @@ export default function BlogPage() {
                     <div className="w-6 h-6 rounded-full bg-primary-subtle text-primary flex items-center justify-center">
                       <User className="w-3 h-3" />
                     </div>
-                    <span>{post.author?.name || 'Dev House'}</span>
+                    <span>{post.author?.name || 'Devhouse'}</span>
                   </div>
                   {post.publishedAt && (
                     <span className="flex items-center gap-1 text-fg-subtle">

@@ -38,15 +38,15 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
   const suggestedPrompts = isEn
     ? [
         'Advise on complete website package for businesses',
-        'What is Dev House’s 6-step delivery process?',
+        'What is Devhouse’s 6-step delivery process?',
         'Cloud hosting, domain and security pricing',
-        'What solutions and templates does Dev House provide?',
+        'What solutions and templates does Devhouse provide?',
       ]
     : [
         'Tư vấn gói website trọn gói cho doanh nghiệp',
-        'Quy trình làm việc 6 bước của Dev House',
+        'Quy trình làm việc 6 bước của Devhouse',
         'Báo giá máy chủ đám mây, tên miền và bảo mật',
-        'Dev House có những mẫu website và giải pháp nào?',
+        'Devhouse có những mẫu website và giải pháp nào?',
       ];
 
   // Focus input when opened
@@ -367,7 +367,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                       </span>
                     </div>
                     <span className="text-[11px] text-fg-subtle">
-                      {isEn ? 'Dev House Knowledge Base' : 'Tri thức Dev House'}
+                      {isEn ? 'Devhouse Knowledge Base' : 'Tri thức Devhouse'}
                     </span>
                   </div>
 
@@ -401,7 +401,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
                         <p className="text-xs font-semibold text-fg">
                           {isEn
                             ? 'DH AI is analyzing your inquiry and synthesizing knowledge...'
-                            : 'DH AI đang phân tích yêu cầu và tổng hợp dữ liệu từ Dev House...'}
+                            : 'DH AI đang phân tích yêu cầu và tổng hợp dữ liệu từ Devhouse...'}
                         </p>
                       </div>
 
@@ -617,7 +617,7 @@ export function SearchModal({ isOpen, onClose, locale = 'vi' }) {
             {/* Footer */}
             <div className="px-3.5 py-2 border-t border-border bg-surface-raised/40 flex items-center justify-between text-[11px] text-fg-subtle">
               <div className="flex items-center gap-1.5">
-                <span className="font-semibold text-fg">Dev House</span>
+                <span className="font-semibold text-fg">Devhouse</span>
                 <span>•</span>
                 <span>
                   {mode === 'ai'

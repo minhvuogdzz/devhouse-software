@@ -232,7 +232,7 @@ export function AdminShell() {
           <Link to="/" className="flex items-center gap-2.5">
             <Logo className="h-8 w-auto" />
             <div className="leading-tight">
-              <span className="font-bold text-sm text-fg tracking-tight block">Dev House</span>
+              <span className="font-bold text-sm text-fg tracking-tight block">Devhouse</span>
               <span className="text-[10px] text-fg-subtle font-medium block">Administration</span>
             </div>
           </Link>
@@ -273,7 +273,7 @@ export function AdminShell() {
           />
           <aside className="relative flex flex-col w-72 max-w-full bg-surface border-r border-border h-full overflow-y-auto z-10 p-4">
             <div className="flex items-center justify-between pb-4 border-b border-border">
-              <span className="font-bold text-base font-display">Dev House CMS</span>
+              <span className="font-bold text-base font-display">Devhouse CMS</span>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -300,7 +300,7 @@ export function AdminShell() {
               <MenuIcon className="w-5 h-5" />
             </button>
             <span className="text-xs font-semibold text-fg-subtle hidden sm:inline-block">
-              Dev House CMS / {location.pathname}
+              Devhouse CMS / {location.pathname}
             </span>
           </div>
 

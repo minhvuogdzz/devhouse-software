@@ -69,11 +69,11 @@ export async function loader({ request }) {
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
   const title = isEn
-    ? 'Technology Stack & Engineering Standards — Dev House Software'
-    : 'Nền tảng Công nghệ & Tiêu chuẩn Kỹ thuật — Dev House Software';
+    ? 'Technology Stack & Engineering Standards — Devhouse Software'
+    : 'Nền tảng Công nghệ & Tiêu chuẩn Kỹ thuật — Devhouse Software';
   const description = isEn
     ? 'Discover the mature, reliable technologies and engineering practices we use to build durable business systems.'
-    : 'Tìm hiểu các công nghệ và tiêu chuẩn kỹ thuật được Dev House áp dụng để phát triển hệ thống bền vững.';
+    : 'Tìm hiểu các công nghệ và tiêu chuẩn kỹ thuật được Devhouse áp dụng để phát triển hệ thống bền vững.';
 
   return generateSeoMeta({
     title,

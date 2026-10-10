@@ -24,7 +24,7 @@ export default {
   footer: {
     privacy: 'Privacy policy',
     terms: 'Terms of service',
-    copyright: '© {year} Dev House Software. All rights reserved.',
+    copyright: '© {year} Devhouse Software. All rights reserved.',
   },
   common: {
     viewDetails: 'Learn more',
@@ -52,6 +52,10 @@ export default {
     confidentialClient: 'Client name withheld',
     featured: 'Featured',
     emptyTitle: 'Content is being updated',
+    showMore: 'Show more',
+    showLess: 'Show less',
+    showMoreRemaining: 'Show more ({count} items)',
+    loadMore: 'Load more',
   },
   services: {
     seeHow: 'See how it works',
@@ -196,7 +200,7 @@ export default {
     requestFailed: 'We cannot handle this request right now.',
   },
   search: {
-    title: 'Search Dev House',
+    title: 'Search Devhouse',
     placeholder: 'Search services, projects, packages, articles...',
     aiPlaceholder: 'Ask DH AI about services, solutions, pricing, process...',
     standardMode: 'Quick Search',
@@ -205,7 +209,7 @@ export default {
     allResults: 'All Results',
     noResults: 'No matching results found for this keyword.',
     tryAiSuggestion: 'Try switching to DH AI Search for intelligent guidance.',
-    thinking: 'DH AI is analyzing and synthesizing information from Dev House...',
+    thinking: 'DH AI is analyzing and synthesizing information from Devhouse...',
     relatedLinks: 'Related resources on website',
     suggestedQuestions: 'Frequently asked questions',
     shortcuts: 'Press Esc to close, Enter to search',

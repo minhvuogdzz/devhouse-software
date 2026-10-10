@@ -127,7 +127,7 @@ export function Header({ alternateUrl = null }) {
             <Logo variant="mark" className="h-10 w-auto" />
             <div className="flex flex-col">
               <span className="font-display font-bold text-xl tracking-tight text-fg whitespace-nowrap group-hover:text-primary transition-colors">
-                Dev House
+                Devhouse
               </span>
               <span className="text-[11px] font-medium text-fg-subtle -mt-1 tracking-wider uppercase">
                 Software
@@ -268,7 +268,7 @@ export function Header({ alternateUrl = null }) {
           <div className="flex h-18 shrink-0 items-center justify-between border-b border-border px-5">
             <Link to={homePath} className="flex items-center gap-3">
               <Logo variant="mark" className="h-9 w-auto" />
-              <span className="font-display font-bold text-lg text-fg">Dev House</span>
+              <span className="font-display font-bold text-lg text-fg">Devhouse</span>
             </Link>
             <button
               ref={closeButtonRef}

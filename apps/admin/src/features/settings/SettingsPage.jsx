@@ -204,10 +204,10 @@ export default function SettingsPage() {
   };
 
   const handleFillTemplate = () => {
-    const template = `# TỔNG QUAN NĂNG LỰC & QUY TRÌNH DEV HOUSE SOFTWARE
+    const template = `# TỔNG QUAN NĂNG LỰC & QUY TRÌNH DEVHOUSE SOFTWARE
 
 ## 1. Giới thiệu doanh nghiệp
-Dev House Software là đơn vị công nghệ thành viên của Dev House Group, chuyên cung cấp giải pháp chuyển đổi số toàn diện, thiết kế website cao cấp chuẩn doanh nghiệp, hạ tầng máy chủ đám mây tốc độ cao và bảo mật dữ liệu an toàn.
+Devhouse Software là đơn vị công nghệ thành viên của Devhouse Group, chuyên cung cấp giải pháp chuyển đổi số toàn diện, thiết kế website cao cấp chuẩn doanh nghiệp, hạ tầng máy chủ đám mây tốc độ cao và bảo mật dữ liệu an toàn.
 
 ## 2. Các dịch vụ & năng lực cốt lõi
 - Xây dựng website thương mại điện tử, landing page giới thiệu công ty, web app chuyên sâu.
@@ -484,7 +484,7 @@ Dev House Software là đơn vị công nghệ thành viên của Dev House Grou
                 </div>
                 <p className="text-xs text-fg-muted mt-1 max-w-2xl">
                   {locale === 'vi'
-                    ? 'Hiển thị danh sách đầy đủ các kênh mạng xã hội chính thức của Dev House ở chân trang (Footer).'
+                    ? 'Hiển thị danh sách đầy đủ các kênh mạng xã hội chính thức của Devhouse ở chân trang (Footer).'
                     : 'All official social network profiles displayed at the bottom footer of the website.'}
                 </p>
               </div>

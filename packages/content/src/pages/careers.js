@@ -12,7 +12,7 @@ export const careersHero = defineSection({
   defaults: {
     eyebrow: {
       vi: 'Cơ hội Nghề nghiệp',
-      en: 'Careers at Dev House',
+      en: 'Careers at Devhouse',
     },
     heading: {
       vi: 'Cùng xây dựng những sản phẩm công nghệ có giá trị thực sự',
@@ -78,12 +78,12 @@ export const careersPage = {
   sections: [careersHero, careersCulture],
   seo: {
     title: {
-      vi: 'Cơ hội Nghề nghiệp — Dev House Software',
-      en: 'Careers & Opportunities — Dev House Software',
+      vi: 'Cơ hội Nghề nghiệp — Devhouse Software',
+      en: 'Careers & Opportunities — Devhouse Software',
     },
     description: {
-      vi: 'Khám phá các vị trí tuyển dụng kỹ sư phần mềm, kiến trúc sư hệ thống tại Dev House Software.',
-      en: 'Discover open software engineering and technical roles at Dev House Software.',
+      vi: 'Khám phá các vị trí tuyển dụng kỹ sư phần mềm, kiến trúc sư hệ thống tại Devhouse Software.',
+      en: 'Discover open software engineering and technical roles at Devhouse Software.',
     },
   },
 };

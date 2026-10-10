@@ -135,8 +135,8 @@ export function FloatingContactDock() {
 
   // Initial greeting
   const initialGreeting = isEn
-    ? 'Hello! I am DH AI, the virtual consultant at Dev House Software. How may I assist you with website development, hosting, or our process today?'
-    : 'Dạ em chào anh/chị ạ! Em là DH AI — Chuyên viên tư vấn ảo của Dev House Software. Em có thể hỗ trợ thông tin gì về bảng giá thiết kế website, máy chủ hay quy trình phần mềm hôm nay ạ?';
+    ? 'Hello! I am DH AI, the virtual consultant at Devhouse Software. How may I assist you with website development, hosting, or our process today?'
+    : 'Dạ em chào anh/chị ạ! Em là DH AI — Chuyên viên tư vấn ảo của Devhouse Software. Em có thể hỗ trợ thông tin gì về bảng giá thiết kế website, máy chủ hay quy trình phần mềm hôm nay ạ?';
 
   const [messages, setMessages] = useState([
     {
@@ -311,7 +311,7 @@ export function FloatingContactDock() {
               {/* Header */}
               <div className="px-3.5 py-2.5 border-b border-border bg-surface-raised flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
-                  {/* Dev House AI Mini Avatar */}
+                  {/* Devhouse AI Mini Avatar */}
                   <div className="relative p-0.5 rounded-full bg-gradient-to-tr from-primary via-accent to-primary">
                     <div className="w-7 h-7 rounded-full bg-surface flex items-center justify-center overflow-hidden">
                       <Logo variant="mark" className="w-5 h-5 object-contain" alt="DH AI" />
@@ -326,7 +326,7 @@ export function FloatingContactDock() {
                       </span>
                     </h3>
                     <p className="text-[10.5px] text-fg-muted mt-0.5 leading-none">
-                      {isEn ? 'Consultant • Dev House Software' : 'Tư vấn viên ảo Dev House'}
+                      {isEn ? 'Consultant • Devhouse Software' : 'Tư vấn viên ảo Devhouse'}
                     </p>
                   </div>
                 </div>
@@ -431,8 +431,8 @@ export function FloatingContactDock() {
                     onChange={e => setInputMessage(e.target.value)}
                     placeholder={
                       isEn
-                        ? 'Ask DH AI anything about Dev House...'
-                        : 'Hỏi em bất kỳ điều gì về Dev House...'
+                        ? 'Ask DH AI anything about Devhouse...'
+                        : 'Hỏi em bất kỳ điều gì về Devhouse...'
                     }
                     className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-border bg-surface-raised text-fg placeholder:text-fg-subtle focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors"
                   />
@@ -450,7 +450,7 @@ export function FloatingContactDock() {
           )}
 
           {/* Chatbot Action Trigger Button */}
-          {/* Custom Dev House Icon wearing a chat balloon hat on roof */}
+          {/* Custom Devhouse Icon wearing a chat balloon hat on roof */}
           <button
             ref={triggerButtonRef}
             onClick={toggleChat}
@@ -479,9 +479,9 @@ export function FloatingContactDock() {
                 </div>
               </div>
 
-              {/* Dev House Brand Mark */}
+              {/* Devhouse Brand Mark */}
               <div className="w-5.5 h-5.5 flex items-center justify-center mt-1">
-                <Logo variant="mark" className="w-5 h-5 object-contain" alt="Dev House" />
+                <Logo variant="mark" className="w-5 h-5 object-contain" alt="Devhouse" />
               </div>
             </span>
 

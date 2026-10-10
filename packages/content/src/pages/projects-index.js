@@ -12,8 +12,8 @@ export const projectsHero = defineSection({
   defaults: {
     eyebrow: { vi: 'Dự án', en: 'Projects' },
     heading: {
-      vi: 'Các dự án website của Dev House',
-      en: 'Website projects by Dev House',
+      vi: 'Các dự án website của Devhouse',
+      en: 'Website projects by Devhouse',
     },
     subheading: {
       vi: 'Rê chuột vào dự án để xem thông tin, bấm Xem demo để dùng thử ngay trên trang này.',
@@ -72,12 +72,12 @@ export const projectsIndexPage = {
   sections: [projectsHero, projectsList, projectsEmpty, projectsCta],
   seo: {
     title: {
-      vi: 'Dự án — Dev House Software',
-      en: 'Projects — Dev House Software',
+      vi: 'Dự án — Devhouse Software',
+      en: 'Projects — Devhouse Software',
     },
     description: {
-      vi: 'Các dự án website của Dev House Software. Xem thử từng dự án ngay trên trang.',
-      en: 'Website projects by Dev House Software. Try each project right on the page.',
+      vi: 'Các dự án website của Devhouse Software. Xem thử từng dự án ngay trên trang.',
+      en: 'Website projects by Devhouse Software. Try each project right on the page.',
     },
   },
 };

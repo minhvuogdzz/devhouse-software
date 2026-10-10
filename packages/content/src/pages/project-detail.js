@@ -28,7 +28,7 @@ export const projectDetailPage = {
   title: { vi: 'Trang chi tiết dự án', en: 'Project page' },
   sections: [projectResults, projectFeatures],
   seo: {
-    title: { vi: 'Dự án — Dev House Software', en: 'Projects — Dev House Software' },
+    title: { vi: 'Dự án — Devhouse Software', en: 'Projects — Devhouse Software' },
     description: { vi: '', en: '' },
   },
 };

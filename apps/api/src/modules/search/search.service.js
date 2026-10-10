@@ -297,7 +297,7 @@ export const searchService = {
     // 8. Static Content Pages from PAGE_REGISTRY
     const staticPages = [
       { key: 'home', vi: 'Trang chủ', en: 'Home', path: '/' },
-      { key: 'about', vi: 'Về chúng tôi', en: 'About Dev House', path: '/about' },
+      { key: 'about', vi: 'Về chúng tôi', en: 'About Devhouse', path: '/about' },
       { key: 'services-index', vi: 'Dịch vụ trọn gói', en: 'Services', path: '/services' },
       { key: 'packages-index', vi: 'Bảng giá dịch vụ', en: 'Pricing Packages', path: '/packages' },
       { key: 'products-index', vi: 'Kho mẫu website', en: 'Website Templates', path: '/products' },
@@ -327,8 +327,8 @@ export const searchService = {
           typeLabel: isEn ? 'Page' : 'Trang',
           title,
           description: isEn
-            ? `Official ${page.en} page on Dev House Software.`
-            : `Trang thông tin chính thức: ${page.vi} của Dev House Software.`,
+            ? `Official ${page.en} page on Devhouse Software.`
+            : `Trang thông tin chính thức: ${page.vi} của Devhouse Software.`,
           url: page.path === '/' ? (isEn ? '/en' : '/') : `${langPrefix}${page.path}`,
           badge: isEn ? 'Navigation' : 'Chuyên mục',
         });
@@ -391,8 +391,8 @@ export const searchService = {
     if (!aiConfig.enabled || !aiConfig.apiKey) {
       const searchRes = await searchPromise;
       const noKeyMessage = isEn
-        ? `### Welcome to **DH AI**\n\nThe intelligent assistant is currently being configured with authorization credentials by the system administrator.\n\nHere are the most relevant resources found across **Dev House Software** for your query:\n\n* **Official Contact**: Hotline **0869 528 304** | Email **devhousesoftware.inc@gmail.com**\n* You can explore the direct links below to find what you need immediately.`
-        : `### Trợ lý thông minh **DH AI**\n\nHệ thống trợ lý DH AI đang được quản trị viên hoàn tất kết nối khóa xác thực.\n\nDưới đây là các thông tin và dịch vụ liên quan trực tiếp đến yêu cầu của bạn trên website **Dev House Software**:\n\n* **Đầu mối hỗ trợ 24/7**: Hotline **0869 528 304** | Email **devhousesoftware.inc@gmail.com**\n* Bạn có thể bấm vào các liên kết gợi ý bên dưới để xem chi tiết ngay lập tức.`;
+        ? `### Welcome to **DH AI**\n\nThe intelligent assistant is currently being configured with authorization credentials by the system administrator.\n\nHere are the most relevant resources found across **Devhouse Software** for your query:\n\n* **Official Contact**: Hotline **0869 528 304** | Email **devhousesoftware.inc@gmail.com**\n* You can explore the direct links below to find what you need immediately.`
+        : `### Trợ lý thông minh **DH AI**\n\nHệ thống trợ lý DH AI đang được quản trị viên hoàn tất kết nối khóa xác thực.\n\nDưới đây là các thông tin và dịch vụ liên quan trực tiếp đến yêu cầu của bạn trên website **Devhouse Software**:\n\n* **Đầu mối hỗ trợ 24/7**: Hotline **0869 528 304** | Email **devhousesoftware.inc@gmail.com**\n* Bạn có thể bấm vào các liên kết gợi ý bên dưới để xem chi tiết ngay lập tức.`;
 
       return {
         query: rawQuery,
@@ -451,10 +451,10 @@ export const searchService = {
 
     // Build Comprehensive System Prompt
     const systemPrompt = `
-Bạn là **DH AI** — Trợ lý Trí tuệ Nhân tạo thông minh, chuẩn xác và tận tâm của **Dev House Software** (thuộc Dev House Group, website chính thức: devhouse.vn).
+Bạn là **DH AI** — Trợ lý Trí tuệ Nhân tạo thông minh, chuẩn xác và tận tâm của **Devhouse Software** (thuộc Devhouse Group, website chính thức: devhouse.vn).
 
 THÔNG TIN DOANH NGHIỆP:
-- Tên thương hiệu: Dev House Software
+- Tên thương hiệu: Devhouse Software
 - Lĩnh vực: Thiết kế website trọn gói, giải pháp phần mềm, hạ tầng máy chủ đám mây, tên miền và bảo mật an toàn thông tin.
 - Triết lý & Định hướng: Cung cấp giải pháp trọn gói, ổn định, an toàn để khách hàng chỉ cần tập trung kinh doanh.
 - Hotline tư vấn: 0869 528 304
@@ -477,7 +477,7 @@ ${projectsSummary || '- Nhiều dự án thực tế cho doanh nghiệp vừa v�
 ${aiConfig.companyKnowledge ? `DỮ LIỆU TRI THỨC NỘI BỘ DO DOANH NGHIỆP CUNG CẤP:\n${aiConfig.companyKnowledge}\n` : ''}
 
 QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH AI:
-1. Danh xưng: Luôn xưng là "DH AI" hoặc "em/chúng em" đại diện cho Dev House Software. TUYỆT ĐỐI KHÔNG BAO GIỜ nhắc đến Google, Gemini, OpenAI hay bất kỳ bên thứ ba nào.
+1. Danh xưng: Luôn xưng là "DH AI" hoặc "em/chúng em" đại diện cho Devhouse Software. TUYỆT ĐỐI KHÔNG BAO GIỜ nhắc đến Google, Gemini, OpenAI hay bất kỳ bên thứ ba nào.
 2. NGUYÊN TẮC TRÌNH BÀY ĐẸP MẮT, KHOA HỌC, ĐẲNG CẤP DOANH NGHIỆP (CỰC KỲ QUAN TRỌNG):
    - BẮT BUỘC XUỐNG DÒNG RÕ RÀNG giữa các phần, các câu và các ý.
    - TUYỆT ĐỐI KHÔNG VIẾT DÍNH NHIỀU Ý HOẶC DÙNG DẤU HOA THỊ TRÊN CÙNG MỘT DÒNG (cấm viết kiểu: "...đoạn văn... * **Ý 1** * **Ý 2**").
@@ -593,7 +593,7 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
       const searchRes = await searchPromise;
       const fallbackMsg = isEn
         ? `### DH AI Response\n\nDH AI encountered an issue processing your query at this moment. You can browse the relevant sections on our website below or directly reach out to our team at **0869 528 304** (Hotline) or **devhousesoftware.inc@gmail.com**.`
-        : `### Trợ lý DH AI\n\nHệ thống DH AI đang trong quá trình đồng bộ dữ liệu. Dưới đây là các nội dung tìm kiếm trực tiếp trên website phù hợp với yêu cầu của bạn, hoặc bạn có thể liên hệ ngay hotline **0869 528 304** để được đội ngũ Dev House tư vấn trực tiếp.`;
+        : `### Trợ lý DH AI\n\nHệ thống DH AI đang trong quá trình đồng bộ dữ liệu. Dưới đây là các nội dung tìm kiếm trực tiếp trên website phù hợp với yêu cầu của bạn, hoặc bạn có thể liên hệ ngay hotline **0869 528 304** để được đội ngũ Devhouse tư vấn trực tiếp.`;
 
       return {
         query: rawQuery,
@@ -615,8 +615,8 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
       return {
         answer:
           locale === 'en'
-            ? 'Hello! How may I assist you with Dev House Software today?'
-            : 'Dạ em chào anh/chị ạ! Em có thể hỗ trợ thông tin gì cho anh/chị về dịch vụ của Dev House Software hôm nay ạ?',
+            ? 'Hello! How may I assist you with Devhouse Software today?'
+            : 'Dạ em chào anh/chị ạ! Em có thể hỗ trợ thông tin gì cho anh/chị về dịch vụ của Devhouse Software hôm nay ạ?',
       };
     }
 
@@ -634,8 +634,8 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
 
     if (!aiConfig.enabled || !aiConfig.apiKey) {
       const fallbackMsg = isEn
-        ? `Hello! I am **DH AI**, the virtual consultant at Dev House Software. The administrator is currently finalizing my connection credentials. If you need any immediate assistance regarding our web design, hosting, or software services, please feel free to reach our team at **0869 528 304** (Hotline) or email **devhousesoftware.inc@gmail.com**. We are always delighted to assist you!`
-        : `Dạ em chào anh/chị ạ! Em là **DH AI** — Chuyên viên tư vấn ảo của Dev House Software. Hiện tại hệ thống trợ lý trực tuyến đang được quản trị viên hoàn tất kết nối. Anh/chị cần tư vấn nhanh về bảng giá thiết kế website, máy chủ đám mây hay quy trình chuyển đổi số, anh/chị có thể liên hệ trực tiếp hotline **0869 528 304** hoặc email **devhousesoftware.inc@gmail.com** để các chuyên viên kỹ thuật của Dev House hỗ trợ anh/chị ngay nhé ạ!`;
+        ? `Hello! I am **DH AI**, the virtual consultant at Devhouse Software. The administrator is currently finalizing my connection credentials. If you need any immediate assistance regarding our web design, hosting, or software services, please feel free to reach our team at **0869 528 304** (Hotline) or email **devhousesoftware.inc@gmail.com**. We are always delighted to assist you!`
+        : `Dạ em chào anh/chị ạ! Em là **DH AI** — Chuyên viên tư vấn ảo của Devhouse Software. Hiện tại hệ thống trợ lý trực tuyến đang được quản trị viên hoàn tất kết nối. Anh/chị cần tư vấn nhanh về bảng giá thiết kế website, máy chủ đám mây hay quy trình chuyển đổi số, anh/chị có thể liên hệ trực tiếp hotline **0869 528 304** hoặc email **devhousesoftware.inc@gmail.com** để các chuyên viên kỹ thuật của Devhouse hỗ trợ anh/chị ngay nhé ạ!`;
 
       return {
         answer: fallbackMsg,
@@ -690,11 +690,11 @@ QUY TẮC BẮT BUỘC VỀ ĐỊNH DẠNG VÀ PHONG CÁCH TRẢ LỜI CỦA DH 
       .join('\n');
 
     const systemPrompt = `
-Bạn là **DH AI** — Chuyên viên tư vấn ảo thông minh, chu đáo và tận tâm của **Dev House Software** (thuộc Dev House Group, website chính thức: devhouse.vn).
+Bạn là **DH AI** — Chuyên viên tư vấn ảo thông minh, chu đáo và tận tâm của **Devhouse Software** (thuộc Devhouse Group, website chính thức: devhouse.vn).
 
 NGUYÊN TẮC XƯNG HÔ VÀ PHONG THÁI TƯ VẤN (BẮT BUỘC):
 1. Xưng hô:
-   - Luôn xưng là "em" (hoặc "chúng em" khi đại diện cho tập thể Dev House Software).
+   - Luôn xưng là "em" (hoặc "chúng em" khi đại diện cho tập thể Devhouse Software).
    - Luôn gọi người dùng là "anh/chị" hoặc "quý đối tác".
    - Bắt đầu câu trả lời bằng lời chào hỏi ấm áp, tôn trọng (Ví dụ: "Dạ em chào anh/chị ạ!", "Dạ thưa anh/chị,...").
 2. Ngữ điệu & Khung cảnh câu chuyện:
@@ -706,7 +706,7 @@ NGUYÊN TẮC XƯNG HÔ VÀ PHONG THÁI TƯ VẤN (BẮT BUỘC):
    - Tuyệt đối KHÔNG BAO GIỜ nhắc đến Google, Gemini, OpenAI hay bất kỳ bên thứ ba nào.
    - Tuyệt đối KHÔNG viết hoa thị lộn xộn hay dính chùm '***', '* *'.
    - Trình bày ngắt đoạn rõ ràng, thoáng mắt để khách hàng đọc trên ô chat nhỏ thuận tiện nhất.
-4. Thông tin doanh nghiệp Dev House Software:
+4. Thông tin doanh nghiệp Devhouse Software:
    - Hotline tư vấn: 0869 528 304 (hỗ trợ 24/7)
    - Email: devhousesoftware.inc@gmail.com
    - Địa chỉ: Phường Tây Hồ, Thành phố Hà Nội
@@ -855,7 +855,7 @@ Ngôn ngữ: ${isEn ? 'Trả lời bằng tiếng Anh, xưng I/we và gọi you,
     } catch (err) {
       const fallbackMsg = isEn
         ? `I am sorry, I am currently synchronizing the latest database. Please feel free to reach out directly to our hotline at **0869 528 304** or email **devhousesoftware.inc@gmail.com** for immediate support!`
-        : `Dạ em xin lỗi anh/chị, hệ thống tư vấn của em đang trong giây lát đồng bộ lại dữ liệu. Anh/chị có thể để lại tin nhắn hoặc gọi trực tiếp hotline **0869 528 304** để các bạn chuyên viên kỹ thuật của Dev House hỗ trợ anh/chị ngay lập tức nhé ạ!`;
+        : `Dạ em xin lỗi anh/chị, hệ thống tư vấn của em đang trong giây lát đồng bộ lại dữ liệu. Anh/chị có thể để lại tin nhắn hoặc gọi trực tiếp hotline **0869 528 304** để các bạn chuyên viên kỹ thuật của Devhouse hỗ trợ anh/chị ngay lập tức nhé ạ!`;
 
       return {
         answer: fallbackMsg,

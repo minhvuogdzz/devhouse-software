@@ -70,7 +70,7 @@ export async function createAdmin() {
   const adminUser = await UserModel.create({
     email,
     passwordHash,
-    name: 'Dev House Super Administrator',
+    name: 'Devhouse Super Administrator',
     roleKeys: ['super_admin'],
     status: 'active',
     mustChangePassword: true,

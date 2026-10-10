@@ -65,7 +65,7 @@ export default function PostListPage() {
             {row.title?.vi || row.title?.en || '—'}
           </Link>
           <span className="block text-[11px] text-fg-subtle">
-            Tác giả: {row.author?.name || 'Dev House'}
+            Tác giả: {row.author?.name || 'Devhouse'}
           </span>
         </div>
       ),

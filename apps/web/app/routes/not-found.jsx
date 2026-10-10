@@ -42,8 +42,8 @@ export function meta({ error }) {
   return [
     {
       title: isEn
-        ? '404 — Page Not Found — Dev House Software'
-        : '404 — Không tìm thấy trang — Dev House Software',
+        ? '404 — Page Not Found — Devhouse Software'
+        : '404 — Không tìm thấy trang — Devhouse Software',
     },
   ];
 }

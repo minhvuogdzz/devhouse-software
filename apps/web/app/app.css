@@ -108,6 +108,15 @@ h6 {
   flex: 0 0 calc((100% - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
   scroll-snap-align: start;
 }
+@media (max-width: 639px) {
+  .collection-slider .collection-track > li {
+    flex: 0 0 clamp(260px, 86%, 360px);
+    scroll-snap-align: center;
+  }
+  .collection-slider .collection-track {
+    scroll-padding: 0 0.5rem;
+  }
+}
 .collection-track:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
@@ -142,6 +151,12 @@ h6 {
   flex: 0 0 18rem;
   flex-basis: calc((100cqw - (var(--per-view) - 1) * var(--gap)) / var(--per-view));
   min-width: 0;
+}
+@media (max-width: 639px) {
+  .collection-marquee-group > li {
+    flex: 0 0 clamp(260px, 86%, 340px);
+    flex-basis: clamp(260px, 86%, 340px);
+  }
 }
 .collection-marquee-group > li > * {
   width: 100%;

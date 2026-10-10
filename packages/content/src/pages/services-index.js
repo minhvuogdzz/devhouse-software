@@ -62,8 +62,8 @@ export const servicesIndexPage = {
   sections: [servicesHero, servicesList, servicesCta],
   seo: {
     title: {
-      vi: 'Dịch vụ — Dev House Software',
-      en: 'Services — Dev House Software',
+      vi: 'Dịch vụ — Devhouse Software',
+      en: 'Services — Devhouse Software',
     },
     description: {
       vi: 'Thiết kế website, máy chủ đám mây, tên miền và bảo mật trọn gói cho cửa hàng và doanh nghiệp nhỏ.',

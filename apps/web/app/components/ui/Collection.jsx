@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'react-router';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router';
+import { ArrowRight, ChevronDown, ChevronLeft, ChevronRight, ChevronUp } from 'lucide-react';
 import { normalizeDisplay } from '@devhouse/shared';
 import { getLocaleFromUrl, getTranslation } from '../../lib/i18n.js';
 import {
@@ -19,6 +19,7 @@ import { SliderDots } from './SliderDots.jsx';
  *   renderItem(item, index, { layout })   draws one item; layout is 'grid', 'list' or 'slide'
  *   display                                the setting from the admin (see @devhouse/shared display)
  *   gap                                    'sm' | 'md' | 'lg', the space between items
+ *   seeAllHref                             optional link to catalog/index page for showMore type 'link'
  */
 export function Collection({
   items = [],
@@ -29,6 +30,7 @@ export function Collection({
   label,
   gap = 'md',
   className = '',
+  seeAllHref = null,
 }) {
   const config = useMemo(() => normalizeDisplay(display, fallback), [display, fallback]);
   if (!items.length) return null;
@@ -41,7 +43,7 @@ export function Collection({
     '--cols-t': columns.tablet,
     '--cols-d': columns.desktop,
   };
-  const shared = { items, config, renderItem, getKey, label, classes, style };
+  const shared = { items, config, renderItem, getKey, label, classes, style, seeAllHref };
 
   if (layout === 'slide') {
     // A slide that runs without stopping needs to move; if the admin turned moving off, it becomes
@@ -53,13 +55,191 @@ export function Collection({
     );
   }
 
+  if (layout === 'grid') {
+    return <GridCollection {...shared} />;
+  }
+
   return (
     <div className={classes} style={style}>
-      <ul className={layout === 'list' ? 'collection-list' : 'collection-grid'} aria-label={label}>
+      <ul className="collection-list" aria-label={label}>
         {items.map((item, index) => (
           <li key={getKey(item, index)}>{renderItem(item, index, { layout })}</li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/**
+ * Grid layout with optional Show More capping. By default, caps visible items at maxRows (default 2 rows)
+ * and displays an interactive button based on admin configuration ('expand', 'loadMore', or 'link').
+ */
+function GridCollection({
+  items,
+  config,
+  renderItem,
+  getKey,
+  label,
+  classes,
+  style,
+  seeAllHref,
+}) {
+  const { columns, showMore } = config;
+  const location = useLocation();
+  const t = getTranslation(getLocaleFromUrl(location?.pathname || '/'));
+
+  const [activeCols, setActiveCols] = useState(columns.desktop);
+  const [expanded, setExpanded] = useState(false);
+  const [extraRows, setExtraRows] = useState(0);
+
+  useEffect(() => {
+    const update = () => {
+      const width = window.innerWidth;
+      if (width >= 1024) setActiveCols(columns.desktop);
+      else if (width >= 640) setActiveCols(columns.tablet);
+      else setActiveCols(columns.mobile);
+    };
+    update();
+    window.addEventListener('resize', update, { passive: true });
+    return () => window.removeEventListener('resize', update);
+  }, [columns.desktop, columns.tablet, columns.mobile]);
+
+  useEffect(() => {
+    setExpanded(false);
+    setExtraRows(0);
+  }, [items.length]);
+
+  const enabled = showMore?.enabled ?? true;
+  const type = showMore?.type ?? 'expand';
+  const maxRows = showMore?.maxRows ?? 2;
+  const initialLimit = Math.max(1, activeCols * maxRows);
+
+  let visibleItems = items;
+  let remainingCount = 0;
+  let isCapped = false;
+
+  if (enabled && items.length > initialLimit) {
+    isCapped = true;
+    if (type === 'expand') {
+      visibleItems = expanded ? items : items.slice(0, initialLimit);
+      remainingCount = items.length - initialLimit;
+    } else if (type === 'loadMore') {
+      const currentLimit = initialLimit + extraRows * activeCols;
+      visibleItems = items.slice(0, currentLimit);
+      remainingCount = Math.max(0, items.length - currentLimit);
+    } else if (type === 'link') {
+      visibleItems = items.slice(0, initialLimit);
+      remainingCount = items.length - initialLimit;
+    }
+  }
+
+  return (
+    <div className={classes} style={style}>
+      <ul className="collection-grid" aria-label={label}>
+        {visibleItems.map((item, index) => (
+          <li key={getKey(item, index)}>{renderItem(item, index, { layout: 'grid' })}</li>
+        ))}
+      </ul>
+
+      {isCapped && (
+        <div className="mt-8 flex justify-center">
+          {type === 'expand' && (
+            <button
+              type="button"
+              onClick={() => setExpanded(prev => !prev)}
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-5 py-2.5 text-xs sm:text-sm font-semibold text-fg shadow-xs transition-colors hover:border-primary/50 hover:bg-surface-2 hover:text-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              {expanded ? (
+                <>
+                  <span>{t('common.showLess') || 'Thu gọn'}</span>
+                  <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                </>
+              ) : (
+                <>
+                  <span>
+                    {(t('common.showMoreRemaining') || 'Xem thêm ({count} mục)').replace(
+                      '{count}',
+                      String(remainingCount),
+                    )}
+                  </span>
+                  <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                </>
+              )}
+            </button>
+          )}
+
+          {type === 'loadMore' && (
+            <>
+              {remainingCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setExtraRows(r => r + maxRows)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-5 py-2.5 text-xs sm:text-sm font-semibold text-fg shadow-xs transition-colors hover:border-primary/50 hover:bg-surface-2 hover:text-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <span>
+                    {(t('common.showMoreRemaining') || 'Xem thêm ({count} mục)').replace(
+                      '{count}',
+                      String(remainingCount),
+                    )}
+                  </span>
+                  <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setExtraRows(0)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-5 py-2.5 text-xs sm:text-sm font-semibold text-fg shadow-xs transition-colors hover:border-primary/50 hover:bg-surface-2 hover:text-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <span>{t('common.showLess') || 'Thu gọn'}</span>
+                  <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                </button>
+              )}
+            </>
+          )}
+
+          {type === 'link' && (
+            <>
+              {seeAllHref ? (
+                <Link
+                  to={seeAllHref}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-5 py-2.5 text-xs sm:text-sm font-semibold text-fg shadow-xs transition-colors hover:border-primary/50 hover:bg-surface-2 hover:text-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <span>
+                    {(t('common.showMoreRemaining') || 'Xem thêm ({count} mục)').replace(
+                      '{count}',
+                      String(remainingCount),
+                    )}
+                  </span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setExpanded(prev => !prev)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-5 py-2.5 text-xs sm:text-sm font-semibold text-fg shadow-xs transition-colors hover:border-primary/50 hover:bg-surface-2 hover:text-primary cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  {expanded ? (
+                    <>
+                      <span>{t('common.showLess') || 'Thu gọn'}</span>
+                      <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                    </>
+                  ) : (
+                    <>
+                      <span>
+                        {(t('common.showMoreRemaining') || 'Xem thêm ({count} mục)').replace(
+                          '{count}',
+                          String(remainingCount),
+                        )}
+                      </span>
+                      <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                    </>
+                  )}
+                </button>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

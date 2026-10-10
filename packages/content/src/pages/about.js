@@ -31,8 +31,8 @@ export const aboutHero = defineSection({
       en: 'We take care of the technology so you can focus on your business',
     },
     subheading: {
-      vi: 'Dev House Software dựng website, vận hành máy chủ, lo tên miền và bảo mật cho cửa hàng và doanh nghiệp nhỏ, từ Việt Nam.',
-      en: 'Dev House Software builds websites, runs servers and looks after domains and security for shops and small businesses, starting in Vietnam.',
+      vi: 'Devhouse Software dựng website, vận hành máy chủ, lo tên miền và bảo mật cho cửa hàng và doanh nghiệp nhỏ, từ Việt Nam.',
+      en: 'Devhouse Software builds websites, runs servers and looks after domains and security for shops and small businesses, starting in Vietnam.',
     },
   },
 });
@@ -48,15 +48,15 @@ export const aboutCompany = defineSection({
     groupNote: field.textarea({ max: 400 }),
   },
   defaults: {
-    heading: { vi: 'Về Dev House Software', en: 'About Dev House Software' },
+    heading: { vi: 'Về Devhouse Software', en: 'About Devhouse Software' },
     intro: {
-      vi: 'Dev House Software là công ty công nghệ có trụ sở tại Hà Nội. Chúng tôi bán trọn gói website, máy chủ, tên miền và bảo mật, rồi đồng hành vận hành lâu dài để bạn không phải lo phần kỹ thuật.',
-      en: 'Dev House Software is a technology company based in Hanoi. We offer websites, hosting, domains and security as one package, and keep running them for you so you never have to deal with the technical side.',
+      vi: 'Devhouse Software là công ty công nghệ có trụ sở tại Hà Nội. Chúng tôi bán trọn gói website, máy chủ, tên miền và bảo mật, rồi đồng hành vận hành lâu dài để bạn không phải lo phần kỹ thuật.',
+      en: 'Devhouse Software is a technology company based in Hanoi. We offer websites, hosting, domains and security as one package, and keep running them for you so you never have to deal with the technical side.',
     },
     paragraphs: [
       {
-        vi: 'Nhiều cửa hàng, quán ăn và sinh viên cần một website nhưng không có thời gian, cũng không muốn tìm hiểu về máy chủ, tên miền hay bảo mật. Dev House Software làm thay phần việc đó.',
-        en: 'Many shops, cafés and students need a website but have no time, and no wish, to learn about servers, domains or security. Dev House Software does that work for them.',
+        vi: 'Nhiều cửa hàng, quán ăn và sinh viên cần một website nhưng không có thời gian, cũng không muốn tìm hiểu về máy chủ, tên miền hay bảo mật. Devhouse Software làm thay phần việc đó.',
+        en: 'Many shops, cafés and students need a website but have no time, and no wish, to learn about servers, domains or security. Devhouse Software does that work for them.',
       },
       {
         vi: 'Chúng tôi dựng website từ những mẫu đã được kiểm chứng, cho chạy trên máy chủ đám mây an toàn, rồi ở lại vận hành: theo dõi, sao lưu, cập nhật bảo mật và xử lý sự cố. Bạn chỉ làm việc với một đầu mối cho cả website, máy chủ và tên miền.',
@@ -68,8 +68,8 @@ export const aboutCompany = defineSection({
       },
     ],
     groupNote: {
-      vi: 'Dev House Software là thành viên của Dev House Group, phụ trách mảng website và hạ tầng cho khách hàng.',
-      en: 'Dev House Software is a member of Dev House Group and looks after websites and hosting for clients.',
+      vi: 'Devhouse Software là thành viên của Devhouse Group, phụ trách mảng website và hạ tầng cho khách hàng.',
+      en: 'Devhouse Software is a member of Devhouse Group and looks after websites and hosting for clients.',
     },
   },
 });
@@ -121,8 +121,8 @@ export const aboutVision = defineSection({
         icon: 'heart',
         title: { vi: 'Sứ mệnh', en: 'Mission' },
         description: {
-          vi: 'Để bạn chỉ cần tập trung kinh doanh: website, tên miền, bảo mật và sự cố đã có Dev House đảm nhận.',
-          en: 'So that you only need to focus on your business: your website, domain, security and any problems are taken care of by Dev House.',
+          vi: 'Để bạn chỉ cần tập trung kinh doanh: website, tên miền, bảo mật và sự cố đã có Devhouse đảm nhận.',
+          en: 'So that you only need to focus on your business: your website, domain, security and any problems are taken care of by Devhouse.',
         },
       },
     ],
@@ -344,7 +344,7 @@ export const aboutPage = {
   // The admin shows every section with a switch (on/off) and its display settings
   overview: true,
   key: 'about',
-  title: { vi: 'Về Dev House', en: 'About Dev House' },
+  title: { vi: 'Về Devhouse', en: 'About Devhouse' },
   sections: [
     aboutHero,
     aboutCompany,
@@ -357,12 +357,12 @@ export const aboutPage = {
   ],
   seo: {
     title: {
-      vi: 'Về chúng tôi — Dev House Software',
-      en: 'About us — Dev House Software',
+      vi: 'Về chúng tôi — Devhouse Software',
+      en: 'About us — Devhouse Software',
     },
     description: {
-      vi: 'Dev House Software là ai, làm gì, và cam kết gì với khách hàng: an toàn, ổn định, đơn giản và minh bạch.',
-      en: 'Who Dev House Software is, what we do and what we promise our customers: safe, stable, simple and transparent.',
+      vi: 'Devhouse Software là ai, làm gì, và cam kết gì với khách hàng: an toàn, ổn định, đơn giản và minh bạch.',
+      en: 'Who Devhouse Software is, what we do and what we promise our customers: safe, stable, simple and transparent.',
     },
   },
 };

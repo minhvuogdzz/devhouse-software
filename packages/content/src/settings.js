@@ -1,11 +1,11 @@
 export const defaultSettings = {
   companyName: {
-    vi: 'Dev House Software',
-    en: 'Dev House Software',
+    vi: 'Devhouse Software',
+    en: 'Devhouse Software',
   },
   legalName: {
-    vi: 'Dev House Software, thành viên của Dev House Group',
-    en: 'Dev House Software, a member of Dev House Group',
+    vi: 'Devhouse Software, thành viên của Devhouse Group',
+    en: 'Devhouse Software, a member of Devhouse Group',
   },
   tagline: {
     vi: 'Website, máy chủ, tên miền và bảo mật trọn gói, để bạn chỉ cần lo việc kinh doanh.',
@@ -26,16 +26,16 @@ export const defaultSettings = {
   floatingContacts: [],
   seo: {
     title: {
-      vi: 'Dev House Software — Website trọn gói, an toàn và ổn định',
-      en: 'Dev House Software — Complete, safe and stable websites',
+      vi: 'Devhouse Software — Website trọn gói, an toàn và ổn định',
+      en: 'Devhouse Software — Complete, safe and stable websites',
     },
     description: {
-      vi: 'Dev House dựng website từ mẫu chuẩn, lo máy chủ, tên miền, bảo mật và xử lý sự cố cho cửa hàng và doanh nghiệp nhỏ.',
-      en: 'Dev House builds websites from proven templates and takes care of hosting, domain, security and fixes for shops and small businesses.',
+      vi: 'Devhouse dựng website từ mẫu chuẩn, lo máy chủ, tên miền, bảo mật và xử lý sự cố cho cửa hàng và doanh nghiệp nhỏ.',
+      en: 'Devhouse builds websites from proven templates and takes care of hosting, domain, security and fixes for shops and small businesses.',
     },
     keywords: {
-      vi: 'thiết kế website, máy chủ đám mây, tên miền, bảo mật website, dev house',
-      en: 'website design, cloud hosting, domain name, website security, dev house',
+      vi: 'thiết kế website, máy chủ đám mây, tên miền, bảo mật website, devhouse',
+      en: 'website design, cloud hosting, domain name, website security, devhouse',
     },
   },
   ai: {

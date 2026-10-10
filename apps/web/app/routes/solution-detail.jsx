@@ -36,14 +36,14 @@ export async function loader({ params, request }) {
 export function meta({ data }) {
   if (!data?.solution) return [{ title: 'Not Found' }];
   const s = data.solution;
-  const title = `${s.title || s.name} — Dev House Software`;
+  const title = `${s.title || s.name} — Devhouse Software`;
   const description = s.summary || s.description || '';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: s.title || s.name,
     description,
-    brand: { '@type': 'Brand', name: 'Dev House Software' },
+    brand: { '@type': 'Brand', name: 'Devhouse Software' },
   };
 
   return generateSeoMeta({

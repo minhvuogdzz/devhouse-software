@@ -70,7 +70,7 @@ describe('Singleton Content (Pages, Settings, Navigation)', () => {
       const res = await request(app).get('/api/v1/site');
       expect(res.status).toBe(200);
       expect(res.body.success).toBe(true);
-      expect(res.body.data.settings.companyName.vi).toBe('Dev House Software');
+      expect(res.body.data.settings.companyName.vi).toBe('Devhouse Software');
       expect(res.body.data.navigation.header.length).toBeGreaterThan(0);
       expect(res.body.data.navigation.footer.columns.length).toBeGreaterThan(0);
     });

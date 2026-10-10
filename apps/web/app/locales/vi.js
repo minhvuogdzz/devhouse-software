@@ -24,7 +24,7 @@ export default {
   footer: {
     privacy: 'Chính sách bảo mật',
     terms: 'Điều khoản dịch vụ',
-    copyright: '© {year} Dev House Software. Mọi quyền được bảo lưu.',
+    copyright: '© {year} Devhouse Software. Mọi quyền được bảo lưu.',
   },
   common: {
     viewDetails: 'Tìm hiểu thêm',
@@ -52,6 +52,10 @@ export default {
     confidentialClient: 'Khách hàng giấu tên',
     featured: 'Nổi bật',
     emptyTitle: 'Nội dung đang được cập nhật',
+    showMore: 'Xem thêm',
+    showLess: 'Thu gọn',
+    showMoreRemaining: 'Xem thêm ({count} mục)',
+    loadMore: 'Tải thêm',
   },
   services: {
     seeHow: 'Xem cách triển khai',
@@ -196,7 +200,7 @@ export default {
     requestFailed: 'Không thể xử lý yêu cầu vào lúc này.',
   },
   search: {
-    title: 'Tìm kiếm trên Dev House',
+    title: 'Tìm kiếm trên Devhouse',
     placeholder: 'Tìm kiếm dịch vụ, dự án, báo giá, bài viết...',
     aiPlaceholder: 'Hỏi DH AI về dịch vụ, giải pháp, chi phí, quy trình...',
     standardMode: 'Tìm kiếm nhanh',
@@ -205,7 +209,7 @@ export default {
     allResults: 'Tất cả kết quả',
     noResults: 'Không tìm thấy kết quả phù hợp với từ khóa này.',
     tryAiSuggestion: 'Thử chuyển sang chế độ DH AI để được trợ lý thông minh giải đáp.',
-    thinking: 'DH AI đang phân tích và tổng hợp thông tin từ Dev House...',
+    thinking: 'DH AI đang phân tích và tổng hợp thông tin từ Devhouse...',
     relatedLinks: 'Liên kết liên quan trên website',
     suggestedQuestions: 'Gợi ý câu hỏi phổ biến',
     shortcuts: 'Nhấn Esc để đóng, Enter để tìm',

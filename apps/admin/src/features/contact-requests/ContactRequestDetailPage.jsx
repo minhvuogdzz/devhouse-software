@@ -119,7 +119,7 @@ export default function ContactRequestDetailPage() {
           </Button>
           <Button
             as="a"
-            href={`mailto:${request.email}?subject=Phản hồi từ Dev House Software về yêu cầu của bạn`}
+            href={`mailto:${request.email}?subject=Phản hồi từ Devhouse Software về yêu cầu của bạn`}
             variant="primary"
             size="sm"
           >

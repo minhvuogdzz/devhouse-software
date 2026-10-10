@@ -207,7 +207,7 @@ export const authController = {
       const resetUrl = `${config.ADMIN_URL}/reset-password?token=${rawToken}`;
       await mailer.sendMail({
         to: user.email,
-        subject: 'Khôi phục mật khẩu tài khoản Dev House Software',
+        subject: 'Khôi phục mật khẩu tài khoản Devhouse Software',
         text: `Chào bạn, bạn vừa yêu cầu khôi phục mật khẩu. Nhấp vào liên kết sau để thiết lập lại mật khẩu: ${resetUrl}`,
         html: `<p>Chào bạn,</p><p>Bạn vừa yêu cầu khôi phục mật khẩu quản trị. Nhấp vào đường dẫn sau (có hiệu lực trong 30 phút):</p><p><a href="${resetUrl}">${resetUrl}</a></p>`,
       });

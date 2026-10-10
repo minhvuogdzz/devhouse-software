@@ -1,5 +1,5 @@
 /**
- * HTML & Text email templates for Dev House Software
+ * HTML & Text email templates for Devhouse Software
  */
 
 function escapeHtml(str) {
@@ -13,7 +13,7 @@ function escapeHtml(str) {
 }
 
 /**
- * Generates notification email for Dev House internal team
+ * Generates notification email for Devhouse internal team
  */
 export function buildContactNotificationEmail({ contactDoc, serviceName }) {
   const name = escapeHtml(contactDoc.name);
@@ -29,7 +29,7 @@ export function buildContactNotificationEmail({ contactDoc, serviceName }) {
   const locale = escapeHtml(contactDoc.meta?.locale || 'vi');
   const sentAt = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' });
 
-  const subject = `[Dev House Contact] ${contactDoc.subject || contactDoc.name} (${locale.toUpperCase()})`;
+  const subject = `[Devhouse Contact] ${contactDoc.subject || contactDoc.name} (${locale.toUpperCase()})`;
 
   const text = [
     `=== YÊU CẦU LIÊN HỆ TƯ VẤN MỚI ===`,
@@ -77,7 +77,7 @@ export function buildContactNotificationEmail({ contactDoc, serviceName }) {
 <body>
   <div class="card">
     <div class="header">
-      <h1>Dev House Software — Yêu Cầu Tư Vấn Mới</h1>
+      <h1>Devhouse Software — Yêu Cầu Tư Vấn Mới</h1>
       <p>Khách hàng vừa gửi thông tin liên hệ từ website</p>
     </div>
     <div class="body">
@@ -125,7 +125,7 @@ export function buildContactNotificationEmail({ contactDoc, serviceName }) {
     </div>
     <div class="footer">
       Thời gian gửi: ${sentAt} (Giờ VN) &bull; IP: ${ip} &bull; Ngôn ngữ: ${locale.toUpperCase()}<br>
-      Dev House Software Co., Ltd &bull; devhousesoftware.inc@gmail.com
+      Devhouse Software Co., Ltd &bull; devhousesoftware.inc@gmail.com
     </div>
   </div>
 </body>
@@ -144,12 +144,12 @@ export function buildCustomerConfirmationEmail({ contactDoc, serviceName }) {
   const service = escapeHtml(serviceName || (isVi ? 'giải pháp phần mềm' : 'software solutions'));
 
   const subject = isVi
-    ? 'Dev House Software — Chúng tôi đã nhận được yêu cầu tư vấn của bạn'
-    : 'Dev House Software — We received your consultation request';
+    ? 'Devhouse Software — Chúng tôi đã nhận được yêu cầu tư vấn của bạn'
+    : 'Devhouse Software — We received your consultation request';
 
   const text = isVi
-    ? `Kính gửi ${contactDoc.name},\n\nCảm ơn bạn đã liên hệ với Dev House Software.\nChúng tôi đã nhận được thông tin yêu cầu tư vấn về dịch vụ "${serviceName || 'Giải pháp phần mềm'}" của bạn.\n\nĐội ngũ chuyên viên của Dev House sẽ xem xét chi tiết và liên hệ lại với bạn trong vòng 24 giờ làm việc.\n\nNếu có vấn đề khẩn cấp, bạn có thể gửi phản hồi trực tiếp qua email: devhousesoftware.inc@gmail.com.\n\nTrân trọng,\nĐội ngũ Dev House Software\nhttps://devhouse.vn`
-    : `Dear ${contactDoc.name},\n\nThank you for reaching out to Dev House Software.\nWe have successfully received your inquiry regarding "${serviceName || 'Software Solutions'}".\n\nOur team is reviewing your requirements and will get back to you within 24 business hours.\n\nIf you have any urgent inquiries, please reply directly to devhousesoftware.inc@gmail.com.\n\nBest regards,\nDev House Software Team\nhttps://devhouse.vn`;
+    ? `Kính gửi ${contactDoc.name},\n\nCảm ơn bạn đã liên hệ với Devhouse Software.\nChúng tôi đã nhận được thông tin yêu cầu tư vấn về dịch vụ "${serviceName || 'Giải pháp phần mềm'}" của bạn.\n\nĐội ngũ chuyên viên của Devhouse sẽ xem xét chi tiết và liên hệ lại với bạn trong vòng 24 giờ làm việc.\n\nNếu có vấn đề khẩn cấp, bạn có thể gửi phản hồi trực tiếp qua email: devhousesoftware.inc@gmail.com.\n\nTrân trọng,\nĐội ngũ Devhouse Software\nhttps://devhouse.vn`
+    : `Dear ${contactDoc.name},\n\nThank you for reaching out to Devhouse Software.\nWe have successfully received your inquiry regarding "${serviceName || 'Software Solutions'}".\n\nOur team is reviewing your requirements and will get back to you within 24 business hours.\n\nIf you have any urgent inquiries, please reply directly to devhousesoftware.inc@gmail.com.\n\nBest regards,\nDevhouse Software Team\nhttps://devhouse.vn`;
 
   const html = isVi
     ? `
@@ -169,17 +169,17 @@ export function buildCustomerConfirmationEmail({ contactDoc, serviceName }) {
 <body>
   <div class="card">
     <div class="header">
-      <h2 style="margin: 0; font-size: 18px; color: #ffffff;">Dev House Software</h2>
+      <h2 style="margin: 0; font-size: 18px; color: #ffffff;">Devhouse Software</h2>
     </div>
     <div class="body">
       <p>Kính gửi <strong>${name}</strong>,</p>
-      <p>Cảm ơn bạn đã liên hệ với <strong>Dev House Software</strong>. Chúng tôi đã nhận được thông tin yêu cầu tư vấn về dịch vụ <strong>${service}</strong> của bạn.</p>
+      <p>Cảm ơn bạn đã liên hệ với <strong>Devhouse Software</strong>. Chúng tôi đã nhận được thông tin yêu cầu tư vấn về dịch vụ <strong>${service}</strong> của bạn.</p>
       <p>Đội ngũ chuyên viên kỹ thuật và tư vấn giải pháp của chúng tôi sẽ phân tích yêu cầu và liên hệ lại với bạn qua thông tin đã cung cấp trong vòng <strong>24 giờ làm việc</strong>.</p>
       <p>Nếu bạn có thêm tài liệu hoặc câu hỏi cần giải đáp khẩn cấp, vui lòng phản hồi trực tiếp qua email này.</p>
-      <p style="margin-top: 24px;">Trân trọng,<br><strong>Đội ngũ Dev House Software</strong></p>
+      <p style="margin-top: 24px;">Trân trọng,<br><strong>Đội ngũ Devhouse Software</strong></p>
     </div>
     <div class="footer">
-      Dev House Software &bull; Email: devhousesoftware.inc@gmail.com<br>
+      Devhouse Software &bull; Email: devhousesoftware.inc@gmail.com<br>
       Website: <a href="https://devhouse.vn" style="color: #2563eb; text-decoration: none;">devhouse.vn</a>
     </div>
   </div>
@@ -203,17 +203,17 @@ export function buildCustomerConfirmationEmail({ contactDoc, serviceName }) {
 <body>
   <div class="card">
     <div class="header">
-      <h2 style="margin: 0; font-size: 18px; color: #ffffff;">Dev House Software</h2>
+      <h2 style="margin: 0; font-size: 18px; color: #ffffff;">Devhouse Software</h2>
     </div>
     <div class="body">
       <p>Dear <strong>${name}</strong>,</p>
-      <p>Thank you for contacting <strong>Dev House Software</strong>. We have received your consultation inquiry regarding <strong>${service}</strong>.</p>
+      <p>Thank you for contacting <strong>Devhouse Software</strong>. We have received your consultation inquiry regarding <strong>${service}</strong>.</p>
       <p>Our solution engineering team is reviewing your requirements and will reach back out to you within <strong>24 business hours</strong>.</p>
       <p>If you have any further questions or project briefs, feel free to reply directly to this email.</p>
-      <p style="margin-top: 24px;">Best regards,<br><strong>Dev House Software Team</strong></p>
+      <p style="margin-top: 24px;">Best regards,<br><strong>Devhouse Software Team</strong></p>
     </div>
     <div class="footer">
-      Dev House Software &bull; Email: devhousesoftware.inc@gmail.com<br>
+      Devhouse Software &bull; Email: devhousesoftware.inc@gmail.com<br>
       Website: <a href="https://devhouse.vn" style="color: #2563eb; text-decoration: none;">devhouse.vn</a>
     </div>
   </div>

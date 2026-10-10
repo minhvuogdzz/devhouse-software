@@ -76,7 +76,7 @@ describe('Mail Integration & Templates', () => {
         contactDoc: mockContactDoc,
         serviceName: 'Thiết kế website',
       });
-      expect(email.subject).toContain('Dev House Contact');
+      expect(email.subject).toContain('Devhouse Contact');
       expect(email.text).toContain('Nguyễn Văn Test');
       expect(email.text).toContain('test@client.com');
       expect(email.html).toContain('Thiết kế website');

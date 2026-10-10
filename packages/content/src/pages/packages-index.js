@@ -136,8 +136,8 @@ export const packagesIndexPage = {
   sections: [packagesHero, packagesList, packagesPayment, packagesCommitments],
   seo: {
     title: {
-      vi: 'Gói dịch vụ — Dev House Software',
-      en: 'Packages — Dev House Software',
+      vi: 'Gói dịch vụ — Devhouse Software',
+      en: 'Packages — Devhouse Software',
     },
     description: {
       vi: 'Gói Sinh viên, Cửa hàng và Doanh nghiệp nhỏ: website, máy chủ, tên miền và bảo mật trọn gói.',

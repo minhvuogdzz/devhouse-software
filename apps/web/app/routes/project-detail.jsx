@@ -30,9 +30,9 @@ export async function loader({ params, request }) {
 }
 
 export function meta({ data }) {
-  if (!data?.project) return [{ title: 'Dev House Software' }];
+  if (!data?.project) return [{ title: 'Devhouse Software' }];
   const { project } = data;
-  const title = project.seo?.title || `${project.title} — Dev House Software`;
+  const title = project.seo?.title || `${project.title} — Devhouse Software`;
   const description = project.seo?.description || project.shortDescription || '';
 
   return generateSeoMeta({

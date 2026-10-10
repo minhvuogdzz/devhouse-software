@@ -51,16 +51,16 @@ export async function loader({ params, request }) {
 }
 
 export function meta({ data }) {
-  if (!data?.service) return [{ title: 'Dev House Software' }];
+  if (!data?.service) return [{ title: 'Devhouse Software' }];
   const { service } = data;
-  const title = service.seo?.title || `${service.name} — Dev House Software`;
+  const title = service.seo?.title || `${service.name} — Devhouse Software`;
   const description = service.seo?.description || service.shortDescription || '';
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: service.name,
     description,
-    provider: { '@type': 'Organization', name: 'Dev House Software' },
+    provider: { '@type': 'Organization', name: 'Devhouse Software' },
   };
 
   return generateSeoMeta({

@@ -2,7 +2,7 @@ import React from 'react';
 import { Logo } from './Logo.jsx';
 
 /**
- * DH AI brand icon featuring the Dev House mark logo encircled
+ * DH AI brand icon featuring the Devhouse mark logo encircled
  * by an animated rotating sRGB spectral ring (Blue, Purple, Red, Yellow, Green).
  */
 export function DhAiIcon({ size = 'md', className = '' }) {
@@ -40,7 +40,7 @@ export function DhAiIcon({ size = 'md', className = '' }) {
         }}
       />
 
-      {/* Static inner circular disc with Dev House mark */}
+      {/* Static inner circular disc with Devhouse mark */}
       <div
         className={`relative z-10 ${s.inset} rounded-full bg-surface flex items-center justify-center overflow-hidden shadow-2xs`}
       >

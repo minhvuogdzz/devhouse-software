@@ -29,11 +29,11 @@ export async function loader({ request }) {
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
   const title = isEn
-    ? 'Privacy Policy — Dev House Software'
-    : 'Chính sách Bảo mật Thông tin — Dev House Software';
+    ? 'Privacy Policy — Devhouse Software'
+    : 'Chính sách Bảo mật Thông tin — Devhouse Software';
   const description = isEn
     ? 'Read our commitments and guidelines on safeguarding your personal and business data.'
-    : 'Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Dev House Software.';
+    : 'Quy định và cam kết bảo vệ dữ liệu, quyền riêng tư của khách hàng tại Devhouse Software.';
 
   return generateSeoMeta({
     title,
@@ -53,8 +53,8 @@ export default function PrivacyPage() {
         locale === 'en' ? 'Last updated: October 2026' : 'Cập nhật lần cuối: Tháng 10, 2026',
       content:
         locale === 'en'
-          ? 'Dev House Software is strictly committed to protecting the privacy and confidentiality of our clients and partners. Information collected via this website is used solely for project correspondence and technical consultations, and is never disclosed to external parties for commercial gain.'
-          : 'Dev House Software cam kết bảo mật tuyệt đối các thông tin khách hàng và đối tác cung cấp. Chúng tôi chỉ thu thập các thông tin liên hệ cần thiết phục vụ quá trình trao đổi công việc, tư vấn giải pháp và đảm bảo không chia sẻ cho bên thứ ba vì bất kỳ mục đích thương mại nào.',
+          ? 'Devhouse Software is strictly committed to protecting the privacy and confidentiality of our clients and partners. Information collected via this website is used solely for project correspondence and technical consultations, and is never disclosed to external parties for commercial gain.'
+          : 'Devhouse Software cam kết bảo mật tuyệt đối các thông tin khách hàng và đối tác cung cấp. Chúng tôi chỉ thu thập các thông tin liên hệ cần thiết phục vụ quá trình trao đổi công việc, tư vấn giải pháp và đảm bảo không chia sẻ cho bên thứ ba vì bất kỳ mục đích thương mại nào.',
     };
 
   return (

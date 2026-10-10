@@ -22,8 +22,8 @@ export async function loader({ request }) {
 export function meta({ data }) {
   const isEn = data?.locale === 'en';
   const title = isEn
-    ? 'Enterprise Software Solutions — Dev House Software'
-    : 'Giải pháp Phần mềm Doanh nghiệp — Dev House Software';
+    ? 'Enterprise Software Solutions — Devhouse Software'
+    : 'Giải pháp Phần mềm Doanh nghiệp — Devhouse Software';
   const description = isEn
     ? 'Pre-architected, specialized software packages tailored to reduce time-to-market and operational risk.'
     : 'Các gói giải pháp phần mềm chuyên sâu được thiết kế sẵn nhằm rút ngắn thời gian triển khai và tối ưu chi phí.';
