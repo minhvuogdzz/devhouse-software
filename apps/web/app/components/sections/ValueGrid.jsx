@@ -20,7 +20,9 @@ function ValueCard({ item, layout }) {
       <div className="space-y-2">
         <h3 className="font-display text-base font-bold text-fg">{item.title}</h3>
         {item.description && (
-          <p className="text-sm leading-relaxed text-fg-muted">{item.description}</p>
+          <p className="text-sm leading-relaxed text-fg-muted whitespace-pre-line">
+            {item.description}
+          </p>
         )}
       </div>
     </div>
