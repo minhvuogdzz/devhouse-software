@@ -14,7 +14,16 @@ import { getLocaleFromUrl, getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  Navigation,
+} from 'lucide-react';
 
 export async function loader({ request }) {
   const page = await loadPage('contact', request);
@@ -80,6 +89,9 @@ export default function ContactPage() {
   const navigation = useNavigation();
   const t = getTranslation(locale);
   const hero = sections.hero;
+  const map = sections.map;
+  // Google Maps embed needs no API key; the pin is the place set in the CMS, else the company address.
+  const mapPlace = (map?.place || settings.address || '').trim();
 
   const [clientTimestamp, setClientTimestamp] = useState(mountTime);
   useEffect(() => {
@@ -360,6 +372,33 @@ export default function ContactPage() {
                 )}
               </ul>
             </Card>
+
+            {isShown(map) && mapPlace && (
+              <Card hover={false} className="overflow-hidden p-0">
+                <div className="flex items-center justify-between gap-3 px-6 pt-5 pb-4">
+                  <h2 className="text-base font-bold font-display text-fg">
+                    {map.heading || t('contact.mapTitle')}
+                  </h2>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapPlace)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                  >
+                    <Navigation className="w-4 h-4" aria-hidden="true" />
+                    {t('contact.directions')}
+                  </a>
+                </div>
+                <iframe
+                  title={t('contact.mapTitle')}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(mapPlace)}&hl=${locale}&z=16&output=embed`}
+                  className="block w-full h-72 border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </Card>
+            )}
 
             <div className="rounded-2xl bg-surface-raised border border-border p-6 space-y-3">
               <h3 className="text-base font-bold font-display text-fg">{t('contact.noteTitle')}</h3>

@@ -179,6 +179,8 @@ export default {
     hotlineLabel: 'Điện thoại',
     addressLabel: 'Địa chỉ',
     hoursLabel: 'Giờ làm việc',
+    mapTitle: 'Bản đồ',
+    directions: 'Chỉ đường',
     noteTitle: 'Thông tin của bạn được giữ kín',
     noteText:
       'Chúng tôi chỉ dùng thông tin này để liên hệ với bạn. Có thể ký thỏa thuận bảo mật (NDA) nếu bạn yêu cầu.',
