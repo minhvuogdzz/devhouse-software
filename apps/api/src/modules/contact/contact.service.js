@@ -6,6 +6,7 @@ import {
   buildContactNotificationEmail,
   buildCustomerConfirmationEmail,
 } from '../../integrations/mail/index.js';
+import { telegram } from '../../integrations/telegram/index.js';
 import { audit } from '../../core/audit/index.js';
 import { config } from '../../config/index.js';
 import { NotFoundError } from '../../core/errors/index.js';
@@ -171,8 +172,10 @@ export const contactService = {
     // answer without waiting on the SMTP server; pass { waitForEmails: true } to wait for them.
     if (!isSpam) {
       const delivery = deliverContactEmails(contactDoc, serviceName);
+      // Red alert to the team's Telegram chat, alongside the emails (never throws).
+      const alert = telegram.sendContactAlert({ contactDoc, serviceName });
       if (options.waitForEmails) {
-        await delivery;
+        await Promise.all([delivery, alert]);
       }
     }
 

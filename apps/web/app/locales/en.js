@@ -179,6 +179,8 @@ export default {
     hotlineLabel: 'Phone',
     addressLabel: 'Address',
     hoursLabel: 'Working hours',
+    mapTitle: 'Map',
+    directions: 'Directions',
     noteTitle: 'Your details stay private',
     noteText:
       'We only use this information to get in touch with you. We can sign a non-disclosure agreement (NDA) if you ask.',

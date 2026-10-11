@@ -74,7 +74,11 @@ export function PackageCard({ pack, locale, prefix, t }) {
             <p className="text-xs text-fg-subtle">{t('packages.priceOnRequestNote')}</p>
           </div>
         )}
-        {pack.priceNote && <p className="mt-3 text-xs text-fg-muted">{pack.priceNote}</p>}
+        {pack.priceNote && (
+          <p className="mt-3 text-xs leading-relaxed text-fg-muted whitespace-pre-line">
+            {pack.priceNote}
+          </p>
+        )}
       </div>
 
       {pack.inclusions?.length > 0 && (

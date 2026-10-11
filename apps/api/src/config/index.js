@@ -43,6 +43,10 @@ const configSchema = z.object({
   MAIL_FROM: z.string().default('Devhouse Software <devhousesoftware.inc@gmail.com>'),
   CONTACT_NOTIFY_TO: z.string().default('devhousesoftware.inc@gmail.com'),
 
+  // New contact requests are also posted to this Telegram chat (both empty = off).
+  TELEGRAM_BOT_TOKEN: z.string().optional().default(''),
+  TELEGRAM_CHAT_ID: z.string().optional().default(''),
+
   CAPTCHA_PROVIDER: z.enum(['none', 'turnstile']).default('none'),
   CAPTCHA_SECRET_KEY: z.string().optional().default(''),
 

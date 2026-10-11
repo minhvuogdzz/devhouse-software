@@ -56,6 +56,8 @@ const LABELS = {
   display: 'Cách hiển thị danh sách',
   path: 'Đường dẫn trang (ví dụ /services/thiet-ke-website)',
   caption: 'Chú thích',
+  place: 'Địa điểm ghim trên bản đồ (để trống: dùng địa chỉ trong Cài đặt)',
+  zoom: 'Mức phóng to (14: cả khu vực, 18: sát toà nhà)',
 };
 
 const labelOf = name => LABELS[name] || name;

@@ -14,7 +14,16 @@ import { getLocaleFromUrl, getTranslation } from '../lib/i18n.js';
 import { Card } from '../components/ui/Card.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
 import { Button } from '../components/ui/Button.jsx';
-import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  Navigation,
+} from 'lucide-react';
 
 export async function loader({ request }) {
   const page = await loadPage('contact', request);
@@ -80,6 +89,10 @@ export default function ContactPage() {
   const navigation = useNavigation();
   const t = getTranslation(locale);
   const hero = sections.hero;
+  const map = sections.map;
+  // Google Maps embed needs no API key; the pin is the place set in the CMS, else the company address.
+  const mapPlace = (map?.place || settings.address || '').trim();
+  const mapZoom = /^(1[4-8])$/.test(map?.zoom || '') ? map.zoom : '16';
 
   const [clientTimestamp, setClientTimestamp] = useState(mountTime);
   useEffect(() => {
@@ -111,9 +124,9 @@ export default function ContactPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start lg:items-stretch">
           {/* Form Column */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 space-y-6">
             <Card hover={false} className="p-6 sm:p-8">
               {isSuccess ? (
                 <div className="py-12 text-center space-y-4" role="status">
@@ -292,10 +305,15 @@ export default function ContactPage() {
                 </Form>
               )}
             </Card>
+            <div className="rounded-2xl bg-surface-raised border border-border p-6 space-y-3">
+              <h3 className="text-base font-bold font-display text-fg">{t('contact.noteTitle')}</h3>
+              <p className="text-sm text-fg-muted leading-relaxed">{t('contact.noteText')}</p>
+            </div>
           </div>
 
-          {/* Contact information column: details come from Admin → Settings */}
-          <div className="lg:col-span-5 space-y-6">
+          {/* Contact information column: details come from Admin → Settings. On large screens
+              the map grows so both columns end at the same line. */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
             <Card hover={false} className="space-y-6 p-6 sm:p-8">
               <h2 className="text-xl font-bold font-display text-fg">{t('contact.directTitle')}</h2>
 
@@ -361,10 +379,32 @@ export default function ContactPage() {
               </ul>
             </Card>
 
-            <div className="rounded-2xl bg-surface-raised border border-border p-6 space-y-3">
-              <h3 className="text-base font-bold font-display text-fg">{t('contact.noteTitle')}</h3>
-              <p className="text-sm text-fg-muted leading-relaxed">{t('contact.noteText')}</p>
-            </div>
+            {isShown(map) && mapPlace && (
+              <Card hover={false} className="overflow-hidden p-0 flex flex-col lg:flex-1">
+                <div className="flex items-center justify-between gap-3 px-6 pt-5 pb-4">
+                  <h2 className="text-base font-bold font-display text-fg">
+                    {map.heading || t('contact.mapTitle')}
+                  </h2>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(mapPlace)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                  >
+                    <Navigation className="w-4 h-4" aria-hidden="true" />
+                    {t('contact.directions')}
+                  </a>
+                </div>
+                <iframe
+                  title={t('contact.mapTitle')}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(mapPlace)}&hl=${locale}&z=${mapZoom}&output=embed`}
+                  className="block w-full h-72 lg:h-auto lg:min-h-72 lg:flex-1 border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </Card>
+            )}
           </div>
         </div>
       </div>

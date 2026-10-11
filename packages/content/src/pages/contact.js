@@ -24,10 +24,29 @@ export const contactHero = defineSection({
   },
 });
 
+export const contactMap = defineSection({
+  key: 'map',
+  label: 'Bản đồ',
+  fields: {
+    heading: field.text({ max: 80 }),
+    place: field.string({ max: 200 }),
+    zoom: field.select({ options: ['14', '15', '16', '17', '18'], defaultVal: '16' }),
+  },
+  defaults: {
+    heading: {
+      vi: 'Văn phòng Devhouse',
+      en: 'Our office',
+    },
+    // Empty: the map pins the address from Admin → Settings.
+    place: '',
+    zoom: '16',
+  },
+});
+
 export const contactPage = {
   key: 'contact',
   title: { vi: 'Liên hệ', en: 'Contact' },
-  sections: [contactHero],
+  sections: [contactHero, contactMap],
   seo: {
     title: {
       vi: 'Liên hệ tư vấn — Devhouse Software',

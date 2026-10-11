@@ -83,6 +83,8 @@ services:
       MAIL_FROM: ${MAIL_FROM:-"Devhouse Software <devhousesoftware.inc@gmail.com>"}
       CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
     depends_on:
       mongodb:
         condition: service_healthy
