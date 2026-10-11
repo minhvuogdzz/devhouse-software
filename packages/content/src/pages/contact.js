@@ -30,6 +30,7 @@ export const contactMap = defineSection({
   fields: {
     heading: field.text({ max: 80 }),
     place: field.string({ max: 200 }),
+    zoom: field.select({ options: ['14', '15', '16', '17', '18'], defaultVal: '16' }),
   },
   defaults: {
     heading: {
@@ -38,6 +39,7 @@ export const contactMap = defineSection({
     },
     // Empty: the map pins the address from Admin → Settings.
     place: '',
+    zoom: '16',
   },
 });
 
