@@ -6,6 +6,7 @@ import { useTheme } from '../../lib/theme.js';
 import { Button } from '../../components/ui/Button.jsx';
 import { Input } from '../../components/ui/Input.jsx';
 import { Card } from '../../components/ui/Card.jsx';
+import { Logo } from '../../components/ui/Logo.jsx';
 import { Lock, Sun, Moon, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
@@ -86,9 +87,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Brand header */}
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-primary text-primary-fg font-black text-xl flex items-center justify-center font-display mx-auto shadow-md">
-            D
-          </div>
+          <Logo className="w-14 h-14 mx-auto" alt="Devhouse CMS" />
           <h1 className="text-2xl font-bold font-display text-fg tracking-tight">Devhouse CMS</h1>
           <p className="text-xs text-fg-muted">{t('auth.loginTitle')}</p>
         </div>

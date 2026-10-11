@@ -57,8 +57,20 @@ export function Footer() {
         <div className="flex flex-col gap-12 lg:flex-row lg:gap-16">
           {/* Company */}
           <div className="space-y-4 lg:w-80 lg:shrink-0">
-            <Link to={prefix || '/'} className="inline-block" aria-label="Devhouse Software">
-              <Logo variant="full" alt="Devhouse Software" className="h-28 w-auto" />
+            <Link
+              to={prefix || '/'}
+              className="inline-flex items-center gap-3.5 group focus:outline-none"
+              aria-label="Devhouse Software"
+            >
+              <Logo alt="Devhouse Software" className="h-12 w-auto shrink-0" />
+              <div className="flex flex-col">
+                <span className="font-display font-bold text-2xl tracking-tight text-fg whitespace-nowrap group-hover:text-primary transition-colors">
+                  Devhouse
+                </span>
+                <span className="text-xs font-medium text-fg-subtle -mt-0.5 tracking-wider uppercase">
+                  Software
+                </span>
+              </div>
             </Link>
             {settings.tagline && (
               <p className="text-sm text-fg-muted leading-relaxed max-w-sm">{settings.tagline}</p>

@@ -273,7 +273,10 @@ export function AdminShell() {
           />
           <aside className="relative flex flex-col w-72 max-w-full bg-surface border-r border-border h-full overflow-y-auto z-10 p-4">
             <div className="flex items-center justify-between pb-4 border-b border-border">
-              <span className="font-bold text-base font-display">Devhouse CMS</span>
+              <div className="flex items-center gap-2.5">
+                <Logo className="h-7 w-auto" />
+                <span className="font-bold text-base font-display">Devhouse CMS</span>
+              </div>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}

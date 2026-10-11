@@ -39,6 +39,11 @@ export function generateSeoMeta({
     { property: 'og:site_name', content: 'Devhouse Software' },
     { property: 'og:locale', content: isEn ? 'en_US' : 'vi_VN' },
     { property: 'og:type', content: type },
+    { property: 'og:image', content: `${baseUrl}/brand/devhouse-logo.png?v=20261011` },
+    { property: 'og:image:width', content: '512' },
+    { property: 'og:image:height', content: '512' },
+    { name: 'twitter:card', content: 'summary' },
+    { name: 'twitter:image', content: `${baseUrl}/brand/devhouse-logo.png?v=20261011` },
   ];
 
   if (jsonLd) {

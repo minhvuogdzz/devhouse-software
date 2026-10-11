@@ -23,12 +23,16 @@ export const links = () => [
     href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap',
   },
   { rel: 'stylesheet', href: stylesHref },
-  { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
-  { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/favicon-48.png' },
-  { rel: 'icon', type: 'image/png', sizes: '96x96', href: '/favicon-96.png' },
-  { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png' },
-  { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicon-192.png' },
-  { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
+  { rel: 'icon', href: '/favicon.ico?v=20261011', sizes: '48x48' },
+  { rel: 'shortcut icon', href: '/favicon.ico?v=20261011' },
+  { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/favicon-48.png?v=20261011' },
+  { rel: 'icon', type: 'image/png', sizes: '96x96', href: '/favicon-96.png?v=20261011' },
+  { rel: 'icon', type: 'image/png', sizes: '144x144', href: '/favicon-144.png?v=20261011' },
+  { rel: 'icon', type: 'image/png', sizes: '192x192', href: '/favicon-192.png?v=20261011' },
+  { rel: 'icon', type: 'image/png', sizes: '512x512', href: '/favicon-512.png?v=20261011' },
+  { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32.png?v=20261011' },
+  { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png?v=20261011' },
+  { rel: 'manifest', href: '/site.webmanifest?v=20261011' },
 ];
 
 export async function loader({ request }) {

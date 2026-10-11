@@ -2,7 +2,13 @@ export async function loader({ request }) {
   const url = new URL(request.url);
   const baseUrl = `${url.protocol}//${url.host}`;
 
-  const content = `User-agent: *
+  const content = `User-agent: Google-Favicon
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /admin

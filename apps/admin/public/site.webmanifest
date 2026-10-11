@@ -1,0 +1,35 @@
+{
+  "name": "Devhouse CMS",
+  "short_name": "Devhouse CMS",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0b57d0",
+  "icons": [
+    {
+      "src": "/favicon-48.png?v=20261011",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-96.png?v=20261011",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-144.png?v=20261011",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-192.png?v=20261011",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-512.png?v=20261011",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -45,12 +45,21 @@ export async function loader({ request }) {
 
 export function meta({ data }) {
   const origin = data?.url ? new URL(data.url).origin : 'https://devhouse.vn';
+  const logoUrl = `${origin}/brand/devhouse-logo.png?v=20261011`;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Devhouse Software',
+    alternateName: 'Devhouse',
     url: origin,
-    logo: `${origin}/brand/logo-light.png`,
+    logo: {
+      '@type': 'ImageObject',
+      url: logoUrl,
+      contentUrl: logoUrl,
+      width: 512,
+      height: 512,
+    },
+    image: logoUrl,
   };
   return generateSeoMeta({
     title: data?.seo?.title || 'Devhouse Software',
