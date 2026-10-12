@@ -1,22 +1,47 @@
-# Devhouse Software — Local & DevOps Docker Compose Stack
-# Run: docker compose up --build -d
-# Stop: docker compose down
+# ─────────────────────────────────────────────────────────────
+# Devhouse Software — Full-Stack Docker Compose
+# ─────────────────────────────────────────────────────────────
+# Services:
+#   - mongodb : MongoDB 7 Jammy (Port 27017) with persistent volume & healthcheck
+#   - api     : Express 5 + Mongoose REST API (Port 4000)
+#   - web     : React Router Framework Mode SSR Website + Intro Video & SEO (Port 3000)
+#   - admin   : React SPA Admin Dashboard + Nginx & /api/v1 reverse proxy (Port 5173)
+#
+# Quick Start (DevOps / Production / Local):
+#   1. Build & start all containers:
+#      docker compose up --build -d
+#   2. Seed initial database & admin user (idempotent):
+#      docker compose exec api node apps/api/src/database/seed/seed.js
+#   3. Check status & logs:
+#      docker compose ps
+#      docker compose logs -f
+#   4. Stop stack:
+#      docker compose down
+# ─────────────────────────────────────────────────────────────
 
 name: devhouse
 
+x-service-defaults: &service-defaults
+  restart: unless-stopped
+  networks:
+    - internal
+  logging:
+    driver: json-file
+    options:
+      max-size: '10m'
+      max-file: '5'
+
 services:
   mongodb:
+    <<: *service-defaults
     image: mongo:7-jammy
     container_name: devhouse-mongodb
-    restart: unless-stopped
     ports:
       - '${MONGO_PORT:-27017}:27017'
     environment:
       MONGO_INITDB_DATABASE: ${MONGODB_DB_NAME:-devhouse_dev}
     volumes:
       - mongodb_data:/data/db
-    networks:
-      - internal
     healthcheck:
       test: ['CMD', 'mongosh', '--eval', 'db.adminCommand("ping")']
       interval: 10s
@@ -25,11 +50,11 @@ services:
       start_period: 10s
 
   api:
+    <<: *service-defaults
     build:
       context: .
       dockerfile: apps/api/Dockerfile
     container_name: devhouse-api
-    restart: unless-stopped
     ports:
       - '${PORT:-4000}:4000'
     env_file:
@@ -37,10 +62,18 @@ services:
         required: false
     environment:
       NODE_ENV: ${NODE_ENV:-production}
+      APP_ENV: ${APP_ENV:-production}
       PORT: 4000
       TRUST_PROXY: '1'
       MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017}
       MONGODB_DB_NAME: ${MONGODB_DB_NAME:-devhouse_dev}
+      DEFAULT_LOCALE: ${DEFAULT_LOCALE:-vi}
+      SUPPORTED_LOCALES: ${SUPPORTED_LOCALES:-vi,en}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-dh_sid}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      CLOUDINARY_FOLDER_PREFIX: ${CLOUDINARY_FOLDER_PREFIX:-devhouse/prod}
       SMTP_HOST: ${SMTP_HOST:-smtp.gmail.com}
       SMTP_PORT: ${SMTP_PORT:-465}
       SMTP_SECURE: ${SMTP_SECURE:-true}
@@ -49,15 +82,15 @@ services:
       MAIL_FROM: ${MAIL_FROM:-Devhouse Software <devhousesoftware.inc@gmail.com>}
       CONTACT_NOTIFY_TO: ${CONTACT_NOTIFY_TO:-devhousesoftware.inc@gmail.com}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_API_KEYS: ${GEMINI_API_KEYS:-}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
       TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:-}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@devhouse.example}
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       ADMIN_URL: ${ADMIN_URL:-http://localhost:5173}
     depends_on:
       mongodb:
         condition: service_healthy
-    networks:
-      - internal
     healthcheck:
       test: ['CMD', 'node', 'apps/api/scripts/healthcheck.js']
       interval: 15s
@@ -66,23 +99,22 @@ services:
       start_period: 15s
 
   web:
+    <<: *service-defaults
     build:
       context: .
       dockerfile: apps/web/Dockerfile
     container_name: devhouse-web
-    restart: unless-stopped
     ports:
       - '${WEB_PORT:-3000}:3000'
     environment:
       NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
       WEB_PORT: 3000
       API_INTERNAL_URL: http://api:4000/api/v1
       SITE_URL: ${SITE_URL:-http://localhost:3000}
     depends_on:
       api:
-        condition: service_started
-    networks:
-      - internal
+        condition: service_healthy
     healthcheck:
       test: ['CMD', 'node', 'apps/web/scripts/healthcheck.js']
       interval: 15s
@@ -91,18 +123,16 @@ services:
       start_period: 15s
 
   admin:
+    <<: *service-defaults
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
     container_name: devhouse-admin
-    restart: unless-stopped
     ports:
       - '${ADMIN_PORT:-5173}:80'
     depends_on:
       api:
-        condition: service_started
-    networks:
-      - internal
+        condition: service_healthy
     healthcheck:
       test: ['CMD', 'wget', '-q', '-O', '-', 'http://127.0.0.1/healthz']
       interval: 15s

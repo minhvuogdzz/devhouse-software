@@ -845,6 +845,10 @@ export function resolveApiKeyPool(aiOverrides = {}) {
     pushRawString(aiOverrides.apiKey);
   }
 
+  if (process.env.GEMINI_API_KEYS) {
+    pushRawString(process.env.GEMINI_API_KEYS);
+  }
+
   if (process.env.GEMINI_API_KEY) {
     pushRawString(process.env.GEMINI_API_KEY);
   }
