@@ -15,6 +15,8 @@ export function withLocale(path, locale) {
   return `${prefix}${path}`;
 }
 
+export const hrefFor = withLocale;
+
 /**
  * Menus managed in Admin → Navigation, ready to render: hidden items removed, ordered, and
  * falling back to the code defaults when the API sent nothing.

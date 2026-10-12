@@ -51,3 +51,5 @@ const ICONS = {
 };
 
 export const iconFor = key => ICONS[key] || Layers;
+export const getIcon = iconFor;
+

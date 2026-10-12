@@ -23,6 +23,11 @@ const solutionSchema = new mongoose.Schema(
       vi: { type: String, default: '' },
       en: { type: String, default: '' },
     },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     order: {
       type: Number,
       default: 0,

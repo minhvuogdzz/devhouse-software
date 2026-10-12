@@ -20,6 +20,8 @@ import {
   AlertCircle,
   ExternalLink,
   Sparkles,
+  Cpu,
+  Puzzle,
 } from 'lucide-react';
 
 const PAGE_META = {
@@ -53,6 +55,36 @@ const PAGE_META = {
     publicUrl: '/services',
     icon: Layers,
     summary: 'Cấu hình Tiêu đề (Heading), Mô tả (Subheading), Khung kêu gọi hành động (CTA).',
+  },
+  'solutions-index': {
+    group: 'menu',
+    menuLabel: 'Tab: Giải pháp',
+    publicUrl: '/solutions',
+    icon: Puzzle,
+    summary:
+      'Cấu hình Tiêu đề (Heading), Mô tả (Subheading) và kiểu hiển thị danh sách Giải pháp phần mềm.',
+  },
+  'technologies-index': {
+    group: 'menu',
+    menuLabel: 'Tab: Công nghệ',
+    publicUrl: '/technologies',
+    icon: Cpu,
+    summary:
+      'Cấu hình Tiêu đề (Heading), Mô tả (Subheading) và kiểu hiển thị danh mục Công nghệ nền tảng.',
+  },
+  'blog-index': {
+    group: 'menu',
+    menuLabel: 'Tab: Bài viết / Tin tức',
+    publicUrl: '/blog',
+    icon: BookOpen,
+    summary: 'Tiêu đề (Heading) & Giới thiệu danh mục các bài viết chia sẻ công nghệ.',
+  },
+  careers: {
+    group: 'menu',
+    menuLabel: 'Tab: Tuyển dụng',
+    publicUrl: '/careers',
+    icon: Users,
+    summary: 'Tiêu đề, Môi trường làm việc, Quyền lợi ứng viên.',
   },
   about: {
     group: 'menu',
@@ -92,21 +124,7 @@ const PAGE_META = {
     publicUrl: '/',
     icon: Home,
     summary:
-      'Đầu trang, cam kết, dịch vụ, mẫu website, dành cho ai, gói dịch vụ, quy trình, kêu gọi hành động. Bật/tắt từng khối và chọn kiểu hiển thị.',
-  },
-  'blog-index': {
-    group: 'core',
-    menuLabel: 'Trang Blog / Tin tức',
-    publicUrl: '/blog',
-    icon: BookOpen,
-    summary: 'Tiêu đề (Heading) & Giới thiệu danh mục các bài viết chia sẻ công nghệ.',
-  },
-  careers: {
-    group: 'core',
-    menuLabel: 'Trang Tuyển dụng',
-    publicUrl: '/careers',
-    icon: Users,
-    summary: 'Tiêu đề, Môi trường làm việc, Quyền lợi ứng viên.',
+      'Đầu trang, cam kết, dịch vụ (/services), mẫu website (/products), dự án (/projects), gói dịch vụ (/packages), giải pháp (/solutions), công nghệ (/technologies), quy trình (/#process), về Devhouse (/about), bài viết (/blog), tuyển dụng (/careers), liên hệ (/contact). Bật/tắt từng khối nổi bật và chọn kiểu hiển thị.',
   },
   privacy: {
     group: 'legal',

@@ -25,6 +25,7 @@ export const TechnologySchema = z.object({
   description: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   icon: z.string().optional().default(''),
   websiteUrl: z.string().url().optional().or(z.literal('')),
+  isFeatured: z.boolean().default(false),
   order: z.number().int().default(0),
   status: z.enum(['draft', 'published', 'archived']).default('published'),
 });
@@ -35,6 +36,7 @@ export const SolutionSchema = z.object({
   shortDescription: LocalizedStringSchema,
   description: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
   targetAudience: LocalizedStringSchema.optional().default({ vi: '', en: '' }),
+  isFeatured: z.boolean().default(false),
   order: z.number().int().default(0),
   services: z.array(z.string()).default([]),
   technologies: z.array(z.string()).default([]),

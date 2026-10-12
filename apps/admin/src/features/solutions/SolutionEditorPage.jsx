@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { ResourceForm } from '../../components/form/ResourceForm.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
+import { Toggle } from '../../components/form/Toggle.jsx';
 import { ImageField } from '../../components/media-picker/MediaPickerModal.jsx';
 import { Input } from '../../components/ui/Input.jsx';
 import { Card } from '../../components/ui/Card.jsx';
@@ -15,6 +16,7 @@ export default function SolutionEditorPage() {
   const [form, setForm] = useState({
     title: { vi: '', en: '' },
     shortDescription: { vi: '', en: '' },
+    isFeatured: false,
     order: 0,
     status: 'draft',
     coverImage: null,
@@ -39,6 +41,7 @@ export default function SolutionEditorPage() {
       setForm({
         title: d.title || d.name || { vi: '', en: '' },
         shortDescription: d.shortDescription || d.summary || { vi: '', en: '' },
+        isFeatured: Boolean(d.isFeatured),
         order: d.order ?? 0,
         status: d.status || 'draft',
         coverImage: d.coverImage || null,
@@ -145,6 +148,13 @@ export default function SolutionEditorPage() {
             onChange={coverImage => setForm({ ...form, coverImage })}
           />
         </div>
+
+        <Toggle
+          label="Giải pháp nổi bật"
+          hint="Ưu tiên hiển thị ở trang chủ khi mục Giải pháp trên trang chủ được bật."
+          checked={form.isFeatured}
+          onChange={isFeatured => setForm({ ...form, isFeatured })}
+        />
       </Card>
 
       <Card className="p-6 space-y-6">

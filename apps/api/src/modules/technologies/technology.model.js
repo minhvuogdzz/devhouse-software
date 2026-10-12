@@ -37,6 +37,11 @@ const technologySchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    isFeatured: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     order: {
       type: Number,
       default: 0,

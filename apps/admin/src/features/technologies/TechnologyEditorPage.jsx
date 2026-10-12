@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { apiClient } from '../../lib/api-client.js';
 import { ResourceForm } from '../../components/form/ResourceForm.jsx';
 import { LocalizedField } from '../../components/form/LocalizedField.jsx';
+import { Toggle } from '../../components/form/Toggle.jsx';
 import { Input } from '../../components/ui/Input.jsx';
 import { Card } from '../../components/ui/Card.jsx';
 
@@ -15,6 +16,7 @@ export default function TechnologyEditorPage() {
     name: '',
     description: { vi: '', en: '' },
     websiteUrl: '',
+    isFeatured: false,
     order: 0,
     status: 'published',
   });
@@ -38,6 +40,7 @@ export default function TechnologyEditorPage() {
         name: d.name || '',
         description: d.description || { vi: '', en: '' },
         websiteUrl: d.websiteUrl || '',
+        isFeatured: Boolean(d.isFeatured),
         order: d.order ?? 0,
         status: d.status || 'published',
       });
@@ -141,6 +144,13 @@ export default function TechnologyEditorPage() {
             onChange={e => setForm({ ...form, order: parseInt(e.target.value, 10) || 0 })}
           />
         </div>
+
+        <Toggle
+          label="Công nghệ nổi bật"
+          hint="Ưu tiên hiển thị ở trang chủ khi mục Công nghệ trên trang chủ được bật."
+          checked={form.isFeatured}
+          onChange={isFeatured => setForm({ ...form, isFeatured })}
+        />
       </Card>
     </ResourceForm>
   );

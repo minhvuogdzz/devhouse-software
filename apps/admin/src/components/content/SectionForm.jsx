@@ -5,6 +5,7 @@ import { Toggle } from '../form/Toggle.jsx';
 import { IconSelect } from '../form/IconSelect.jsx';
 import { DisplayField } from '../form/DisplayField.jsx';
 import { GalleryField } from '../form/GalleryField.jsx';
+import { PathPickerInput } from '../form/PathPickerInput.jsx';
 import { Input, Select } from '../ui/Input.jsx';
 import { ImageField } from '../media-picker/MediaPickerModal.jsx';
 import { normalizeDisplay } from '@devhouse/shared';
@@ -110,6 +111,15 @@ function FieldEditor({ name, descriptor, value, onChange }) {
 
   switch (descriptor.type) {
     case 'string':
+      if (name === 'path' || name === 'url') {
+        return (
+          <PathPickerInput
+            label={label}
+            value={value ?? ''}
+            onChange={nextPath => onChange(nextPath)}
+          />
+        );
+      }
       return (
         <Input
           label={label}
@@ -181,22 +191,32 @@ function FieldEditor({ name, descriptor, value, onChange }) {
             value={link.label || { vi: '', en: '' }}
             onChange={next => onChange({ ...link, label: next })}
           />
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Input
-              label="Đường dẫn"
-              placeholder="/contact hoặc https://…"
-              value={link.url || ''}
-              onChange={e => onChange({ ...link, url: e.target.value })}
-            />
-            <Select
-              label="Cách mở"
-              value={link.target || '_self'}
-              onChange={e => onChange({ ...link, target: e.target.value })}
-            >
-              <option value="_self">Mở trong cùng tab</option>
-              <option value="_blank">Mở tab mới</option>
-            </Select>
-          </div>
+          <PathPickerInput
+            label="Đường dẫn"
+            placeholder="/contact hoặc https://…"
+            value={link.url || ''}
+            onChange={url => onChange({ ...link, url })}
+            onSelectOption={option => {
+              const currentVi = link.label?.vi?.trim();
+              const currentEn = link.label?.en?.trim();
+              onChange({
+                ...link,
+                url: option.path,
+                label: {
+                  vi: currentVi || option.label.vi,
+                  en: currentEn || option.label.en,
+                },
+              });
+            }}
+          />
+          <Select
+            label="Cách mở"
+            value={link.target || '_self'}
+            onChange={e => onChange({ ...link, target: e.target.value })}
+          >
+            <option value="_self">Mở trong cùng tab</option>
+            <option value="_blank">Mở tab mới</option>
+          </Select>
         </div>
       );
     }

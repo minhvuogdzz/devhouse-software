@@ -112,8 +112,9 @@ export const homeValues = defineSection({
 
 export const homeServicesIntro = defineSection({
   key: 'servicesIntro',
-  label: 'Mục Dịch vụ trên trang chủ',
-  summary: 'Các nhóm dịch vụ, lấy từ mục Dịch vụ. Muốn đổi nội dung từng thẻ, vào mục Dịch vụ.',
+  label: 'Mục Dịch vụ nổi bật trên trang chủ (/services)',
+  summary:
+    'Các nhóm dịch vụ nổi bật (/services), lấy từ mục Dịch vụ. Muốn đổi nội dung từng thẻ, vào mục Dịch vụ.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -135,8 +136,9 @@ export const homeServicesIntro = defineSection({
 
 export const homeProductsIntro = defineSection({
   key: 'productsIntro',
-  label: 'Mục Mẫu website trên trang chủ',
-  summary: 'Các mẫu website, lấy từ mục Mẫu website (ưu tiên mẫu được đánh dấu Nổi bật).',
+  label: 'Mục Mẫu website nổi bật trên trang chủ (/products)',
+  summary:
+    'Các mẫu website (/products), lấy từ mục Mẫu website (ưu tiên mẫu được đánh dấu Nổi bật).',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -152,6 +154,31 @@ export const homeProductsIntro = defineSection({
     subheading: {
       vi: 'Xem thử ngay trên trang này, chọn mẫu phù hợp rồi để chúng tôi triển khai cho bạn.',
       en: 'Try them right here, pick the one you like and we will set it up for you.',
+    },
+  },
+});
+
+export const homeProjectsIntro = defineSection({
+  key: 'projectsIntro',
+  label: 'Mục Dự án nổi bật trên trang chủ (/projects)',
+  summary:
+    'Các dự án tiêu biểu (/projects), lấy từ mục Dự án (ưu tiên dự án được đánh dấu Dự án nổi bật).',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    display: field.display(),
+  },
+  defaults: {
+    visible: true,
+    display: makeDisplay({
+      layout: 'grid',
+      columns: { mobile: 1, tablet: 2, desktop: 4 },
+      showMore: 'expand',
+    }),
+    heading: { vi: 'Dự án tiêu biểu đã triển khai', en: 'Featured client projects' },
+    subheading: {
+      vi: 'Các hệ thống và website thực tế đã được Devhouse xây dựng và vận hành cho khách hàng.',
+      en: 'Real-world websites and systems built and operated by Devhouse for our clients.',
     },
   },
 });
@@ -204,8 +231,8 @@ export const homeAudiences = defineSection({
 
 export const homePackagesIntro = defineSection({
   key: 'packagesIntro',
-  label: 'Mục Gói dịch vụ trên trang chủ',
-  summary: 'Các gói dịch vụ, lấy từ mục Bảng Giá & Gói Cước.',
+  label: 'Mục Gói dịch vụ nổi bật trên trang chủ (/packages)',
+  summary: 'Các gói dịch vụ (/packages), lấy từ mục Bảng Giá & Gói Cước.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -221,11 +248,53 @@ export const homePackagesIntro = defineSection({
   },
 });
 
+export const homeSolutionsIntro = defineSection({
+  key: 'solutionsIntro',
+  label: 'Mục Giải pháp nổi bật trên trang chủ (/solutions)',
+  summary:
+    'Các gói giải pháp phần mềm (/solutions), lấy từ mục Giải pháp (ưu tiên giải pháp Nổi bật).',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    display: field.display(),
+  },
+  defaults: {
+    visible: false,
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+    heading: { vi: 'Giải pháp phần mềm chuyên biệt', en: 'Specialized software solutions' },
+    subheading: {
+      vi: 'Các gói giải pháp được thiết kế sẵn giúp rút ngắn thời gian triển khai và tối ưu chi phí vận hành.',
+      en: 'Pre-architected solution packages tailored to reduce time-to-market and operational risk.',
+    },
+  },
+});
+
+export const homeTechnologiesIntro = defineSection({
+  key: 'technologiesIntro',
+  label: 'Mục Công nghệ nổi bật trên trang chủ (/technologies)',
+  summary:
+    'Các công nghệ nền tảng (/technologies), lấy từ mục Công nghệ (ưu tiên công nghệ Nổi bật).',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    display: field.display(),
+  },
+  defaults: {
+    visible: false,
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 2, tablet: 3, desktop: 4 } }),
+    heading: { vi: 'Nền tảng công nghệ tin cậy', en: 'Trusted technology stack' },
+    subheading: {
+      vi: 'Chúng tôi sử dụng các công nghệ trưởng thành, bảo mật cao và dễ bảo trì lâu dài.',
+      en: 'We build on mature, secure and maintainable technologies.',
+    },
+  },
+});
+
 export const homeProcess = defineSection({
   key: 'process',
-  label: 'Quy trình làm việc',
+  label: 'Quy trình làm việc (/#process)',
   summary:
-    'Các bước làm việc, từ lúc tư vấn đến khi vận hành. Dạng lưới hoặc danh sách hiện thành dòng thời gian.',
+    'Các bước làm việc (/#process), từ lúc tư vấn đến khi vận hành. Dạng lưới hoặc danh sách hiện thành dòng thời gian.',
   fields: {
     heading: field.text({ max: 120 }),
     subheading: field.textarea({ max: 300 }),
@@ -308,10 +377,199 @@ export const homeProcess = defineSection({
   },
 });
 
+export const homeAboutIntro = defineSection({
+  key: 'aboutIntro',
+  label: 'Mục Về Devhouse nổi bật trên trang chủ (/about)',
+  summary:
+    'Khối giới thiệu tóm tắt về công ty (/about) trên trang chủ kèm các điểm mạnh và nút dẫn sang trang Về Devhouse.',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 400 }),
+    items: cardList(true),
+    display: field.display(),
+  },
+  defaults: {
+    visible: false,
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+    heading: {
+      vi: 'Về Devhouse Software',
+      en: 'About Devhouse Software',
+    },
+    subheading: {
+      vi: 'Đội ngũ kỹ thuật đồng hành trọn gói từ thiết kế website, hạ tầng đám mây đến vận hành và bảo mật lâu dài.',
+      en: 'Your dedicated technical partner for websites, cloud hosting, security and long-term operations.',
+    },
+    items: [
+      {
+        icon: 'building',
+        title: { vi: 'Trọn gói một đầu mối', en: 'Single point of contact' },
+        description: {
+          vi: 'Từ tên miền, máy chủ, giao diện đến bảo mật định kỳ đều do Devhouse trực tiếp đảm nhận.',
+          en: 'From domain and hosting to design and regular security updates, handled by one team.',
+        },
+      },
+      {
+        icon: 'shield',
+        title: { vi: 'Vận hành an toàn 24/7', en: '24/7 safe operations' },
+        description: {
+          vi: 'Theo dõi hoạt động liên tục, sao lưu tự động và hỗ trợ ngay khi phát sinh sự cố.',
+          en: 'Continuous monitoring, automated backups and immediate support whenever issues arise.',
+        },
+      },
+      {
+        icon: 'file-text',
+        title: { vi: 'Hợp đồng & chi phí rõ ràng', en: 'Clear contracts & pricing' },
+        description: {
+          vi: 'Báo giá minh bạch trước khi triển khai, quyền sở hữu tên miền và dữ liệu thuộc về khách hàng.',
+          en: 'Transparent quotes upfront, with full ownership of your domain and data.',
+        },
+      },
+    ],
+  },
+});
+
+export const homeBlogIntro = defineSection({
+  key: 'blogIntro',
+  label: 'Mục Bài viết / Tin tức nổi bật trên trang chủ (/blog)',
+  summary:
+    'Các bài viết chia sẻ kinh nghiệm và tin tức (/blog), lấy từ mục Bài viết (ưu tiên bài viết Nổi bật).',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    display: field.display(),
+  },
+  defaults: {
+    visible: false,
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+    heading: { vi: 'Góc nhìn & Chia sẻ', en: 'Insights & Articles' },
+    subheading: {
+      vi: 'Kinh nghiệm xây dựng, vận hành và bảo mật website thực tế cho doanh nghiệp.',
+      en: 'Practical guides on building, operating and securing business websites.',
+    },
+  },
+});
+
+export const homeCareersIntro = defineSection({
+  key: 'careersIntro',
+  label: 'Mục Tuyển dụng nổi bật trên trang chủ (/careers)',
+  summary:
+    'Khối giới thiệu môi trường làm việc và cơ hội nghề nghiệp (/careers) trên trang chủ.',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    items: cardList(true),
+    display: field.display(),
+  },
+  defaults: {
+    visible: false,
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 3 } }),
+    heading: { vi: 'Cơ hội nghề nghiệp tại Devhouse', en: 'Careers at Devhouse' },
+    subheading: {
+      vi: 'Cùng xây dựng những sản phẩm công nghệ thực tế, ổn định và mang lại giá trị lâu dài cho khách hàng.',
+      en: 'Join our team to build dependable, high-impact software products for businesses.',
+    },
+    items: [
+      {
+        icon: 'rocket',
+        title: { vi: 'Dự án thực chất', en: 'Real-world impact' },
+        description: {
+          vi: 'Tham gia trực tiếp vào các hệ thống đang phục vụ khách hàng thật mỗi ngày.',
+          en: 'Work directly on production systems serving real businesses every day.',
+        },
+      },
+      {
+        icon: 'users',
+        title: { vi: 'Văn hóa tôn trọng & tự chủ', en: 'Autonomy & respect' },
+        description: {
+          vi: 'Đánh giá dựa trên kết quả bàn giao, quy trình làm việc rõ ràng và hỗ trợ lẫn nhau.',
+          en: 'Evaluated on real delivery outcomes with clear processes and strong team support.',
+        },
+      },
+      {
+        icon: 'check',
+        title: { vi: 'Đãi ngộ xứng đáng', en: 'Fair compensation' },
+        description: {
+          vi: 'Thu nhập cạnh tranh, xét duyệt định kỳ và đầy đủ quyền lợi bảo hiểm, phúc lợi.',
+          en: 'Competitive pay, regular reviews and full benefits.',
+        },
+      },
+    ],
+  },
+});
+
+export const homeCustomPathsIntro = defineSection({
+  key: 'customPathsIntro',
+  label: 'Mục Các trang /path tùy chỉnh bật nổi bật trên trang chủ',
+  summary:
+    'Cho phép bật hiển thị nổi bật thêm bất kỳ trang nào có đường dẫn /path trên thanh Menu điều hướng.',
+  fields: {
+    heading: field.text({ max: 120 }),
+    subheading: field.textarea({ max: 300 }),
+    items: field.list({
+      of: field.group({
+        fields: {
+          icon: field.select({ options: ICON_KEYS }),
+          title: field.text({ max: 80 }),
+          description: field.textarea({ max: 300 }),
+          path: field.string({ max: 200 }),
+        },
+      }),
+    }),
+    display: field.display(),
+  },
+  defaults: {
+    visible: false,
+    display: makeDisplay({ layout: 'grid', columns: { mobile: 1, tablet: 2, desktop: 4 } }),
+    heading: { vi: 'Khám phá thêm trên Devhouse', en: 'Explore more on Devhouse' },
+    subheading: {
+      vi: 'Truy cập nhanh các chuyên mục và dịch vụ trọng tâm.',
+      en: 'Quick access to our key sections and services.',
+    },
+    items: [
+      {
+        icon: 'layout',
+        title: { vi: 'Thiết kế website & Shopify', en: 'Website & Shopify Design' },
+        description: {
+          vi: 'Dựng website chuẩn SEO, giao diện hiện đại và dễ quản trị.',
+          en: 'SEO-ready websites with modern design and easy management.',
+        },
+        path: '/services/thiet-ke-website',
+      },
+      {
+        icon: 'server',
+        title: { vi: 'Máy chủ & Hạ tầng Cloud', en: 'Cloud & Server Hosting' },
+        description: {
+          vi: 'Vận hành ổn định trên hạ tầng đám mây với sao lưu tự động.',
+          en: 'Reliable cloud hosting with automated daily backups.',
+        },
+        path: '/services/may-chu-va-ha-tang-dam-may',
+      },
+      {
+        icon: 'link',
+        title: { vi: 'Tên miền & DNS', en: 'Domain & DNS' },
+        description: {
+          vi: 'Đăng ký và quản lý tên miền chính chủ, cấu hình SSL/HTTPS tự động.',
+          en: 'Domain registration in your name with automatic SSL/HTTPS.',
+        },
+        path: '/services/ten-mien-va-dns',
+      },
+      {
+        icon: 'shield',
+        title: { vi: 'Bảo mật & Hỗ trợ định kỳ', en: 'Security & Support' },
+        description: {
+          vi: 'Giám sát 24/7, tường lửa và xử lý sự cố kỹ thuật nhanh chóng.',
+          en: '24/7 monitoring, firewall protection and rapid issue resolution.',
+        },
+        path: '/services/bao-mat-va-ho-tro',
+      },
+    ],
+  },
+});
+
 export const homeCta = defineSection({
   key: 'cta',
-  label: 'Kêu gọi hành động',
-  summary: 'Khung cuối trang mời khách liên hệ hoặc xem gói dịch vụ.',
+  label: 'Kêu gọi hành động / Liên hệ (/contact)',
+  summary: 'Khung cuối trang mời khách liên hệ (/contact) hoặc xem gói dịch vụ.',
   fields: {
     heading: field.text({ max: 150 }),
     subheading: field.textarea({ max: 300 }),
@@ -347,9 +605,16 @@ export const homePage = {
     homeValues,
     homeServicesIntro,
     homeProductsIntro,
+    homeProjectsIntro,
     homeAudiences,
     homePackagesIntro,
+    homeSolutionsIntro,
+    homeTechnologiesIntro,
     homeProcess,
+    homeAboutIntro,
+    homeBlogIntro,
+    homeCareersIntro,
+    homeCustomPathsIntro,
     homeCta,
   ],
   seo: {
